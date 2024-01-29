@@ -1,14 +1,16 @@
-import { List } from "@mui/material";
+import Box from "@mui/material/Box";
 
 type FlexListProps = {
-  children: React.ReactNode;
-  flexWrap: React.CSSProperties["flexWrap"];
-  flexDirection: React.CSSProperties["flexDirection"];
+  children?: React.ReactNode;
+  flexWrap?: React.CSSProperties["flexWrap"];
+  flexDirection?: React.CSSProperties["flexDirection"];
 };
 
 const FlexList = ({ children, flexWrap, flexDirection }: FlexListProps) => {
   return (
-    <List sx={{ display: "flex", flexWrap, flexDirection }}>{children}</List>
+    <Box component="ul" sx={{ display: "flex", flexWrap, flexDirection }}>
+      {children}
+    </Box>
   );
 };
 
