@@ -1,7 +1,13 @@
 import { List } from "@mui/material";
 
-const FlexList = (props: { children: React.ReactNode }) => {
-  return <List>{props.children}</List>;
+type FlexListProps = {
+  children: React.ReactNode;
+  flexWrap: React.CSSProperties["flexWrap"];
+  flexDirection: React.CSSProperties["flexDirection"];
+};
+
+const FlexList = (props: FlexListProps) => {
+  return <List sx={{ display: "flex" }}>{props.children}</List>;
 };
 
 export default FlexList;
