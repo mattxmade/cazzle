@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box";
+import List from "@mui/material/List";
 
 type FlexListProps = {
   children?: React.ReactNode;
@@ -8,9 +8,7 @@ type FlexListProps = {
 
 const FlexList = ({ children, flexWrap, flexDirection }: FlexListProps) => {
   return (
-    <Box component="ul" sx={{ display: "flex", flexWrap, flexDirection }}>
-      {children}
-    </Box>
+    <List sx={{ display: "flex", flexWrap, flexDirection }}>{children}</List>
   );
 };
 
