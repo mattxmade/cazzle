@@ -6,8 +6,10 @@ type FlexListProps = {
   flexDirection: React.CSSProperties["flexDirection"];
 };
 
-const FlexList = (props: FlexListProps) => {
-  return <List sx={{ display: "flex" }}>{props.children}</List>;
+const FlexList = ({ children, flexWrap, flexDirection }: FlexListProps) => {
+  return (
+    <List sx={{ display: "flex", flexWrap, flexDirection }}>{children}</List>
+  );
 };
 
 export default FlexList;
