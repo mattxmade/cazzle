@@ -7,7 +7,7 @@ type MediaGalleryProps = {
   mediaData: { src: string; alt: string; type: string }[];
 };
 
-const MediaGallery = ({ mediaData }: MediaGalleryProps) => {
+const MediaGalleryAside = ({ mediaData }: MediaGalleryProps) => {
   return (
     <Card elevation={3} sx={{ width: "fit-content" }}>
       <ImageList
@@ -38,6 +38,10 @@ const MediaGallery = ({ mediaData }: MediaGalleryProps) => {
       </ImageList>
     </Card>
   );
+};
+
+const MediaGallery = ({ mediaData }: MediaGalleryProps) => {
+  return <MediaGalleryAside mediaData={mediaData} />;
 };
 
 export default MediaGallery;
