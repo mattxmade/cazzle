@@ -1,7 +1,11 @@
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
+import Container from "@mui/material/Container";
+
 import Button from "@mui/material/Button";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
+import { ImageListItemStyle } from "@/styles/custom";
 
 type MediaGalleryProps = {
   mediaData: { src: string; alt: string; type: string }[];
@@ -41,7 +45,14 @@ const MediaGalleryAside = ({ mediaData }: MediaGalleryProps) => {
 };
 
 const MediaGallery = ({ mediaData }: MediaGalleryProps) => {
-  return <MediaGalleryAside mediaData={mediaData} />;
+  return (
+    <Box component="main" display={"flex"}>
+      <Box>
+        <MediaGalleryAside mediaData={mediaData} />
+      </Box>
+      <Container>Gallery Viewer</Container>
+    </Box>
+  );
 };
 
 export default MediaGallery;
