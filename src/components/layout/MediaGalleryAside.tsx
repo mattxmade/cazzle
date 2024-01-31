@@ -19,11 +19,12 @@ const MediaGalleryAside = (props: AsideProps) => {
     <Card elevation={8} sx={{ height: "100%", overflowY: "scroll" }}>
       <ImageList cols={props.columns}>
         {props.mediaData.map((item, i) => (
-          <ImageListItem key={item.src}>
+          <ImageListItem key={item.src + i}>
             <Button
               sx={{
                 overflow: "hidden",
                 borderRadius: "0.2rem",
+                backgroundColor: props.item === i ? "lightgrey" : "",
               }}
               aria-label={"select" + item.src}
               onClick={() => props.handleSelection(i)}
