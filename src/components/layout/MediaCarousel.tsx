@@ -19,15 +19,23 @@ type MediaCarouselProps = {
 } & MediaData;
 
 const MediaCarousel = (props: MediaCarouselProps) => {
+  const slideTotal = props.mediaData.length;
+
+  const prevSlide = (e: React.MouseEvent) =>
+    props.item !== 0 && props.handleNavigation(props.item - 1);
+
+  const nextSlide = (e: React.MouseEvent) =>
+    props.item !== slideTotal && props.handleNavigation(props.item + 1);
+
   return (
     <>
-      <Button aria-label="previous gallery slide">
+      <Button aria-label="previous gallery slide" onClick={prevSlide}>
         <ArrowBackIosIcon />
       </Button>
       <Container sx={{ position: "relative", overflow: "hidden" }}>
         {props.mediaData.map((item, i) => (
           <Box
-            key={"carousel_" + item.src}
+            key={"carousel_" + item.src + i}
             sx={{
               display: i !== props.item ? "none" : "grid",
             }}
@@ -45,7 +53,7 @@ const MediaCarousel = (props: MediaCarouselProps) => {
           </Box>
         ))}
       </Container>
-      <Button aria-label="next gallery slide">
+      <Button aria-label="next gallery slide" onClick={nextSlide}>
         <ArrowForwardIosIcon />
       </Button>
     </>
