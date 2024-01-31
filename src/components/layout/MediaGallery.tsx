@@ -1,19 +1,31 @@
 "use client";
 
+import { useCallback, useState } from "react";
+
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
 import MediaCarousel from "./MediaCarousel";
 import MediaGalleryAside from "./MediaGalleryAside";
+import { MediaData } from "@/types";
 
-export type MediaGalleryProps = {
-  mediaData: { src: string; alt: string; type: string }[];
-  initPosition: number;
-};
+type MediaGalleryProps = {
+  initItem: number;
+} & MediaData;
 
-const MediaGallery = ({ mediaData, initPosition }: MediaGalleryProps) => {
+const MediaGallery = ({ mediaData, initItem }: MediaGalleryProps) => {
+  const [currentItem, setCurrentItem] = useState(initItem);
+
+  const handleSelection = useCallback(
+    (item: number) => {
+      setCurrentItem(item);
+    },
+    [currentItem]
+  );
+
   return (
     <Container
+      disableGutters
       component="article"
       maxWidth="lg"
       sx={{
@@ -27,10 +39,16 @@ const MediaGallery = ({ mediaData, initPosition }: MediaGalleryProps) => {
         <Box>
           <MediaGalleryAside
             mediaData={mediaData}
-            initPosition={initPosition}
+            item={currentItem}
+            handleSelection={handleSelection}
           />
         </Box>
-        <MediaCarousel mediaData={mediaData} showControls />
+        <MediaCarousel
+          showControls
+          item={currentItem}
+          mediaData={mediaData}
+          handleNavigation={handleSelection}
+        />
       </Box>
       <Container component="footer"></Container>
     </Container>
