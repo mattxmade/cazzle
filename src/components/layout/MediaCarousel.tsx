@@ -21,7 +21,7 @@ type MediaCarouselProps = {
 const MediaCarousel = (props: MediaCarouselProps) => {
   return (
     <>
-      <Button>
+      <Button aria-label="previous gallery slide">
         <ArrowBackIosIcon />
       </Button>
       <Container sx={{ position: "relative", overflow: "hidden" }}>
@@ -29,7 +29,7 @@ const MediaCarousel = (props: MediaCarouselProps) => {
           <Box
             key={"carousel_" + item.src}
             sx={{
-              display: i > 0 ? "none" : "grid",
+              display: i !== props.item ? "none" : "grid",
             }}
           >
             <img
@@ -45,7 +45,7 @@ const MediaCarousel = (props: MediaCarouselProps) => {
           </Box>
         ))}
       </Container>
-      <Button>
+      <Button aria-label="next gallery slide">
         <ArrowForwardIosIcon />
       </Button>
     </>
