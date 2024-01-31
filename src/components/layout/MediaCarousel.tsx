@@ -19,10 +19,10 @@ type MediaCarouselProps = {
 } & MediaData;
 
 const MediaCarousel = (props: MediaCarouselProps) => {
-  const slideTotal = props.mediaData.length;
+  const slideTotal = props.mediaData.length - 1;
 
   const prevSlide = (e: React.MouseEvent) =>
-    props.item !== 0 && props.handleNavigation(props.item - 1);
+    props.item > 0 && props.handleNavigation(props.item - 1);
 
   const nextSlide = (e: React.MouseEvent) =>
     props.item !== slideTotal && props.handleNavigation(props.item + 1);
@@ -48,7 +48,7 @@ const MediaCarousel = (props: MediaCarouselProps) => {
               width={"100%"}
             />
             <Typography>
-              {props.item} of {props.mediaData.length}
+              {props.item + 1} of {slideTotal + 1}
             </Typography>
           </Box>
         ))}
