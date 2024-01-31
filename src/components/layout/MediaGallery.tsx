@@ -9,6 +9,8 @@ import MediaCarousel from "./MediaCarousel";
 import MediaGalleryAside from "./MediaGalleryAside";
 import { MediaData } from "@/types";
 
+import Divider from "@mui/material/Divider";
+
 type MediaGalleryProps = {
   initItem: number;
 } & MediaData;
@@ -27,28 +29,50 @@ const MediaGallery = ({ mediaData, initItem }: MediaGalleryProps) => {
     <Container
       disableGutters
       component="article"
-      maxWidth="lg"
+      maxWidth={false}
       sx={{
+        maxWidth: 2400,
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
       }}
     >
-      <Container component="header"></Container>
-      <Box component="main" display={"flex"} flexGrow={1}>
-        <Box>
+      <Container
+        disableGutters
+        component="header"
+        maxWidth={false}
+        sx={{ paddingTop: 10 }}
+      >
+        <Divider />
+      </Container>
+      <Box
+        component="main"
+        gap={2}
+        display={"flex"}
+        flexGrow={1}
+        overflow="hidden"
+      >
+        <Box component="aside">
           <MediaGalleryAside
+            columns={2}
             mediaData={mediaData}
             item={currentItem}
             handleSelection={handleSelection}
           />
         </Box>
-        <MediaCarousel
-          showControls
-          item={currentItem}
-          mediaData={mediaData}
-          handleNavigation={handleSelection}
-        />
+        <Container
+          disableGutters
+          component="section"
+          sx={{ display: "flex", alignItems: "center" }}
+        >
+          <MediaCarousel
+            showControls
+            item={currentItem}
+            mediaData={mediaData}
+            handleNavigation={handleSelection}
+          />
+        </Container>
       </Box>
       <Container component="footer"></Container>
     </Container>
