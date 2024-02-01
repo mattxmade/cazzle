@@ -1,11 +1,9 @@
-import Link from "@mui/material/Link";
+import Link from "next/link";
+import Image from "next/image";
+
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-
-type ThumbnailsProps = {
-  additional: number | null;
-  thumbnails: { src: string; alt: string; type: string }[];
-};
+import Typography from "@mui/material/Typography";
 
 const ImageListItemStyle = {
   width: 75,
@@ -17,18 +15,24 @@ const ImageListItemStyle = {
   ":hover": { cursor: "pointer" },
 };
 
-const Thumbnails = ({ additional, thumbnails }: ThumbnailsProps) => (
+type ThumbnailsProps = {
+  slug: string;
+  additional: number | null;
+  thumbnails: { src: string; alt: string; type: string }[];
+};
+
+const Thumbnails = ({ slug, additional, thumbnails }: ThumbnailsProps) => (
   <ImageList
     sx={{ gap: "0.8rem !important", display: "flex", flexWrap: "wrap" }}
   >
-    {thumbnails.map((item) => (
+    {thumbnails.map((item, i) => (
       <ImageListItem key={item.src} sx={ImageListItemStyle}>
-        <Link width={75} height={75} display="grid" justifyContent="center">
-          <img
-            srcSet={`${item.src}?h=75&fit=crop&auto=format&dpr=2 2x`}
-            src={`${item.src}?h=75&fit=crop&auto=format`}
+        <Link href={slug + `?id=media${i}`} style={{ width: 75, height: 75 }}>
+          <Image
+            fill
+            src={item.src}
             alt={item.alt}
-            loading="lazy"
+            style={{ objectFit: "cover" }}
           />
         </Link>
       </ImageListItem>
@@ -37,11 +41,14 @@ const Thumbnails = ({ additional, thumbnails }: ThumbnailsProps) => (
     {additional ? (
       <ImageListItem sx={ImageListItemStyle}>
         <Link
-          alignSelf="center"
-          justifySelf="center"
-          sx={{ fontSize: "1.4rem", textDecoration: "none" }}
+          href={slug}
+          style={{
+            display: "grid",
+            placeContent: "center",
+            textDecoration: "none",
+          }}
         >
-          +{additional}
+          <Typography fontSize={"1.4rem"}>+{additional}</Typography>
         </Link>
       </ImageListItem>
     ) : null}
