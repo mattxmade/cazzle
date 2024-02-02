@@ -33,7 +33,7 @@ const DashboardAppBar = ({ title }: DashboardAppBarProps) => {
             <UserButton />
           </SignedIn>
           <SignedOut>
-            <SignInButton>
+            <SignInButton mode="modal">
               <Button color="inherit" aria-label="sign in">
                 Login
               </Button>
