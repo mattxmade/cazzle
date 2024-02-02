@@ -1,29 +1,58 @@
 "use client";
 
-import { useState } from "react";
-import Container from "@mui/material/Container";
+import { useCallback, useState } from "react";
 
+import Box from "@mui/material/Box";
+import AdaptiveBox from "@/components/mui/box/AdaptiveBox";
+import ElevationScroll from "@/components/mui/ElevationOnScroll";
+
+import MenuDrawer from "./MenuDrawer";
 import DashboardAppBar from "./DashboardAppBar";
 
 const Dashboard = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
-  const handleDrawerOpen = () => {
+  const handleDrawerOpen = useCallback(() => {
     setOpen(true);
-  };
+  }, [open]);
 
-  const handleDrawerClose = () => {
+  const handleDrawerClose = useCallback(() => {
     setOpen(false);
-  };
+  }, [open]);
 
   return (
-    <Container disableGutters maxWidth={false}>
-      <DashboardAppBar
-        title="Dashboard"
+    <Box>
+      <ElevationScroll>
+        <DashboardAppBar
+          title="Dashboard"
+          open={open}
+          drawerWidth={240}
+          handleDrawerOpen={handleDrawerOpen}
+        />
+      </ElevationScroll>
+      <MenuDrawer
         open={open}
-        handleDrawerOpen={handleDrawerOpen}
+        drawerWidth={240}
+        handleDrawerClose={handleDrawerClose}
       />
-    </Container>
+
+      <Box
+        sx={{
+          width: "100%",
+          overflowX: "hidden",
+        }}
+      >
+        <AdaptiveBox
+          reduce={open}
+          width={240}
+          margin={65}
+          sx={{
+            marginTop: 9,
+            marginBottom: 2,
+          }}
+        ></AdaptiveBox>
+      </Box>
+    </Box>
   );
 };
 
