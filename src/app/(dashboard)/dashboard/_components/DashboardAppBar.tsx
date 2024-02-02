@@ -16,11 +16,13 @@ import { styled } from "@mui/material/styles";
 import { useState } from "react";
 
 type DashboardAppBarProps = {
+  open?: boolean;
   title: string;
+  handleDrawerOpen: () => void;
 };
 
-const DashboardAppBar = ({ title }: DashboardAppBarProps) => {
-  const [open, setOpen] = useState(false);
+const DashboardAppBar = (props: DashboardAppBarProps) => {
+  const { open, title, handleDrawerOpen } = props;
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -31,8 +33,8 @@ const DashboardAppBar = ({ title }: DashboardAppBarProps) => {
             edge="start"
             color="inherit"
             aria-label="dashboard menu"
-            sx={{ marginRight: 2 }}
-            onClick={() => setOpen(!open)}
+            sx={{ marginRight: 2, ...(open && { display: "none" }) }}
+            onClick={handleDrawerOpen}
           >
             <MenuIcon />
           </IconButton>
