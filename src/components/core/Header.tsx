@@ -2,15 +2,14 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 
-import NavBar from "./NavBar";
-
 type HeaderProps = {
   heading?: string;
   subheading?: string;
   logo?: string;
+  children?: React.ReactNode;
 };
 
-const Header = ({ heading, subheading, logo }: HeaderProps) => {
+const Header = ({ heading, subheading, logo, children }: HeaderProps) => {
   return (
     <Container
       disableGutters
@@ -31,7 +30,7 @@ const Header = ({ heading, subheading, logo }: HeaderProps) => {
           <Typography variant="h3">{heading}</Typography>
         </Stack>
 
-        <NavBar />
+        {children}
       </Container>
     </Container>
   );
