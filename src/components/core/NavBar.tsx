@@ -1,6 +1,8 @@
 import Link from "next/link";
 
 import {
+  ClerkLoaded,
+  ClerkLoading,
   SignedIn,
   SignedOut,
   SignOutButton,
@@ -10,37 +12,48 @@ import {
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 
 type NavBarProps = {
-  navItems: { name: string; slug: string }[];
+  navItems?: { name: string; slug: string }[];
 };
 
 const NavBar = ({ navItems }: NavBarProps) => {
   return (
     <Stack component="nav" direction={"row"} spacing={7} alignItems="center">
       <Stack direction={"row"} spacing={3}>
-        {navItems.map((item) => (
-          <Link href={item.slug} style={{ textDecoration: "none" }}>
-            <Typography variant="button">{item.name}</Typography>
-          </Link>
-        ))}
+        {navItems
+          ? navItems.map((item) => (
+              <Link href={item.slug} style={{ textDecoration: "none" }}>
+                <Typography variant="button">{item.name}</Typography>
+              </Link>
+            ))
+          : null}
       </Stack>
 
       <Stack spacing={1}>
-        <SignedIn>
-          <SignOutButton>
-            <Button>
-              <Typography variant="button">Sign Out</Typography>
-            </Button>
-          </SignOutButton>
-        </SignedIn>
-        <SignedOut>
-          <SignInButton>
-            <Button>
-              <Typography variant="button">Sign In</Typography>
-            </Button>
-          </SignInButton>
-        </SignedOut>
+        <ClerkLoading>
+          <Button>
+            <CircularProgress size={25} />
+          </Button>
+        </ClerkLoading>
+
+        <ClerkLoaded>
+          <SignedIn>
+            <SignOutButton>
+              <Button>
+                <Typography variant="button">Sign Out</Typography>
+              </Button>
+            </SignOutButton>
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <Button>
+                <Typography variant="button">Sign In</Typography>
+              </Button>
+            </SignInButton>
+          </SignedOut>
+        </ClerkLoaded>
       </Stack>
     </Stack>
   );
