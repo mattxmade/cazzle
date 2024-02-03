@@ -11,11 +11,7 @@ type HeaderProps = {
 
 const Header = ({ heading, subheading, logo, children }: HeaderProps) => {
   return (
-    <Container
-      disableGutters
-      maxWidth={false}
-      sx={{ backgroundColor: "lightcyan" }}
-    >
+    <Container disableGutters maxWidth={false}>
       <Container
         component="header"
         maxWidth="lg"
