@@ -14,17 +14,25 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
+import { content } from "@/app/content";
+
 type NavBarProps = {
   navItems?: { name: string; slug: string }[];
 };
 
 const NavBar = ({ navItems }: NavBarProps) => {
+  const items = navItems ?? content.navBarItems;
+
   return (
     <Stack component="nav" direction={"row"} spacing={7} alignItems="center">
       <Stack direction={"row"} spacing={3}>
-        {navItems
-          ? navItems.map((item) => (
-              <Link href={item.slug} style={{ textDecoration: "none" }}>
+        {items
+          ? items.map((item) => (
+              <Link
+                key={item.name}
+                href={item.slug}
+                style={{ textDecoration: "none" }}
+              >
                 <Typography variant="button">{item.name}</Typography>
               </Link>
             ))
