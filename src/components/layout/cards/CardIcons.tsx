@@ -14,7 +14,7 @@ type Props = {
   floorplanCount: number;
 };
 
-const CardIcons = (props: Props) => {
+const CardIcons = (props: Props) => (
   <Stack direction="row" alignItems="center" spacing={0.5}>
     {props.floorplanCount ? (
       <>
@@ -27,13 +27,13 @@ const CardIcons = (props: Props) => {
         />
       </>
     ) : null}
+
     <Stack spacing={0.5} direction="row" justifyContent="space-between">
       <CameraAltIcon fontSize={"small"} sx={{ color: props.color }} />
       <Typography fontSize={"small"} sx={{ color: props.color }}>
         {props.imageIndex}/{props.imageCount}
       </Typography>
     </Stack>
-  </Stack>;
-};
-
+  </Stack>
+);
 export default CardIcons;
