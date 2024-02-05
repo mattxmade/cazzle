@@ -19,7 +19,7 @@ const ImageGrid = ({ imageData, link }: ImageGrid) => {
 
   return (
     <Grid container sx={{ height: 435 }}>
-      <Grid sm={12} md={8} height="inherit" paddingRight={"4px"}>
+      <Grid xs={12} sm={12} md={8} height="inherit" paddingRight={"4px"}>
         <Button
           fullWidth
           component={NextLink}
