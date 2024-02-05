@@ -2,14 +2,13 @@ import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 
+import { content } from "@/app/content";
+
 type HeaderProps = {
-  heading?: string;
-  subheading?: string;
-  logo?: string;
   children?: React.ReactNode;
 };
 
-const Header = ({ heading, subheading, logo, children }: HeaderProps) => {
+const Header = ({ children }: HeaderProps) => {
   return (
     <Container disableGutters maxWidth={false}>
       <Container
@@ -23,7 +22,7 @@ const Header = ({ heading, subheading, logo, children }: HeaderProps) => {
         }}
       >
         <Stack>
-          <Typography variant="h3">{heading}</Typography>
+          <Typography variant="h3">{content.header.heading}</Typography>
         </Stack>
 
         {children}
