@@ -6,7 +6,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 type PrimaryGridProps = {
   component?: keyof JSX.IntrinsicElements | React.JSXElementConstructor<any>;
-  constantElements: React.ReactNode;
+  children: React.ReactNode;
   mediumAboveDisplayElements: React.ReactNode;
 };
 
@@ -17,10 +17,10 @@ const PrimaryGrid = (props: PrimaryGridProps) => {
   return (
     <Grid container component={props.component || "section"}>
       {matches ? (
-        props.constantElements
+        props.children
       ) : (
         <>
-          {props.constantElements}
+          {props.children}
           {props.mediumAboveDisplayElements}
         </>
       )}
