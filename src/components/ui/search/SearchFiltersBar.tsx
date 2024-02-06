@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import Stack from "@mui/material/Stack";
-
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -13,12 +13,15 @@ import { content } from "@/app/content";
 import validFilterInput, { type InputType } from "@/utils/validateInputs";
 
 const SearchFiltersBar = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [filterInputs, setFilterInputs] = useState({
     location: "",
-    minPrice: "Min Price",
-    maxPrice: "Max Price",
-    minBeds: "Min Beds",
-    maxBeds: "Max Beds",
+    minPrice: "",
+    maxPrice: "",
+    minBeds: "",
+    maxBeds: "",
     propertyType: "",
   });
 
@@ -28,6 +31,30 @@ const SearchFiltersBar = () => {
     if (!validFilterInput(type, select.value)) return;
     setFilterInputs((prev) => ({ ...prev, [type]: select.value }));
   };
+
+  const handleSearchQuery = () => {
+    let searchQuery = "?";
+    const inputs = Object.entries(filterInputs);
+
+    inputs.forEach((input, i) => {
+      const [key, value] = input;
+
+      if (value !== "") {
+        searchQuery += `${key}=${value}&`;
+      }
+    });
+
+    searchQuery = searchQuery.slice(0, -1);
+    searchQuery ? router.replace(searchQuery) : router.replace("/properties");
+  };
+
+  useEffect(() => {
+    handleSearchQuery();
+  }, [filterInputs]);
+
+  useEffect(() => {
+    // TODO: validate inputs if query changed in address bar
+  }, [searchParams]);
 
   return (
     <Stack
