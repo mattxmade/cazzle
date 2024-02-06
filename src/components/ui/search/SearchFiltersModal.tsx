@@ -1,5 +1,11 @@
-const SearchFiltersModal = () => {
-  return <h2>Search Filters Modal</h2>;
+import Dialog from "@mui/material/Dialog/Dialog";
+
+type SearchFiltersModal = {
+  open: boolean;
+};
+
+const SearchFiltersModal = ({ open }: SearchFiltersModal) => {
+  <Dialog open={open}></Dialog>;
 };
 
 export default SearchFiltersModal;
