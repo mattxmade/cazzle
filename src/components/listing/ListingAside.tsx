@@ -1,5 +1,11 @@
-const ListingAside = () => {
-  return <h1>Lisitng Aside Section</h1>;
+import { Container } from "postcss";
+
+type ListingAside = {
+  children?: React.ReactNode;
+};
+
+const ListingAside = ({ children }: ListingAside) => {
+  return <>{children}</>;
 };
 
 export default ListingAside;
