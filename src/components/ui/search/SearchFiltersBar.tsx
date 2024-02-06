@@ -9,12 +9,24 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography/Typography";
+
 import { content } from "@/app/content";
+import useWindowWidth from "@/hooks/useWindowWidth";
 import validFilterInput, { type InputType } from "@/utils/validateInputs";
 
 const SearchFiltersBar = () => {
   const router = useRouter();
+  const { currWidth } = useWindowWidth();
   const searchParams = useSearchParams();
+
+  let filterLabelText = "";
+
+  if (currWidth > 1200) filterLabelText = "";
+  if (currWidth <= 1200) filterLabelText = "1";
+  if (currWidth <= 1024) filterLabelText = "2";
+  if (currWidth <= 768) filterLabelText = "3";
 
   const [filterInputs, setFilterInputs] = useState({
     location: "",
@@ -80,87 +92,105 @@ const SearchFiltersBar = () => {
         </Select>
       </FormControl>
 
-      <Stack direction="row" spacing={2}>
-        <FormControl sx={{ m: 1, minWidth: 110 }}>
-          <InputLabel>MinPrice</InputLabel>
-          <Select
-            value={filterInputs.minPrice}
-            onChange={(e) => handleInputChange(e, "minPrice")}
-            autoWidth
-            label="MinPrice"
-          >
-            {content.search.filters.prices.map((price) => (
-              <MenuItem key={"minPrice_" + price.value} value={price.value}>
-                {price.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      {currWidth >= 768 ? (
+        <Stack direction="row" spacing={2}>
+          <FormControl sx={{ m: 1, minWidth: 110 }}>
+            <InputLabel>MinPrice</InputLabel>
+            <Select
+              autoWidth
+              value={filterInputs.minPrice}
+              onChange={(e) => handleInputChange(e, "minPrice")}
+              label="MinPrice"
+            >
+              {content.search.filters.prices.map((price) => (
+                <MenuItem key={"minPrice_" + price.value} value={price.value}>
+                  {price.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ m: 1, minWidth: 110 }}>
+            <InputLabel>MaxPrice</InputLabel>
+            <Select
+              autoWidth
+              value={filterInputs.maxPrice}
+              onChange={(e) => handleInputChange(e, "maxPrice")}
+              label="MaxPrice"
+            >
+              {content.search.filters.prices.map((price) => (
+                <MenuItem key={"maxPrice_" + price.value} value={price.value}>
+                  {price.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+      ) : null}
 
-        <FormControl sx={{ m: 1, minWidth: 110 }}>
-          <InputLabel>MaxPrice</InputLabel>
-          <Select
-            value={filterInputs.maxPrice}
-            onChange={(e) => handleInputChange(e, "maxPrice")}
-            autoWidth
-            label="MaxPrice"
-          >
-            {content.search.filters.prices.map((price) => (
-              <MenuItem key={"maxPrice_" + price.value} value={price.value}>
-                {price.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Stack>
-      <Stack direction="row" spacing={2}>
-        <FormControl sx={{ m: 1, minWidth: 110 }}>
-          <InputLabel>MinBeds</InputLabel>
-          <Select
-            value={filterInputs.minBeds}
-            onChange={(e) => handleInputChange(e, "minBeds")}
-            autoWidth
-            label="MinBeds"
-          >
-            {content.search.filters.bedrooms.map((beds) => (
-              <MenuItem key={"minBeds_" + beds.value} value={beds.value}>
-                {beds.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      {currWidth >= 1024 ? (
+        <Stack direction="row" spacing={2}>
+          <FormControl sx={{ m: 1, minWidth: 110 }}>
+            <InputLabel>MinBeds</InputLabel>
+            <Select
+              autoWidth
+              value={filterInputs.minBeds}
+              onChange={(e) => handleInputChange(e, "minBeds")}
+              label="MinBeds"
+            >
+              {content.search.filters.bedrooms.map((beds) => (
+                <MenuItem key={"minBeds_" + beds.value} value={beds.value}>
+                  {beds.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ m: 1, minWidth: 110 }}>
+            <InputLabel>MaxBeds</InputLabel>
+            <Select
+              autoWidth
+              value={filterInputs.maxBeds}
+              onChange={(e) => handleInputChange(e, "maxBeds")}
+              label="MaxBeds"
+            >
+              {content.search.filters.bedrooms.map((beds) => (
+                <MenuItem key={"maxBeds_" + beds.value} value={beds.value}>
+                  {beds.text}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Stack>
+      ) : null}
 
-        <FormControl sx={{ m: 1, minWidth: 110 }}>
-          <InputLabel>MaxBeds</InputLabel>
+      {currWidth >= 1200 ? (
+        <FormControl sx={{ m: 1, minWidth: 170 }}>
+          <InputLabel>Property Type</InputLabel>
           <Select
-            value={filterInputs.maxBeds}
-            onChange={(e) => handleInputChange(e, "maxBeds")}
             autoWidth
-            label="MaxBeds"
+            value={filterInputs.propertyType}
+            onChange={(e) => handleInputChange(e, "propertyType")}
+            label="Property Type"
           >
-            {content.search.filters.bedrooms.map((beds) => (
-              <MenuItem key={"maxBeds_" + beds.value} value={beds.value}>
-                {beds.text}
+            {content.search.filters.propertyType.map((type) => (
+              <MenuItem key={"propertyType_" + type.value} value={type.value}>
+                {type.text}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
-      </Stack>
-      <FormControl sx={{ m: 1, minWidth: 170 }}>
-        <InputLabel>Property Type</InputLabel>
-        <Select
-          value={filterInputs.propertyType}
-          onChange={(e) => handleInputChange(e, "propertyType")}
-          autoWidth
-          label="Property Type"
+      ) : null}
+
+      {currWidth <= 1200 ? (
+        <Button
+          variant="outlined"
+          fullWidth={false}
+          sx={{ padding: 2, textTransform: "none" }}
         >
-          {content.search.filters.propertyType.map((type) => (
-            <MenuItem key={"propertyType_" + type.value} value={type.value}>
-              {type.text}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+          <Typography variant="body1">
+            Filters {`(${filterLabelText})`}
+          </Typography>
+        </Button>
+      ) : null}
     </Stack>
   );
 };
