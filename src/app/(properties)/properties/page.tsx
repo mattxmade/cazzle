@@ -26,41 +26,27 @@ export type Filters = {
 };
 
 type SearchParams = {
-  // params: string; // no params as non-dynamic route segment
+  // no params as non-dynamic route segment
   searchParams: Filters;
 };
 
-let count = 0;
-
-// cached data otherwise
-// export const dynamic = "force-dynamic";
+// fresh data on every request
+export const dynamic = "force-dynamic";
 
 export default async function PropertiesPage({ searchParams }: SearchParams) {
-  let valid = false;
   const filters = Object.entries(searchParams);
 
-  if (filters.length) {
-    valid = filters.every((query) => {
-      const isValid = validateSearchQuery(query[0], query[1]);
+  // query: key [0] | value [1]
+  const isValid =
+    filters &&
+    filters.every((query) => validateSearchQuery(query[0], query[1]));
 
-      console.log("From middleware : " + isValid);
-
-      return isValid;
-    });
-  }
-
-  count += 1;
-
-  console.log(`++ --- ${count}--- ++`);
-  console.log("Filters Count: " + filters.length);
-  console.log("Valid Query:" + valid);
-
-  return filters.length && !valid ? (
+  return filters && !isValid ? (
     <NotFound />
   ) : (
     <>
       <Container disableGutters maxWidth={false}>
-        <SearchFiltersBar queryParams={valid ? searchParams : null} />
+        <SearchFiltersBar queryParams={isValid ? searchParams : null} />
       </Container>
 
       <Container
@@ -70,7 +56,7 @@ export default async function PropertiesPage({ searchParams }: SearchParams) {
       >
         <Grid container component="section" spacing={2} padding={0} margin={0}>
           <Suspense fallback={<p>Loading...</p>}>
-            <PropertyCards search={valid ? { searchParams } : null} />
+            <PropertyCards search={isValid ? { searchParams } : null} />
           </Suspense>
         </Grid>
       </Container>
