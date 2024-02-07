@@ -12,11 +12,12 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography/Typography";
 
+import useWindowWidth from "@/hooks/useWindowWidth";
 import SearchFiltersModal from "./SearchFiltersModal";
 
+import type { InputType } from "@/utils/validateInputs";
+import type { Filters } from "@/app/(properties)/properties/page";
 import { content } from "@/app/content";
-import useWindowWidth from "@/hooks/useWindowWidth";
-import validFilterInput, { type InputType } from "@/utils/validateInputs";
 
 export type FilterInputs = {
   location: string;
@@ -27,21 +28,30 @@ export type FilterInputs = {
   propertyType: string;
 };
 
-const SearchFiltersBar = () => {
+// from server
+type SearchParams = {
+  queryParams: Filters | null;
+};
+
+const SearchFiltersBar = ({ queryParams }: SearchParams) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { currWidth } = useWindowWidth();
   const [openSearchForm, setOpenSearchForm] = useState(false);
 
-  const [filterInputs, setFilterInputs] = useState({
-    location: "",
-    minPrice: "",
-    maxPrice: "",
-    minBeds: "",
-    maxBeds: "",
-    propertyType: "",
-  });
+  const getFilterValues = () => {
+    return {
+      location: searchParams.get("location") ?? "",
+      minPrice: searchParams.get("minPrice") ?? "",
+      maxPrice: searchParams.get("maxPrice") ?? "",
+      minBeds: searchParams.get("minBeds") ?? "",
+      maxBeds: searchParams.get("maxBeds") ?? "",
+      propertyType: searchParams.get("propertyType") ?? "",
+    };
+  };
+
+  const [filterValues, setFilterValues] = useState({ ...getFilterValues() });
 
   let filterLabelText = "";
 
@@ -53,38 +63,33 @@ const SearchFiltersBar = () => {
   const handleInputChange = (e: SelectChangeEvent, type: InputType) => {
     const select = e.target as HTMLSelectElement;
 
-    if (!validFilterInput(type, select.value)) return;
-    setFilterInputs((prev) => ({ ...prev, [type]: select.value }));
+    handleSearchQuery({ ...filterValues, [type]: select.value });
+    setFilterValues((prev) => ({ ...prev, [type]: select.value }));
   };
 
-  const handleSearchQuery = () => {
-    let searchQuery = "?";
-    const inputs = Object.entries(filterInputs);
+  const handleSearchQuery = (values: typeof filterValues) => {
+    let searchQuery = "";
 
-    inputs.forEach((input, i) => {
-      const [key, value] = input;
+    Object.entries(values).forEach((filter) => {
+      const [key, value] = filter;
+      if (!value) return;
 
-      if (value !== "") {
-        searchQuery += `${key}=${value}&`;
-      }
+      searchQuery === ""
+        ? (searchQuery += `?${key}=${value}`)
+        : (searchQuery += `&${key}=${value}`);
     });
 
-    searchQuery = searchQuery.slice(0, -1);
-    searchQuery ? router.replace(searchQuery) : router.replace("/properties");
+    searchQuery.length ? router.push(searchQuery) : router.push("/properties");
   };
+
+  useEffect(() => {
+    setFilterValues({ ...getFilterValues() });
+  }, [queryParams]);
 
   const handleCloseSearchForm = useCallback(
     () => setOpenSearchForm(false),
     [openSearchForm]
   );
-
-  useEffect(() => {
-    handleSearchQuery();
-  }, [filterInputs]);
-
-  useEffect(() => {
-    // TODO: validate inputs if query changed in address bar
-  }, [searchParams]);
 
   return (
     <>
@@ -102,12 +107,11 @@ const SearchFiltersBar = () => {
         <FormControl sx={{ m: 1, minWidth: 125 }}>
           <InputLabel>Location</InputLabel>
           <Select
-            value={filterInputs.location}
+            value={filterValues.location}
             onChange={(e) => handleInputChange(e, "location")}
             autoWidth
             label="Location"
           >
-            <MenuItem aria-label="None" value=""></MenuItem>
             {content.search.filters.locations.map((location) => (
               <MenuItem
                 key={"location_" + location.value}
@@ -125,10 +129,11 @@ const SearchFiltersBar = () => {
               <InputLabel>MinPrice</InputLabel>
               <Select
                 autoWidth
-                value={filterInputs.minPrice}
+                value={filterValues.minPrice}
                 onChange={(e) => handleInputChange(e, "minPrice")}
                 label="Min Price"
               >
+                <MenuItem value="">Min Price</MenuItem>
                 {content.search.filters.prices.map((price) => (
                   <MenuItem key={"minPrice_" + price.value} value={price.value}>
                     {price.text}
@@ -140,10 +145,11 @@ const SearchFiltersBar = () => {
               <InputLabel>MaxPrice</InputLabel>
               <Select
                 autoWidth
-                value={filterInputs.maxPrice}
+                value={filterValues.maxPrice}
                 onChange={(e) => handleInputChange(e, "maxPrice")}
                 label="Max Price"
               >
+                <MenuItem value="">Max Price</MenuItem>
                 {content.search.filters.prices.map((price) => (
                   <MenuItem key={"maxPrice_" + price.value} value={price.value}>
                     {price.text}
@@ -160,10 +166,11 @@ const SearchFiltersBar = () => {
               <InputLabel>MinBeds</InputLabel>
               <Select
                 autoWidth
-                value={filterInputs.minBeds}
+                value={filterValues.minBeds}
                 onChange={(e) => handleInputChange(e, "minBeds")}
                 label="Min Beds"
               >
+                <MenuItem value="">Min Beds</MenuItem>
                 {content.search.filters.bedrooms.map((beds) => (
                   <MenuItem key={"minBeds_" + beds.value} value={beds.value}>
                     {beds.text}
@@ -175,10 +182,11 @@ const SearchFiltersBar = () => {
               <InputLabel>Max Beds</InputLabel>
               <Select
                 autoWidth
-                value={filterInputs.maxBeds}
+                value={filterValues.maxBeds}
                 onChange={(e) => handleInputChange(e, "maxBeds")}
                 label="Max Beds"
               >
+                <MenuItem value="">Max Beds</MenuItem>
                 {content.search.filters.bedrooms.map((beds) => (
                   <MenuItem key={"maxBeds_" + beds.value} value={beds.value}>
                     {beds.text}
@@ -194,7 +202,7 @@ const SearchFiltersBar = () => {
             <InputLabel>Property Type</InputLabel>
             <Select
               autoWidth
-              value={filterInputs.propertyType}
+              value={filterValues.propertyType}
               onChange={(e) => handleInputChange(e, "propertyType")}
               label="Property Type"
             >
@@ -207,7 +215,7 @@ const SearchFiltersBar = () => {
           </FormControl>
         ) : null}
 
-        {currWidth <= 1200 ? (
+        {currWidth < 1200 ? (
           <Button
             variant="outlined"
             fullWidth={false}
