@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-const useWindowWidth = () => {
-  const [currWidth, setCurrWidth] = useState<number>(0);
+const useWindowWidth = (initWidth?: number) => {
+  const [currWidth, setCurrWidth] = useState<number>(initWidth ?? 1200);
 
   const handleResizeChange = () => {
     window && setCurrWidth(window.innerWidth);
