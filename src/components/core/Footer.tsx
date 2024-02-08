@@ -1,9 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 
 import Copyright from "../Copyright";
 
