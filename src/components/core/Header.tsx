@@ -22,7 +22,7 @@ const Header = ({ children }: HeaderProps) => {
         }}
       >
         <Stack>
-          <Typography variant="h3">{content.header.heading}</Typography>
+          <Typography variant="h4">{content.header.heading}</Typography>
         </Stack>
 
         {children}
