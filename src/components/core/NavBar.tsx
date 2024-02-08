@@ -31,9 +31,15 @@ const NavBar = ({ navItems }: NavBarProps) => {
               <Link
                 key={item.name}
                 href={item.slug}
-                style={{ textDecoration: "none" }}
+                aria-label={`${item.name} page link`}
+                style={{ color: "navy", textDecoration: "none" }}
               >
-                <Typography variant="button">{item.name}</Typography>
+                <Typography
+                  variant="button"
+                  sx={{ ":hover": { textDecoration: "underline" } }}
+                >
+                  {item.name}
+                </Typography>
               </Link>
             ))
           : null}
