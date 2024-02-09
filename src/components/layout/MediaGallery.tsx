@@ -1,29 +1,46 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
 
 import MediaCarousel from "./MediaCarousel";
 import MediaGalleryAside from "./MediaGalleryAside";
+import BackButton from "../ui/buttons/BackButton";
 import { MediaData } from "@/types";
+import useHideElements from "@/hooks/useHideElements";
 
-import Divider from "@mui/material/Divider";
-
-type MediaGalleryProps = {
+type GalleryProps = {
   initItem: number;
+  showGallery?: (show: boolean, item: number) => void;
 } & MediaData;
 
-const MediaGallery = ({ mediaData, initItem }: MediaGalleryProps) => {
-  const [currentItem, setCurrentItem] = useState(initItem);
+const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
+  const clientRouter = useRouter();
+  const clientParams = useParams() as { propertyId: string };
+
+  useHideElements(["header"]);
+
+  const [currentItem, setCurrentItem] = useState(initItem - 1);
 
   const handleSelection = useCallback(
     (item: number) => {
       setCurrentItem(item);
+
+      clientParams["propertyId"] &&
+        clientRouter.replace(
+          `/properties/${clientParams["propertyId"]}/media?media=${item + 1}`
+        );
     },
     [currentItem]
   );
+
+  const navigateBack = () => {
+    clientRouter.back();
+  };
 
   return (
     <Container
@@ -42,8 +59,11 @@ const MediaGallery = ({ mediaData, initItem }: MediaGalleryProps) => {
         disableGutters
         component="header"
         maxWidth={false}
-        sx={{ paddingTop: 10 }}
+        sx={{ display: "flex", padding: 2 }}
       >
+        <BackButton icon="arrow" onClick={navigateBack}>
+          Back
+        </BackButton>
         <Divider />
       </Container>
       <Box
