@@ -1,15 +1,15 @@
 "use client";
 
-import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import Button from "@mui/material/Button";
-
 import Image from "next/image";
 import NextLink from "next/link";
 
+import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
+import Button from "@mui/material/Button";
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
+
 type ImageGrid = {
-  imageData: { src: string; alt: string }[];
+  imageData: { src: string | null; alt?: string }[];
   link: string;
 };
 
@@ -17,27 +17,38 @@ const ImageGrid = ({ imageData, link }: ImageGrid) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down("md"));
 
+  const additionalImages =
+    imageData.length === 1
+      ? null // NoItemCard x2
+      : imageData.length === 2
+      ? [imageData[1]] // NoItemCard x1
+      : imageData.filter((data, i) => i > 0 && i < 3 && data);
+
   return (
     <Grid container sx={{ height: 435 }}>
       <Grid xs={12} sm={12} md={8} height="inherit" paddingRight={"4px"}>
-        <Button
-          fullWidth
-          component={NextLink}
-          href={`${link + 0}`}
-          aria-label="image 1"
-          sx={{
-            height: "inherit",
-            overflow: "hidden",
-          }}
-        >
-          <Image
-            fill
-            priority
-            src={imageData[0].src}
-            alt={imageData[0].alt}
-            style={{ objectFit: "cover" }}
-          />
-        </Button>
+        {
+          imageData.length && imageData[0].src ? (
+            <Button
+              fullWidth
+              component={NextLink}
+              href={`${link + 0}`}
+              aria-label="listing image 1"
+              sx={{
+                height: "inherit",
+                overflow: "hidden",
+              }}
+            >
+              <Image
+                fill
+                priority
+                src={imageData[0].src}
+                alt={"lsting image " + 1}
+                style={{ objectFit: "cover" }}
+              />
+            </Button>
+          ) : null // TODO: <NoImageCard/>
+        }
       </Grid>
 
       {matches ? null : (
@@ -49,26 +60,31 @@ const ImageGrid = ({ imageData, link }: ImageGrid) => {
           height="inherit"
           paddingLeft={"4px"}
         >
-          {[imageData[1], imageData[2]].map((item, i) => (
-            <Button
-              fullWidth
-              key={"image_" + item.alt + "_" + i}
-              aria-label={"image " + i + 1}
-              sx={{
-                height: "calc(50% - 4px)",
-                overflow: "hidden",
-                position: "relative",
-                alignSelf: i === 0 ? "start" : "end",
-              }}
-            >
-              <Image
-                fill
-                src={item.src}
-                alt={item.alt}
-                style={{ objectFit: "cover" }}
-              />
-            </Button>
-          ))}
+          {additionalImages
+            ? additionalImages.map(
+                (item, i) =>
+                  item.src ? (
+                    <Button
+                      fullWidth
+                      key={"image_" + i}
+                      aria-label={"listing image " + i + 1}
+                      sx={{
+                        height: "calc(50% - 4px)",
+                        overflow: "hidden",
+                        position: "relative",
+                        alignSelf: i === 0 ? "start" : "end",
+                      }}
+                    >
+                      <Image
+                        fill
+                        src={item.src}
+                        alt={"listing image " + i + 1}
+                        style={{ objectFit: "cover" }}
+                      />
+                    </Button>
+                  ) : null // TODO: <NoImageCard/>
+              )
+            : null}
         </Grid>
       )}
     </Grid>
