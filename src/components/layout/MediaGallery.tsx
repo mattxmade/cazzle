@@ -84,7 +84,7 @@ const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
         <Container
           disableGutters
           component="section"
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{ height: "100%", display: "flex", alignItems: "center" }}
         >
           <MediaCarousel
             showControls
