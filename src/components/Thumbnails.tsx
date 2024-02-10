@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
@@ -18,41 +20,50 @@ const ImageListItemStyle = {
 type ThumbnailsProps = {
   slug: string;
   additional: number | null;
-  thumbnails: { src: string; alt: string; type: string }[];
+  thumbnails: { src: string | null; alt?: string; type?: string }[];
 };
 
-const Thumbnails = ({ slug, additional, thumbnails }: ThumbnailsProps) => (
-  <ImageList
-    sx={{ gap: "0.8rem !important", display: "flex", flexWrap: "wrap" }}
-  >
-    {thumbnails.map((item, i) => (
-      <ImageListItem key={item.src} sx={ImageListItemStyle}>
-        <Link href={slug + `?id=media${i}`} style={{ width: 75, height: 75 }}>
-          <Image
-            fill
-            src={item.src}
-            alt={item.alt}
-            style={{ objectFit: "cover" }}
-          />
-        </Link>
-      </ImageListItem>
-    ))}
+const Thumbnails = ({ slug, additional, thumbnails }: ThumbnailsProps) => {
+  return (
+    <ImageList
+      sx={{ gap: "0.8rem !important", display: "flex", flexWrap: "wrap" }}
+    >
+      {thumbnails.map((item, i) =>
+        item.src ? (
+          <ImageListItem key={item.src} sx={ImageListItemStyle}>
+            <Link
+              href={slug + `/media?media=${i + 1}`}
+              style={{ width: 75, height: 75, position: "relative" }}
+            >
+              <Image
+                fill
+                src={item.src}
+                alt={item.alt ?? "image " + i + 1}
+                style={{ objectFit: "cover" }}
+              />
+            </Link>
+          </ImageListItem>
+        ) : null
+      )}
 
-    {additional ? (
-      <ImageListItem sx={ImageListItemStyle}>
-        <Link
-          href={slug}
-          style={{
-            display: "grid",
-            placeContent: "center",
-            textDecoration: "none",
-          }}
-        >
-          <Typography fontSize={"1.4rem"}>+{additional}</Typography>
-        </Link>
-      </ImageListItem>
-    ) : null}
-  </ImageList>
-);
+      {additional ? (
+        <ImageListItem sx={ImageListItemStyle}>
+          <Link
+            href={slug + "/media?media=1"}
+            style={{
+              display: "grid",
+              width: 75,
+              height: 75,
+              placeContent: "center",
+              textDecoration: "none",
+            }}
+          >
+            <Typography fontSize={"1.4rem"}>+{additional}</Typography>
+          </Link>
+        </ImageListItem>
+      ) : null}
+    </ImageList>
+  );
+};
 
 export default Thumbnails;
