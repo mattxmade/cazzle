@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Button from "@mui/material/Button";
@@ -15,8 +16,17 @@ type AsideProps = {
 } & MediaData;
 
 const MediaGalleryAside = (props: AsideProps) => {
+  console.log(props.item);
+
   return (
-    <Card elevation={8} sx={{ height: "100%", overflowY: "scroll" }}>
+    <Card
+      elevation={8}
+      sx={{
+        height: "100%",
+        overflowY: "overlay",
+        padding: "1rem 1.4rem 0 0.5rem",
+      }}
+    >
       <ImageList cols={props.columns}>
         {props.mediaData.map((item, i) => (
           <ImageListItem key={item.src + i}>
@@ -31,16 +41,18 @@ const MediaGalleryAside = (props: AsideProps) => {
             >
               <Box
                 sx={{
+                  width: 160,
                   height: 105,
                   overflow: "hidden",
                   borderRadius: "0.2rem",
                 }}
               >
-                <img
-                  srcSet={`${item.src}?w=160&fit=crop&auto=format&dpr=2 2x`}
-                  src={`${item.src}?w=160&fit=crop&auto=format`}
+                <Image
+                  fill
+                  src={item.src}
                   alt={item.alt}
                   loading="lazy"
+                  style={{ objectFit: "cover" }}
                 />
               </Box>
             </Button>
