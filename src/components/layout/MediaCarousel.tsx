@@ -32,9 +32,7 @@ const MediaCarousel = (props: MediaCarouselProps) => {
       <Button aria-label="previous gallery slide" onClick={prevSlide}>
         <ArrowBackIosIcon />
       </Button>
-      <Container
-        sx={{ height: "100%", position: "relative", overflow: "hidden" }}
-      >
+      <Container sx={{ position: "relative", overflow: "hidden" }}>
         {props.mediaData.map((item, i) =>
           item.src ? (
             <Box
