@@ -16,8 +16,6 @@ type AsideProps = {
 } & MediaData;
 
 const MediaGalleryAside = (props: AsideProps) => {
-  console.log(props.item);
-
   return (
     <Card
       elevation={8}
@@ -28,36 +26,38 @@ const MediaGalleryAside = (props: AsideProps) => {
       }}
     >
       <ImageList cols={props.columns}>
-        {props.mediaData.map((item, i) => (
-          <ImageListItem key={item.src + i}>
-            <Button
-              sx={{
-                overflow: "hidden",
-                borderRadius: "0.2rem",
-                backgroundColor: props.item === i ? "lightgrey" : "",
-              }}
-              aria-label={"select" + item.src}
-              onClick={() => props.handleSelection(i)}
-            >
-              <Box
+        {props.mediaData.map((item, i) =>
+          item.src ? (
+            <ImageListItem key={item.src + i}>
+              <Button
                 sx={{
-                  width: 160,
-                  height: 105,
                   overflow: "hidden",
                   borderRadius: "0.2rem",
+                  backgroundColor: props.item === i ? "lightgrey" : "",
                 }}
+                aria-label={"select" + item.src}
+                onClick={() => props.handleSelection(i)}
               >
-                <Image
-                  fill
-                  src={item.src}
-                  alt={item.alt}
-                  loading="lazy"
-                  style={{ objectFit: "cover" }}
-                />
-              </Box>
-            </Button>
-          </ImageListItem>
-        ))}
+                <Box
+                  sx={{
+                    width: 160,
+                    height: 105,
+                    overflow: "hidden",
+                    borderRadius: "0.2rem",
+                  }}
+                >
+                  <Image
+                    fill
+                    src={item.src}
+                    alt={`listing image ${i + 1}`} // item.alt
+                    loading="lazy"
+                    style={{ objectFit: "cover" }}
+                  />
+                </Box>
+              </Button>
+            </ImageListItem>
+          ) : null
+        )}
       </ImageList>
     </Card>
   );
