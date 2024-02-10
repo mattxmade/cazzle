@@ -32,26 +32,32 @@ const MediaCarousel = (props: MediaCarouselProps) => {
       <Button aria-label="previous gallery slide" onClick={prevSlide}>
         <ArrowBackIosIcon />
       </Button>
-      <Container sx={{ position: "relative", overflow: "hidden" }}>
-        {props.mediaData.map((item, i) => (
-          <Box
-            key={"carousel_" + item.src + i}
-            sx={{
-              display: i !== props.item ? "none" : "grid",
-            }}
-          >
-            <img
-              key={item.src}
-              src={item.src}
-              alt={item.alt}
-              loading="lazy"
-              width={"100%"}
-            />
-            <Typography>
-              {props.item + 1} of {slideTotal + 1}
-            </Typography>
-          </Box>
-        ))}
+      <Container
+        sx={{ height: "100%", position: "relative", overflow: "hidden" }}
+      >
+        {props.mediaData.map((item, i) =>
+          item.src ? (
+            <Box
+              key={"carousel_" + item.src + i}
+              sx={{
+                display: i !== props.item ? "none" : "grid",
+              }}
+            >
+              <img
+                key={item.src}
+                src={item.src}
+                alt={`listing image ${i + 1}`}
+                loading="lazy"
+                width={"100%"}
+                style={{ aspectRatio: "1/1", objectFit: "contain" }}
+              />
+
+              <Typography>{`${props.item + 1} of ${
+                slideTotal + 1
+              }`}</Typography>
+            </Box>
+          ) : null
+        )}
       </Container>
       <Button aria-label="next gallery slide" onClick={nextSlide}>
         <ArrowForwardIosIcon />
