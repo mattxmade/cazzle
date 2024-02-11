@@ -31,7 +31,7 @@ const CardIcons = (props: Props) => (
     <Stack spacing={0.5} direction="row" justifyContent="space-between">
       <CameraAltIcon fontSize={"small"} sx={{ color: props.color }} />
       <Typography fontSize={"small"} sx={{ color: props.color }}>
-        {props.imageIndex}/{props.imageCount}
+        {props.imageCount ? `${props.imageIndex}/${props.imageCount}` : 0}
       </Typography>
     </Stack>
   </Stack>
