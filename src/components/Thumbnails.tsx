@@ -7,10 +7,13 @@ import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
 import Typography from "@mui/material/Typography";
 
+import NoItemCard from "./NoItemCard";
+
 const ImageListItemStyle = {
   width: 75,
   height: 75,
   display: "grid",
+  position: "relative",
   overflow: "hidden",
   borderRadius: "0.2rem",
   backgroundColor: "lavender",
@@ -18,38 +21,53 @@ const ImageListItemStyle = {
 };
 
 type ThumbnailsProps = {
-  slug: string;
-  additional: number | null;
-  thumbnails: { src: string | null; alt?: string; type?: string }[];
+  link: string;
+  images: { src: string | null; alt?: string; type?: string }[] | null;
 };
 
-const Thumbnails = ({ slug, additional, thumbnails }: ThumbnailsProps) => {
+const Thumbnails = ({ link, images }: ThumbnailsProps) => {
+  const thumbnails = images ? images.filter((image, i) => i <= 5 && image) : [];
+  const additional = thumbnails.length > 6 ? thumbnails.length - 6 : null;
+
   return (
     <ImageList
-      sx={{ gap: "0.8rem !important", display: "flex", flexWrap: "wrap" }}
+      sx={{
+        minHeight: 75,
+        gap: "0.8rem !important",
+        display: "flex",
+        flexWrap: "wrap",
+      }}
     >
-      {thumbnails.map((item, i) =>
-        item.src ? (
+      {!thumbnails.length ? (
+        <ImageListItem sx={ImageListItemStyle}>
+          <NoItemCard variant="image" />
+        </ImageListItem>
+      ) : (
+        thumbnails.map((item, i) => (
           <ImageListItem key={item.src} sx={ImageListItemStyle}>
-            <Link
-              href={slug + `/media?media=${i + 1}`}
-              style={{ width: 75, height: 75, position: "relative" }}
-            >
-              <Image
-                fill
-                src={item.src}
-                alt={item.alt ?? "image " + i + 1}
-                style={{ objectFit: "cover" }}
-              />
-            </Link>
+            {item.src ? (
+              <Link
+                href={link + `/media?media=${i + 1}`}
+                style={{ width: 75, height: 75, position: "relative" }}
+              >
+                <Image
+                  fill
+                  src={item.src}
+                  alt={item.alt ?? "image " + i + 1}
+                  style={{ objectFit: "cover" }}
+                />
+              </Link>
+            ) : (
+              <NoItemCard variant="image" />
+            )}
           </ImageListItem>
-        ) : null
+        ))
       )}
 
       {additional ? (
         <ImageListItem sx={ImageListItemStyle}>
           <Link
-            href={slug + "/media?media=1"}
+            href={link + "/media?media=1"}
             style={{
               display: "grid",
               width: 75,
