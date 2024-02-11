@@ -56,7 +56,7 @@ const ListingDetails = (props: ListingDetailsProps) => {
       <Grid flexGrow={1}>
         <ListingDetail
           heading={"SIZE"}
-          textContent={props.size + " ft"}
+          textContent={props.size ? props.size + " ft" : "Ask agent"}
           Icon={ViewComfyOutlinedIcon}
         />
       </Grid>
