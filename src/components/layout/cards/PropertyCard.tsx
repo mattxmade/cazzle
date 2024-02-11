@@ -7,24 +7,26 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Avatar from "@mui/material/Avatar";
 import HotelOutlinedIcon from "@mui/icons-material/HotelOutlined";
 import ShowerOutlinedIcon from "@mui/icons-material/ShowerOutlined";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 
-import { PropertyListing } from "@/types";
 import Link from "next/link";
+import { Suspense } from "react";
+
 import CardIcons from "./CardIcons";
-import React from "react";
+import PropertyCardMedia from "./PropertyCardMedia";
+import FavButton from "@/components/ui/buttons/FavButton";
+import formatPrice from "@/utils/formatPrice";
+import type { PropertyListing_ } from "@/types";
 
 type PropertyCardProps = {
-  propertyData: PropertyListing;
+  propertyData: PropertyListing_;
   children?: React.ReactNode;
 };
 
-const PropertyCard = ({ propertyData, children }: PropertyCardProps) => {
+const PropertyCard = async ({ propertyData, children }: PropertyCardProps) => {
   const LinkProps = {
     href: `/properties/${propertyData.slug}`,
     style: {
@@ -41,16 +43,20 @@ const PropertyCard = ({ propertyData, children }: PropertyCardProps) => {
     <Grid
       xs={12}
       sm={12}
-      md={5.8}
-      lg={3.8}
-      xl={2.8}
+      md={6}
+      lg={3}
+      xl={3}
       component="article"
       margin={0}
       sx={{ position: "relative" }}
     >
       <Card elevation={2}>
         <Link {...LinkProps}>
-          <CardMedia>{children}</CardMedia>
+          <CardMedia>
+            <Suspense fallback={<p>Loading...</p>}>
+              <PropertyCardMedia galleryImages={propertyData.galleryImages} />
+            </Suspense>
+          </CardMedia>
 
           <CardHeader
             disableTypography
@@ -75,12 +81,12 @@ const PropertyCard = ({ propertyData, children }: PropertyCardProps) => {
                 fontWeight={500}
                 sx={{ ...css }}
               >
-                {propertyData.name}
+                {propertyData.street}
               </Typography>
             }
             subheader={
               <Typography variant="body2" fontSize={18} sx={{ ...css }}>
-                £{propertyData.fullMarketPrice}
+                {formatPrice(propertyData.fullMarketPrice, "GBP")}
               </Typography>
             }
             sx={{
@@ -143,7 +149,7 @@ const PropertyCard = ({ propertyData, children }: PropertyCardProps) => {
                 backgroundColor: "darkslategrey",
               }}
             >
-              <Link href={LinkProps.href}>
+              <Link href={LinkProps.href} style={{ textDecoration: "none" }}>
                 <CardIcons
                   color={css.color}
                   imageIndex={1}
@@ -153,25 +159,7 @@ const PropertyCard = ({ propertyData, children }: PropertyCardProps) => {
                 />
               </Link>
             </Card>
-
-            <Stack direction="row" alignItems="center">
-              <Button
-                aria-label="favourite property"
-                sx={{
-                  minWidth: 0,
-                  minHeight: 0,
-                  padding: 0.75,
-                  borderRadius: "100%",
-                }}
-              >
-                <Card sx={{ lineHeight: 0, padding: 1, borderRadius: "100%" }}>
-                  <FavoriteBorderOutlinedIcon />
-                </Card>
-              </Button>
-              <Typography variant="body1" fontWeight={500}>
-                Save
-              </Typography>
-            </Stack>
+            <FavButton listingId={propertyData._id} />
           </Stack>
         </CardContent>
       </Card>
