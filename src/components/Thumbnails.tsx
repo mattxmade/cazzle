@@ -39,7 +39,9 @@ const Thumbnails = ({ link, images }: ThumbnailsProps) => {
       }}
     >
       {!thumbnails.length ? (
-        <ImageListItem sx={ImageListItemStyle}>
+        <ImageListItem
+          sx={{ cursor: "auto !important", ...ImageListItemStyle }}
+        >
           <NoItemCard variant="image" />
         </ImageListItem>
       ) : (
