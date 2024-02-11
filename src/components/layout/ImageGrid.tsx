@@ -33,7 +33,7 @@ const ImageGrid = ({ imageData, link }: ImageGridProps) => {
         <Button
           fullWidth
           component={NextLink}
-          href={`${link + 0}`}
+          href={imageData?.length ? `${link + 1}` : ""}
           aria-disabled={!imageData}
           aria-label={!imageData ? "listing image 1" : "no image"}
           sx={{
@@ -69,6 +69,8 @@ const ImageGrid = ({ imageData, link }: ImageGridProps) => {
                 <Button
                   fullWidth
                   key={"image_" + i}
+                  component={NextLink}
+                  href={item.image ? `${link + (i + 2)}` : ""}
                   aria-disabled={!item.image ? true : false}
                   aria-label={
                     item.image ? "listing image " + i + 1 : "no image"
