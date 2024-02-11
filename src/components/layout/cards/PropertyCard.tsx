@@ -12,6 +12,8 @@ import Avatar from "@mui/material/Avatar";
 import HotelOutlinedIcon from "@mui/icons-material/HotelOutlined";
 import ShowerOutlinedIcon from "@mui/icons-material/ShowerOutlined";
 
+import Skeleton from "@mui/material/Skeleton";
+
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -53,7 +55,15 @@ const PropertyCard = async ({ propertyData, children }: PropertyCardProps) => {
       <Card elevation={2}>
         <Link {...LinkProps}>
           <CardMedia>
-            <Suspense fallback={<p>Loading...</p>}>
+            <Suspense
+              fallback={
+                <Skeleton
+                  sx={{ height: 222 }}
+                  animation="wave"
+                  variant="rectangular"
+                />
+              }
+            >
               <PropertyCardMedia galleryImages={propertyData.galleryImages} />
             </Suspense>
           </CardMedia>
