@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import NextLink from "next/link";
 
@@ -32,23 +33,27 @@ const ImageGrid = ({ imageData, link }: ImageGridProps) => {
       <Grid xs={12} sm={12} md={8} height="inherit" paddingRight={"4px"}>
         <Button
           fullWidth
-          component={NextLink}
-          href={imageData?.length ? `${link + 1}` : ""}
-          aria-disabled={!imageData}
-          aria-label={!imageData ? "listing image 1" : "no image"}
+          aria-disabled={!imageData?.length ? true : false}
+          aria-label={!imageData?.length ? "listing image 1" : "no image"}
           sx={{
             height: "inherit",
             overflow: "hidden",
+            cursor: imageData?.length ? "pointer" : "auto",
           }}
         >
           {imageData && imageData[0]?.src ? (
-            <Image
-              fill
-              priority
-              src={imageData[0].src}
-              alt={"lsting image " + 1}
-              style={{ objectFit: "cover" }}
-            />
+            <Link
+              href={`${link + 1}`}
+              style={{ color: "initial", textDecoration: "none" }}
+            >
+              <Image
+                fill
+                priority
+                src={imageData[0].src}
+                alt={"lsting image " + 1}
+                style={{ objectFit: "cover" }}
+              />
+            </Link>
           ) : (
             <NoItemCard variant="image" />
           )}
@@ -69,8 +74,6 @@ const ImageGrid = ({ imageData, link }: ImageGridProps) => {
                 <Button
                   fullWidth
                   key={"image_" + i}
-                  component={NextLink}
-                  href={item.image ? `${link + (i + 2)}` : ""}
                   aria-disabled={!item.image ? true : false}
                   aria-label={
                     item.image ? "listing image " + i + 1 : "no image"
@@ -80,15 +83,21 @@ const ImageGrid = ({ imageData, link }: ImageGridProps) => {
                     overflow: "hidden",
                     position: "relative",
                     alignSelf: i === 0 ? "start" : "end",
+                    cursor: item.image ? "pointer" : "auto",
                   }}
                 >
                   {item.image && item.image.src ? (
-                    <Image
-                      fill
-                      src={item.image.src}
-                      alt={"listing image " + i + 1}
-                      style={{ objectFit: "cover" }}
-                    />
+                    <Link
+                      href={`${link + (i + 2)}`}
+                      style={{ color: "initial", textDecoration: "none" }}
+                    >
+                      <Image
+                        fill
+                        src={item.image.src}
+                        alt={"listing image " + i + 1}
+                        style={{ objectFit: "cover" }}
+                      />
+                    </Link>
                   ) : (
                     <NoItemCard variant="image" />
                   )}
