@@ -1,7 +1,7 @@
 "use client";
 
-const BasicAccountStep = () => {
-  return <h2>Basic Account Step</h2>;
+const StandardAccountStep = () => {
+  return <h2>Standard Account Step</h2>;
 };
 
-export default BasicAccountStep;
+export default StandardAccountStep;
