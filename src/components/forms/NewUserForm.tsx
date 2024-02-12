@@ -15,6 +15,14 @@ import Input from "@mui/material/Input";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import { useState } from "react";
+import StandardAccountStep from "./new-user-form-steps/StandardAccountStep";
+import BranchAccountStep from "./new-user-form-steps/BranchAccountStep";
+
+type AccountDetails = {
+  userName: string;
+  accountType: "standard" | "branch";
+  accountDetails: any;
+};
 
 type NewUserFormProps = {
   heading: string;
@@ -23,6 +31,12 @@ type NewUserFormProps = {
 
 const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
   const [formStep, setFormStep] = useState(0);
+
+  const [accountDetails, setAccountDetails] = useState<AccountDetails>({
+    userName: userName ?? "",
+    accountType: "standard",
+    accountDetails: {},
+  });
 
   return (
     <Stack component="section" spacing={2}>
@@ -66,6 +80,13 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
             </RadioGroup>
           </FormControl>
         </Stack>
+      ) : null}
+
+      {formStep === 1 && accountDetails.accountType === "standard" ? (
+        <StandardAccountStep />
+      ) : null}
+      {formStep === 1 && accountDetails.accountType === "branch" ? (
+        <BranchAccountStep />
       ) : null}
     </Stack>
   );
