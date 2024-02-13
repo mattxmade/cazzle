@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 
 import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -35,21 +36,20 @@ type NewUserFormProps = {
 };
 
 const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
-  const formStep = useRef(0);
+  const [formStep, setFormStep] = useState(0);
 
   const [accountDetails, setAccountDetails] = useState<AccountDetails>({
     accountName: userName ?? "",
-    accountType: "",
+    accountType: "standard",
     accountOptions: {},
   });
 
-  const updateStepsCompleted = (params: AccountDetails) => {
-    const { accountName, accountType, accountOptions } = params;
-    formStep.current = 0;
+  const handleMoveToNextStep = (
+    step: number,
+    validateStep: ({ step }: { step: number }) => boolean
+  ) => validateStep({ step }) && setFormStep(step + 1);
 
-    if (accountName && accountType) formStep.current = 1;
-    // if (Object.values(accountOptions)) formStep.current = 2;
-  };
+  const handleMoveToPrevStep = () => setFormStep((prevStep) => prevStep - 1);
 
   const isStepComplete = ({ step }: { step: number }) => {
     const { accountName, accountType, accountOptions } = accountDetails;
@@ -62,6 +62,8 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
       return accountName && accountType ? true : false;
       // + accountOptions
     }
+
+    return false;
   };
 
   const handleAccountTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,9 +71,6 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
     const { value } = formInput;
 
     if (value === "branch" || value === "standard") {
-      const { accountName, accountOptions } = accountDetails;
-
-      // updateStepsCompleted({ accountName, accountOptions, accountType: value });
       setAccountDetails({ ...accountDetails, accountType: value });
     }
   };
@@ -80,76 +79,114 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
   const isStepTwoComplete = isStepComplete({ step: 1 });
 
   return (
-    <Stack component="section" spacing={2}>
-      <Typography variant="h1" sx={{ fontSize: 36 }}>
+    <Stack component="section" sx={{ alignItems: "center", padding: 6 }}>
+      <Typography variant="h1" sx={{ alignSelf: "flex-start", fontSize: 36 }}>
         {heading}
       </Typography>
 
-      <Stepper orientation="vertical" activeStep={formStep.current}>
-        <Step completed={formStep.current >= 1}>
-          <StepLabel>Account Setup {formStep.current}</StepLabel>
+      <Stepper
+        orientation="vertical"
+        activeStep={formStep}
+        sx={{
+          width: "100%",
+          padding: 4,
+          borderRadius: 1,
+        }}
+      >
+        <Step completed={formStep >= 1}>
+          <StepLabel>Account Setup {formStep}</StepLabel>
           <StepContent>
-            {formStep.current === 0 ? (
-              <Stack component="form" spacing={2}>
-                <FormControl sx={{ maxWidth: "min(100%, 20rem)" }}>
-                  <FormLabel id="account-name">Name</FormLabel>
-                  <Input readOnly value={accountDetails.accountName} />
-                </FormControl>
-
-                <FormControl>
-                  <FormLabel id="account-type">Account type</FormLabel>
-                  <RadioGroup
-                    row
-                    value={accountDetails.accountType}
-                    onChange={handleAccountTypeChange}
-                    aria-labelledby="account-type"
-                    name="account-type-radio-buttons-group"
-                  >
-                    <FormControlLabel
-                      value="standard"
-                      control={<Radio />}
-                      label="Standard account"
-                    />
-                    <FormControlLabel
-                      value="branch"
-                      control={<Radio />}
-                      label="Branch account"
-                    />
-                  </RadioGroup>
-                </FormControl>
-              </Stack>
-            ) : null}
-
-            <Button
-              variant="contained"
-              aria-label="go to next form section"
-              aria-disabled={isStepOneComplete}
+            <Card
+              elevation={4}
               sx={{
-                width: "fit-content",
-                cursor: !isStepOneComplete ? "auto" : "initial",
-                color: !isStepOneComplete ? "darkgrey" : "initial",
-                backgroundColor: !isStepOneComplete ? "lightgrey" : "initial",
-                ":hover": {
-                  backgroundColor: !isStepOneComplete ? "lightgrey" : "initial",
-                  boxShadow: !isStepOneComplete ? "none" : "initial",
-                },
+                padding: 4,
+                marginLeft: 2,
+                backdropFilter: "blur(2px)",
+                backgroundColor: "hsl(0 0% 100%/.6)",
               }}
             >
-              Next
-            </Button>
+              {formStep === 0 ? (
+                <Stack component="form" spacing={4}>
+                  <FormControl sx={{ maxWidth: "min(100%, 20rem)" }}>
+                    <FormLabel id="account-name">Name</FormLabel>
+                    <Input readOnly value={accountDetails.accountName} />
+                  </FormControl>
+
+                  <FormControl>
+                    <FormLabel id="account-type">Account type</FormLabel>
+                    <RadioGroup
+                      row
+                      value={accountDetails.accountType}
+                      onChange={handleAccountTypeChange}
+                      aria-labelledby="account-type"
+                      name="account-type-radio-buttons-group"
+                    >
+                      <FormControlLabel
+                        value="standard"
+                        control={<Radio />}
+                        label="Standard account"
+                      />
+                      <FormControlLabel
+                        value="branch"
+                        control={<Radio />}
+                        label="Branch account"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Stack>
+              ) : null}
+
+              <Button
+                variant="contained"
+                aria-label="go to next form section"
+                aria-disabled={isStepOneComplete}
+                onClick={() => handleMoveToNextStep(formStep, isStepComplete)}
+                sx={{
+                  my: 2,
+                  width: "fit-content",
+                  cursor: !isStepOneComplete ? "auto" : "pointer",
+                  color: !isStepOneComplete ? "darkgrey" : "#fff",
+                  backgroundColor: !isStepOneComplete ? "lightgrey" : "#1976d2",
+                  ":hover": {
+                    backgroundColor: !isStepOneComplete
+                      ? "lightgrey"
+                      : "#1565c0",
+                    boxShadow: !isStepOneComplete
+                      ? "none"
+                      : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+                  },
+                }}
+              >
+                Next
+              </Button>
+            </Card>
           </StepContent>
         </Step>
 
-        <Step completed={formStep.current >= 2}>
-          <StepLabel>Account Options {formStep.current}</StepLabel>
+        <Step completed={formStep >= 2}>
+          <StepLabel>Account Options {formStep}</StepLabel>
           <StepContent>
-            {formStep.current >= 1 &&
-            accountDetails.accountType === "standard" ? (
-              <StandardAccountStep />
+            {formStep >= 1 && accountDetails.accountType === "standard" ? (
+              <StandardAccountStep>
+                <Button
+                  variant="outlined"
+                  onClick={handleMoveToPrevStep}
+                  sx={{ width: "fit-content" }}
+                >
+                  Back
+                </Button>
+              </StandardAccountStep>
             ) : null}
-            {formStep.current >= 1 &&
-            accountDetails.accountType === "branch" ? (
-              <BranchAccountStep />
+            {formStep >= 1 && accountDetails.accountType === "branch" ? (
+              <BranchAccountStep>
+                <Button
+                  variant="outlined"
+                  onClick={handleMoveToPrevStep}
+                  sx={{ width: "fit-content" }}
+                >
+                  Back
+                </Button>
+              </BranchAccountStep>
             ) : null}
           </StepContent>
         </Step>
