@@ -11,16 +11,17 @@ import Divider from "@mui/material/Divider";
 import Avatar from "@mui/material/Avatar";
 import HotelOutlinedIcon from "@mui/icons-material/HotelOutlined";
 import ShowerOutlinedIcon from "@mui/icons-material/ShowerOutlined";
-
 import Skeleton from "@mui/material/Skeleton";
 
 import Link from "next/link";
 import { Suspense } from "react";
 
-import CardIcons from "./CardIcons";
-import PropertyCardMedia from "./PropertyCardMedia";
-import FavButton from "@/components/ui/buttons/FavButton";
 import formatPrice from "@/utils/formatPrice";
+import getSignedInUser from "@/server/user/getUser";
+
+import CardIcons from "./CardIcons";
+import FavButton from "@/components/ui/buttons/FavButton";
+import PropertyCardMedia from "./PropertyCardMedia";
 import type { PropertyListing_ } from "@/types";
 
 type PropertyCardProps = {
@@ -29,6 +30,12 @@ type PropertyCardProps = {
 };
 
 const PropertyCard = async ({ propertyData, children }: PropertyCardProps) => {
+  const user = await getSignedInUser();
+
+  const isUserFavourite = !user
+    ? false
+    : user.current?.favourites?.includes(propertyData._id) ?? false;
+
   const LinkProps = {
     href: `/properties/${propertyData.slug}`,
     style: {
@@ -169,7 +176,10 @@ const PropertyCard = async ({ propertyData, children }: PropertyCardProps) => {
                 />
               </Link>
             </Card>
-            <FavButton listingId={propertyData._id} />
+            <FavButton
+              listingId={propertyData._id}
+              isUserFavourite={isUserFavourite}
+            />
           </Stack>
         </CardContent>
       </Card>
