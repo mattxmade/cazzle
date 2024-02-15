@@ -17,7 +17,6 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import formatPrice from "@/utils/formatPrice";
-import getSignedInUser from "@/server/user/getUser";
 
 import CardIcons from "./CardIcons";
 import FavButton from "@/components/ui/buttons/FavButton";
@@ -26,15 +25,12 @@ import type { PropertyListing_ } from "@/types";
 
 type PropertyCardProps = {
   propertyData: PropertyListing_;
+  isUserFavourite: boolean;
   children?: React.ReactNode;
 };
 
-const PropertyCard = async ({ propertyData, children }: PropertyCardProps) => {
-  const user = await getSignedInUser();
-
-  const isUserFavourite = !user
-    ? false
-    : user.current?.favourites?.includes(propertyData._id) ?? false;
+const PropertyCard = async ({ propertyData, ...props }: PropertyCardProps) => {
+  const isUserFavourite = props.isUserFavourite;
 
   const LinkProps = {
     href: `/properties/${propertyData.slug}`,
