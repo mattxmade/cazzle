@@ -1,5 +1,6 @@
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/../convex/_generated/api";
+import { Id } from "@/../convex/_generated/dataModel";
 
 import Divider from "@mui/material/Divider";
 import Container from "@mui/material/Container";
@@ -8,40 +9,45 @@ import Stack from "@mui/material/Stack/Stack";
 import Button from "@mui/material/Button";
 import InfoIcon from "@mui/icons-material/InfoOutlined";
 import Typography from "@mui/material/Typography";
-import TuneSharpIcon from "@mui/icons-material/TuneSharp";
 import CalculateIcon from "@mui/icons-material/CalculateOutlined";
 
-import ImageBanner from "@/components/ImageBanner";
+import NotFound from "@/app/not-found";
 import ImageGrid from "@/components/layout/ImageGrid";
 import PrimaryGrid from "@/components/layout/PrimaryGrid";
 import Thumbnails from "@/components/Thumbnails";
 import NoItemCard from "@/components/NoItemCard";
+import BranchCard from "@/components/layout/cards/BranchCard";
 import InfoTooltip from "@/components/ui/feedback/InfoTooltip";
+import ListingAside from "@/components/listing/ListingAside";
 import ListingHeader from "@/components/listing/ListingHeader";
 import ListingDetails from "@/components/listing/ListingDetails";
-import { PropertyListing } from "@/types";
 
-type PropertyPageParams = {
+import { content } from "@/app/content";
+import formatPrice from "@/utils/formatPrice";
+import type { PropertyListing_ } from "@/types";
+
+type PropertyPageParams = Readonly<{
   params: { propertyId: string };
-};
+}>;
 
 export const dyanmic = "force-dynamic";
 
 export default async function PropertyPage({ params }: PropertyPageParams) {
-  const property: PropertyListing = await fetchQuery(
-    api.properties.queries.getProperty,
-    {
-      name: params.propertyId,
-    }
-  );
+  const property = (await fetchQuery(api.properties.queries.getProperty, {
+    name: params.propertyId,
+  })) as PropertyListing_;
 
-  const features: string[] = [];
+  if (!property) return <NotFound />;
 
-  if (property.features.length) {
-    property.features.forEach((feature: any) =>
-      feature.values.forEach((item: string) => features.push(item))
-    );
-  }
+  const dbImages = await fetchQuery(api.properties.queries.getPropertyImages, {
+    ImageIdList: property.galleryImages as { storageId: Id<"_storage"> }[],
+  });
+
+  const images = dbImages
+    ? dbImages.filter((img) => typeof img.src === "string" && img)
+    : [];
+
+  const features = property.features;
 
   const sectionStyle = {
     disableGutters: true,
@@ -49,30 +55,35 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
     sx: { paddingTop: 2, paddingBottom: 2 },
   };
 
-  return !property ? null : (
+  return (
     <Container
       disableGutters
       component="main"
       maxWidth="lg"
       sx={{ display: "grid", padding: "4rem 1rem" }}
     >
-      <ImageBanner src="" alt="" slug="/" />
-      <ImageGrid link="/media?id=media" imageData={property.galleryImages} />
+      <ImageGrid link={property.slug + "/media?media="} imageData={images} />
 
       <PrimaryGrid
         mediumAboveDisplayElements={
-          <Grid container md={4}>
-            <TuneSharpIcon sx={{ width: "100%" }} />
+          <Grid container md={4} sx={{ paddingTop: 2 }}>
+            {/* Listing Aside */}
+            <ListingAside>
+              <BranchCard sticky details={{ name: content.project.name }} />
+            </ListingAside>
           </Grid>
         }
       >
+        {/* Listing Main Content */}
         <Grid container xs={12} sm={12} md={8} width="100%">
           <Stack width="100%">
             <Container {...sectionStyle}>
               <ListingHeader heading={property.displayAddress} />
 
               <Stack gap={1} direction="row" alignItems="center">
-                <Typography variant="h4">{property.fullMarketPrice}</Typography>
+                <Typography variant="h4">
+                  {formatPrice(property.fullMarketPrice, "GBP")}
+                </Typography>
 
                 <Button sx={{ minWidth: 0, padding: 0, borderRadius: "100%" }}>
                   <InfoIcon fontSize="small" />
@@ -106,21 +117,14 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
               sx={{ gap: 2, display: "flex", alignItems: "center" }}
             >
               {!property.floorplanImages.length ? (
-                <NoItemCard type="floorplan" />
+                <NoItemCard variant="floorplan" />
               ) : (
                 <></>
               )}
 
               <Thumbnails
-                slug={"/properties/" + property.slug}
-                additional={
-                  property.galleryImages.length > 6
-                    ? property.galleryImages.length - 6
-                    : null
-                }
-                thumbnails={property.galleryImages.filter(
-                  (image, i) => i <= 5 && image
-                )}
+                link={"/properties/" + property.slug}
+                images={images}
               />
             </Container>
             <Divider />
@@ -164,7 +168,7 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
 
             <Container {...sectionStyle}>
               <Grid container columns={2} spacing={1}>
-                <Grid sm={1} gap={2}>
+                <Grid xs={2} sm={2} md={2} lg={1} gap={2}>
                   <Stack gap={0.5} direction="row" alignItems="center">
                     <Typography variant="h6" fontWeight="500">
                       Energy Performance Certificates
@@ -176,12 +180,11 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
                   </Stack>
 
                   <Typography fontWeight={"500"}>
-                    {/* @ts-ignore */}
-                    {property.enviro ?? "Not provided"}
+                    {property.environmentRating ?? "Not provided"}
                   </Typography>
                 </Grid>
 
-                <Grid sm={1} gap={2}>
+                <Grid xs={2} sm={2} md={2} lg={1} gap={2}>
                   <Stack gap={0.5} direction="row" alignItems="center">
                     <Typography variant="h6" fontWeight="500">
                       Council Tax
