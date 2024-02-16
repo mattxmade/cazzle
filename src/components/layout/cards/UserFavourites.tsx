@@ -11,7 +11,6 @@ import PropertyCard from "./PropertyCard";
 import type { PropertyListing_ } from "@/types";
 
 type UserFavouritesProps = {
-  id: Id<"users">;
   token: string;
   userFavourites: Id<"properties">[];
 };
@@ -19,7 +18,7 @@ type UserFavouritesProps = {
 const UserFavourites = async (props: UserFavouritesProps) => {
   const { getUserFavourites } = api.users.queries;
 
-  const args = { user_id: props.id, favourites: props.userFavourites };
+  const args = { favourites: props.userFavourites };
   const options = { token: props.token };
 
   const listingItems = (await fetchQuery(
