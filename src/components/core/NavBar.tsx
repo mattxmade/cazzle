@@ -7,6 +7,7 @@ import {
   SignedOut,
   SignOutButton,
   SignInButton,
+  UserButton,
 } from "@clerk/nextjs";
 
 import Stack from "@mui/material/Stack";
@@ -55,9 +56,11 @@ const NavBar = ({ navItems }: NavBarProps) => {
         <ClerkLoaded>
           <SignedIn>
             <SignOutButton>
-              <Button>
+              {/* <Button>
                 <Typography variant="button">Sign Out</Typography>
-              </Button>
+              </Button> */}
+
+              <UserButton />
             </SignOutButton>
           </SignedIn>
           <SignedOut>
