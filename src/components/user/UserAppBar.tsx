@@ -17,6 +17,10 @@ import FavouritesModal from "./FavouritesModal";
 const UserAppBar = () => {
   const selectOptions = ["default"];
 
+  const listManagerFormAction = async (formData: FormData) => {
+    "use server";
+  };
+
   return (
     <AppBar
       elevation={6}
@@ -81,11 +85,9 @@ const UserAppBar = () => {
                 borderRadius: "100%",
               }}
             >
-              <FavouritesModal>
-                <IconButton>
-                  <AddIcon />
-                </IconButton>
-              </FavouritesModal>
+              <form action={listManagerFormAction}>
+                <FavouritesModal />
+              </form>
             </Card>
             <Typography variant="button">New List</Typography>
           </Stack>
