@@ -49,7 +49,15 @@ const FavouritesModal = (props: ModalProps) => {
         <AddIcon />
       </IconButton>
 
-      <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+      <Dialog
+        disableEscapeKeyDown
+        open={open}
+        onClose={handleClose}
+        sx={{
+          backdropFilter: "blur(2px)",
+          backgroundColor: "hsl(0 0% 100%/.6)",
+        }}
+      >
         <DialogTitle>Favourites List Manager</DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexWrap: "wrap" }}>
