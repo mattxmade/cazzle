@@ -1,9 +1,11 @@
-import AppBar from "@mui/material/AppBar";
+import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
+import AppBar from "@mui/material/AppBar";
 import Container from "@mui/material/Container";
 
 import AddIcon from "@mui/icons-material/Add";
-import IconBuuton from "@mui/material/IconButton";
+import IconButton from "@mui/material/IconButton";
+import Typography from "@mui/material/Typography";
 
 import { customTheme } from "@/styles/custom";
 
@@ -19,11 +21,38 @@ const UserAppBar = () => {
         backgroundColor: customTheme.backgroundColor.search.filtersBar,
       }}
     >
-      <Container maxWidth="xl">
-        <Stack direction="row" justifyContent="space-between">
-          <h2>Your favourites</h2>
+      <Container
+        maxWidth="xl"
+        sx={{
+          gap: 24,
+          display: "flex",
+          flexDirection: "row",
+          position: "relative",
+          justifyContent: "space-between",
+        }}
+      >
+        <h2>Your favourites</h2>
+        <Stack
+          flex="auto"
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Stack justifySelf="flex-start">
+            <Typography>List</Typography>
+          </Stack>
 
-          <Stack>Icons Stack</Stack>
+          <Stack gap={1} alignItems="center" justifyContent="center">
+            <Card
+              elevation={4}
+              sx={{ width: "fit-content", borderRadius: "100%" }}
+            >
+              <IconButton>
+                <AddIcon />
+              </IconButton>
+            </Card>
+            <Typography variant="button">New List</Typography>
+          </Stack>
         </Stack>
       </Container>
     </AppBar>
