@@ -1,4 +1,9 @@
 import AppBar from "@mui/material/AppBar";
+import Stack from "@mui/material/Stack";
+import Container from "@mui/material/Container";
+
+import AddIcon from "@mui/icons-material/Add";
+import IconBuuton from "@mui/material/IconButton";
 
 import { customTheme } from "@/styles/custom";
 
@@ -14,7 +19,13 @@ const UserAppBar = () => {
         backgroundColor: customTheme.backgroundColor.search.filtersBar,
       }}
     >
-      <h2>User App Bar</h2>
+      <Container maxWidth="xl">
+        <Stack direction="row" justifyContent="space-between">
+          <h2>Your favourites</h2>
+
+          <Stack>Icons Stack</Stack>
+        </Stack>
+      </Container>
     </AppBar>
   );
 };
