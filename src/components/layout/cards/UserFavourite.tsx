@@ -12,33 +12,26 @@ import type { PropertyListing_ } from "@/types";
 
 type UserFavouritesProps = {
   token: string;
-  userFavourites: Id<"properties">[];
+  listingId: Id<"properties">;
 };
 
-const UserFavourites = async (props: UserFavouritesProps) => {
-  const { getUserFavourites } = api.users.queries;
+const UserFavourite = async (props: UserFavouritesProps) => {
+  const { getUserFavourite } = api.users.queries;
 
-  const args = { favourites: props.userFavourites };
+  const args = { listing_id: props.listingId };
   const options = { token: props.token };
 
-  const listingItems = (await fetchQuery(
-    getUserFavourites,
+  const listingItem = (await fetchQuery(
+    getUserFavourite,
     args,
     options
-  )) as PropertyListing_[];
+  )) as PropertyListing_;
 
-  return listingItems && listingItems.length ? (
-    listingItems.map((listing) => (
-      <Suspense key={listing._id}>
-        <PropertyCard
-          propertyData={listing}
-          isUserFavourite={props.userFavourites.includes(listing._id)}
-        />
-      </Suspense>
-    ))
+  return listingItem ? (
+    <PropertyCard propertyData={listingItem} isUserFavourite={true} />
   ) : (
-    <Typography>No listings found</Typography>
+    <Typography>Listing no longer available</Typography>
   );
 };
 
-export default UserFavourites;
+export default UserFavourite;
