@@ -33,7 +33,7 @@ type PropertyPageParams = Readonly<{
 export const dyanmic = "force-dynamic";
 
 export default async function PropertyPage({ params }: PropertyPageParams) {
-  const property = (await fetchQuery(api.properties.queries.getProperty, {
+  const property = (await fetchQuery(api.properties.queries.getPropertyBySlug, {
     name: params.propertyId,
   })) as PropertyListing_;
 
