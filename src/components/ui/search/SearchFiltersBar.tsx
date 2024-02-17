@@ -30,12 +30,16 @@ export type FilterInputs = {
 
 // from server
 type SearchParams = {
-  variant?: "bar" | "modal";
   queryParams: Filters | null;
+};
+
+type SearchFilterBarProps = {
+  variant?: "bar" | "modal";
+  queryParams: SearchParams;
   style?: React.CSSProperties;
 };
 
-const SearchFiltersBar = ({ queryParams, ...props }: SearchParams) => {
+const SearchFiltersBar = ({ queryParams, ...props }: SearchFilterBarProps) => {
   const variant = props.variant ?? "bar";
 
   const router = useRouter();
