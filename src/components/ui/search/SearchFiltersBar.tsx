@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import Stack from "@mui/material/Stack";
@@ -32,6 +32,7 @@ export type FilterInputs = {
 type SearchParams = {
   variant?: "bar" | "modal";
   queryParams: Filters | null;
+  style?: React.CSSProperties;
 };
 
 const SearchFiltersBar = ({ queryParams, ...props }: SearchParams) => {
@@ -101,7 +102,11 @@ const SearchFiltersBar = ({ queryParams, ...props }: SearchParams) => {
           open={openSearchForm}
           handleClose={handleCloseSearchForm}
         >
-          <SearchFiltersBar queryParams={queryParams} variant="modal" />
+          <SearchFiltersBar
+            queryParams={queryParams}
+            variant="modal"
+            style={{ gap: 1 }}
+          />
         </SearchFiltersModal>
       ) : null}
 
@@ -110,6 +115,7 @@ const SearchFiltersBar = ({ queryParams, ...props }: SearchParams) => {
         direction={variant === "bar" ? "row" : "column"}
         alignItems="center"
         justifyContent="space-around"
+        sx={props.style ?? {}}
       >
         <FormControl sx={{ m: 1, minWidth: 125 }}>
           <InputLabel>Location</InputLabel>
