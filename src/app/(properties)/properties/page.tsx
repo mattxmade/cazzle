@@ -6,7 +6,7 @@ import Container from "@mui/material/Container";
 
 import NotFound from "@/app/not-found";
 import PropertyCards from "@/components/layout/cards/PropertyCards";
-import SearchFiltersBar from "@/components/ui/search/SearchFiltersBar";
+import SearchController from "@/components/ui/search/SearchController";
 import { validateSearchQuery } from "@/server/validation/validateSearchQuery";
 import { customTheme } from "@/styles/custom";
 
@@ -58,7 +58,7 @@ export default async function PropertiesPage({ searchParams }: SearchParams) {
         }}
       >
         <Card elevation={4}>
-          <SearchFiltersBar queryParams={isValid ? searchParams : null} />
+          <SearchController queryParams={isValid ? searchParams : null} />
         </Card>
       </Container>
 
