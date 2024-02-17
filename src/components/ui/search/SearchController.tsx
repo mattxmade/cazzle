@@ -31,7 +31,7 @@ type SearchControllerProps = {
   style?: React.CSSProperties;
 };
 
-const SearchController = ({ queryParams, ...props }: SearchControllerProps) => {
+const SearchController = ({ queryParams }: SearchControllerProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -49,9 +49,8 @@ const SearchController = ({ queryParams, ...props }: SearchControllerProps) => {
   };
 
   const [filterValues, setFilterValues] = useState({ ...getFilterValues() });
-  const filterButtonText = Object.values(filterValues).filter(
-    (val) => val.length
-  ).length;
+  const filterButtonText =
+    Object.values(filterValues).filter((val) => val.length).length || "";
 
   const { currWidth } = useWindowWidth();
 
@@ -114,7 +113,7 @@ const SearchController = ({ queryParams, ...props }: SearchControllerProps) => {
           sx={{ padding: 2, textTransform: "none" }}
         >
           <Typography variant="body1">
-            Filters {`(${filterButtonText})`}
+            Filters {filterButtonText ? `(${filterButtonText})` : ""}
           </Typography>
         </Button>
       </SearchFiltersBar>
