@@ -19,20 +19,20 @@ const SearchFiltersModal = (props: SearchFiltersModal) => {
 
   return (
     <Dialog open={open}>
-      <Stack spacing={1}>
+      <Stack spacing={1} padding={3} paddingTop={1}>
         <Button onClick={handleClose} aria-label="close search form modal">
           <CloseIcon />
         </Button>
 
         <DialogContent>{children}</DialogContent>
 
-        <Stack direction="row" justifyContent="space-between">
+        <Stack direction="row" justifyContent="space-around">
           <Button variant="outlined" aria-label="clear search filters ">
             Clear
           </Button>
           <Button
             onClick={handleClose}
-            variant="outlined"
+            variant="contained"
             aria-label="apply search filters and close search form modal"
           >
             Done
