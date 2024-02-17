@@ -30,10 +30,13 @@ export type FilterInputs = {
 
 // from server
 type SearchParams = {
+  variant?: "bar" | "modal";
   queryParams: Filters | null;
 };
 
-const SearchFiltersBar = ({ queryParams }: SearchParams) => {
+const SearchFiltersBar = ({ queryParams, ...props }: SearchParams) => {
+  const variant = props.variant ?? "bar";
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -93,14 +96,18 @@ const SearchFiltersBar = ({ queryParams }: SearchParams) => {
 
   return (
     <>
-      <SearchFiltersModal
-        open={openSearchForm}
-        handleClose={handleCloseSearchForm}
-      />
+      {variant === "bar" ? (
+        <SearchFiltersModal
+          open={openSearchForm}
+          handleClose={handleCloseSearchForm}
+        >
+          <SearchFiltersBar queryParams={queryParams} variant="modal" />
+        </SearchFiltersModal>
+      ) : null}
 
       <Stack
         component="form"
-        direction="row"
+        direction={variant === "bar" ? "row" : "column"}
         alignItems="center"
         justifyContent="space-around"
       >
@@ -123,7 +130,7 @@ const SearchFiltersBar = ({ queryParams }: SearchParams) => {
           </Select>
         </FormControl>
 
-        {currWidth >= 768 ? (
+        {currWidth >= 768 || variant === "modal" ? (
           <Stack direction="row" spacing={2}>
             <FormControl sx={{ m: 1, minWidth: 110 }}>
               <InputLabel>MinPrice</InputLabel>
@@ -160,7 +167,7 @@ const SearchFiltersBar = ({ queryParams }: SearchParams) => {
           </Stack>
         ) : null}
 
-        {currWidth >= 1024 ? (
+        {currWidth >= 1024 || variant === "modal" ? (
           <Stack direction="row" spacing={2}>
             <FormControl sx={{ m: 1, minWidth: 110 }}>
               <InputLabel>MinBeds</InputLabel>
@@ -197,7 +204,7 @@ const SearchFiltersBar = ({ queryParams }: SearchParams) => {
           </Stack>
         ) : null}
 
-        {currWidth >= 1200 ? (
+        {currWidth >= 1200 || variant === "modal" ? (
           <FormControl sx={{ m: 1, minWidth: 170 }}>
             <InputLabel>Property Type</InputLabel>
             <Select
@@ -215,7 +222,7 @@ const SearchFiltersBar = ({ queryParams }: SearchParams) => {
           </FormControl>
         ) : null}
 
-        {currWidth < 1200 ? (
+        {currWidth < 1200 && variant === "bar" ? (
           <Button
             variant="outlined"
             fullWidth={false}
