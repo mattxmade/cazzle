@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState } from "react";
 
 import Stack from "@mui/material/Stack";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,10 +12,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography/Typography";
 
 import useWindowWidth from "@/hooks/useWindowWidth";
-import SearchFiltersModal from "./SearchFiltersModal";
 
 import type { InputType } from "@/utils/validateInputs";
-import type { Filters } from "@/app/(properties)/properties/page";
 import { content } from "@/app/content";
 
 export type FilterInputs = {
@@ -28,92 +25,21 @@ export type FilterInputs = {
   propertyType: string;
 };
 
-// from server
-type SearchParams = {
-  queryParams: Filters | null;
-};
-
 type SearchFilterBarProps = {
   variant?: "bar" | "modal";
-  queryParams: SearchParams;
+  currWidth: number;
+  filterValues: FilterInputs;
   style?: React.CSSProperties;
+  children?: React.ReactNode;
+  handleInputChange: (e: SelectChangeEvent, type: InputType) => void;
 };
 
-const SearchFiltersBar = ({ queryParams, ...props }: SearchFilterBarProps) => {
+const SearchFiltersBar = (props: SearchFilterBarProps) => {
   const variant = props.variant ?? "bar";
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const { currWidth } = useWindowWidth();
-  const [openSearchForm, setOpenSearchForm] = useState(false);
-
-  const getFilterValues = () => {
-    return {
-      location: searchParams.get("location") ?? "",
-      minPrice: searchParams.get("minPrice") ?? "",
-      maxPrice: searchParams.get("maxPrice") ?? "",
-      minBeds: searchParams.get("minBeds") ?? "",
-      maxBeds: searchParams.get("maxBeds") ?? "",
-      propertyType: searchParams.get("propertyType") ?? "",
-    };
-  };
-
-  const [filterValues, setFilterValues] = useState({ ...getFilterValues() });
-
-  let filterLabelText = "";
-
-  if (currWidth > 1200) filterLabelText = "";
-  if (currWidth <= 1200) filterLabelText = "1";
-  if (currWidth <= 1024) filterLabelText = "2";
-  if (currWidth <= 768) filterLabelText = "3";
-
-  const handleInputChange = (e: SelectChangeEvent, type: InputType) => {
-    const select = e.target as HTMLSelectElement;
-
-    handleSearchQuery({ ...filterValues, [type]: select.value });
-    setFilterValues((prev) => ({ ...prev, [type]: select.value }));
-  };
-
-  const handleSearchQuery = (values: typeof filterValues) => {
-    let searchQuery = "";
-
-    Object.entries(values).forEach((filter) => {
-      const [key, value] = filter;
-      if (!value) return;
-
-      searchQuery === ""
-        ? (searchQuery += `?${key}=${value}`)
-        : (searchQuery += `&${key}=${value}`);
-    });
-
-    searchQuery.length ? router.push(searchQuery) : router.push("/properties");
-  };
-
-  useEffect(() => {
-    setFilterValues({ ...getFilterValues() });
-  }, [queryParams]);
-
-  const handleCloseSearchForm = useCallback(
-    () => setOpenSearchForm(false),
-    [openSearchForm]
-  );
+  const { filterValues, currWidth, handleInputChange } = props;
 
   return (
     <>
-      {variant === "bar" ? (
-        <SearchFiltersModal
-          open={openSearchForm}
-          handleClose={handleCloseSearchForm}
-        >
-          <SearchFiltersBar
-            queryParams={queryParams}
-            variant="modal"
-            style={{ gap: 1 }}
-          />
-        </SearchFiltersModal>
-      ) : null}
-
       <Stack
         component="form"
         direction={variant === "bar" ? "row" : "column"}
@@ -232,18 +158,7 @@ const SearchFiltersBar = ({ queryParams, ...props }: SearchFilterBarProps) => {
           </FormControl>
         ) : null}
 
-        {currWidth < 1200 && variant === "bar" ? (
-          <Button
-            variant="outlined"
-            fullWidth={false}
-            onClick={() => setOpenSearchForm(true)}
-            sx={{ padding: 2, textTransform: "none" }}
-          >
-            <Typography variant="body1">
-              Filters {`(${filterLabelText})`}
-            </Typography>
-          </Button>
-        ) : null}
+        {currWidth < 1200 && variant === "bar" ? props.children : null}
       </Stack>
     </>
   );
