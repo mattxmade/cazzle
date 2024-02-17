@@ -6,16 +6,16 @@ import DialogContent from "@mui/material/DialogContent/DialogContent";
 import Stack from "@mui/material/Stack/Stack";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import { useState } from "react";
 
 type SearchFiltersModal = {
   open: boolean;
   children?: React.ReactNode;
   handleClose: () => void;
+  handleClearSearchForm: () => void;
 };
 
 const SearchFiltersModal = (props: SearchFiltersModal) => {
-  const { open, children, handleClose } = props;
+  const { open, children, handleClose, handleClearSearchForm } = props;
 
   return (
     <Dialog open={open}>
@@ -27,13 +27,17 @@ const SearchFiltersModal = (props: SearchFiltersModal) => {
         <DialogContent>{children}</DialogContent>
 
         <Stack direction="row" justifyContent="space-around">
-          <Button variant="outlined" aria-label="clear search filters ">
+          <Button
+            onClick={handleClearSearchForm}
+            variant="outlined"
+            aria-label="clear search filters "
+          >
             Clear
           </Button>
           <Button
             onClick={handleClose}
             variant="contained"
-            aria-label="apply search filters and close search form modal"
+            aria-label="close search form modal"
           >
             Done
           </Button>
