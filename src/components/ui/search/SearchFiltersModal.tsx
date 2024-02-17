@@ -10,10 +10,13 @@ import { useState } from "react";
 
 type SearchFiltersModal = {
   open: boolean;
+  children?: React.ReactNode;
   handleClose: () => void;
 };
 
-const SearchFiltersModal = ({ open, handleClose }: SearchFiltersModal) => {
+const SearchFiltersModal = (props: SearchFiltersModal) => {
+  const { open, children, handleClose } = props;
+
   return (
     <Dialog open={open}>
       <Stack spacing={1}>
@@ -21,7 +24,7 @@ const SearchFiltersModal = ({ open, handleClose }: SearchFiltersModal) => {
           <CloseIcon />
         </Button>
 
-        <DialogContent>Content</DialogContent>
+        <DialogContent>{children}</DialogContent>
 
         <Stack direction="row" justifyContent="space-between">
           <Button variant="outlined" aria-label="clear search filters ">
