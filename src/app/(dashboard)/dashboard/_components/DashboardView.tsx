@@ -7,3 +7,5 @@ type DashboardView = {
 const DashboardView = ({ viewName, currentView, children }: DashboardView) => {
   return viewName === currentView ? children : null;
 };
+
+export default DashboardView;
