@@ -117,8 +117,6 @@ const Dashboard = (props: DashboardProps) => {
           }}
         >
           <DashboardView viewName="properties-view" currentView={view}>
-            <button onClick={() => setOpenModal(true)}>Toggle Modal</button>
-
             {properties?.length ? (
               properties.map((propertyData) => (
                 <DashboardItem item={propertyData}>
