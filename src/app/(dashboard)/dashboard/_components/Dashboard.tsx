@@ -46,6 +46,7 @@ const Dashboard = (props: DashboardProps) => {
     setOpen(false);
   }, [open]);
 
+  const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = useCallback(() => setOpenModal(false), [openModal]);
 
   const handleMenuItem = useCallback(() => {}, []);
@@ -99,6 +100,7 @@ const Dashboard = (props: DashboardProps) => {
       <Box
         sx={{
           width: "100%",
+          display: "flex",
           minHeight: "100vh",
           overflowX: "hidden",
           padding: theme.spacing(4),
@@ -112,6 +114,7 @@ const Dashboard = (props: DashboardProps) => {
           sx={{
             gap: theme.spacing(1),
             display: "grid",
+            flex: "auto",
             marginTop: 9,
             marginBottom: 2,
           }}
@@ -119,17 +122,24 @@ const Dashboard = (props: DashboardProps) => {
           <DashboardView viewName="properties-view" currentView={view}>
             {properties?.length ? (
               properties.map((propertyData) => (
-                <DashboardItem item={propertyData}>
-                  <Button aria-label="edit property">
+                <DashboardItem key={propertyData._id} item={propertyData}>
+                  <Button aria-label="edit property" onClick={handleOpenModal}>
                     <BorderColorOutlinedIcon />
                   </Button>
                 </DashboardItem>
               ))
             ) : (
-              <p>
-                Properties will be listed here - press the + icon to add your
-                first property
-              </p>
+              <Box
+                flex="auto"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <Typography variant="h6" color="darkslategrey">
+                  Properties will be listed here - press the + icon to add your
+                  first property
+                </Typography>
+              </Box>
             )}
           </DashboardView>
         </AdaptiveBox>
