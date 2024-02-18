@@ -10,11 +10,14 @@ import theme from "@/theme";
 import NavBar from "@/components/core/NavBar";
 import Header from "@/components/core/Header";
 import Footer from "@/components/core/Footer";
+import { projectMetadata } from "./metadata";
 import "./globals.css";
 
 type RootLayoutProps = Readonly<{
   children: React.ReactNode;
 }>;
+
+export const metadata = projectMetadata;
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
