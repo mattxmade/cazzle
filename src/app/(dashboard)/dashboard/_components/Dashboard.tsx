@@ -10,6 +10,9 @@ import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
+import Button from "@mui/material/Button";
+import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
+
 import MenuItems from "./MenuItems";
 import MenuDrawer from "./MenuDrawer";
 
@@ -118,7 +121,11 @@ const Dashboard = (props: DashboardProps) => {
 
             {properties?.length ? (
               properties.map((propertyData) => (
-                <DashboardItem item={propertyData} />
+                <DashboardItem item={propertyData}>
+                  <Button aria-label="edit property">
+                    <BorderColorOutlinedIcon />
+                  </Button>
+                </DashboardItem>
               ))
             ) : (
               <p>
