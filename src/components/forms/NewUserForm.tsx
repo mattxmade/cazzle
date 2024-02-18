@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Divider from "@mui/material/Divider";
 
 import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
@@ -23,11 +24,12 @@ import RadioGroup from "@mui/material/RadioGroup";
 
 import StandardAccountStep from "./new-user-form-steps/StandardAccountStep";
 import BranchAccountStep from "./new-user-form-steps/BranchAccountStep";
+import createAccount from "@/server/user/createAccount";
 
 type AccountDetails = {
   accountName: string;
   accountType: "standard" | "branch" | "";
-  accountOptions: any;
+  accountOptions: { branchName: string };
 };
 
 type NewUserFormProps = {
@@ -37,11 +39,14 @@ type NewUserFormProps = {
 
 const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
   const [formStep, setFormStep] = useState(0);
+  const [createAccountResult, setCreateAccountResult] = useState<string | null>(
+    null
+  );
 
   const [accountDetails, setAccountDetails] = useState<AccountDetails>({
     accountName: userName ?? "",
-    accountType: "standard",
-    accountOptions: {},
+    accountType: "",
+    accountOptions: { branchName: "" },
   });
 
   const handleMoveToNextStep = (
@@ -54,13 +59,15 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
   const isStepComplete = ({ step }: { step: number }) => {
     const { accountName, accountType, accountOptions } = accountDetails;
 
-    if (step === 0) {
+    if (step === 0 || accountType === "standard") {
       return accountName && accountType ? true : false;
     }
 
-    if (step === 1) {
-      return accountName && accountType ? true : false;
+    if (accountType === "branch") {
       // + accountOptions
+      return accountName && accountType && accountOptions.branchName.length > 1
+        ? true
+        : false;
     }
 
     return false;
@@ -75,14 +82,44 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
     }
   };
 
+  const handleTextInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formInput = e.currentTarget as HTMLInputElement;
+      const { value } = formInput;
+
+      setAccountDetails({
+        ...accountDetails,
+        accountOptions: { branchName: value },
+      });
+    },
+    [accountDetails]
+  );
+
+  const handleFormSubmit = async () => {
+    const formData = new FormData();
+
+    formData.append("accountName", accountDetails.accountName);
+    formData.append("accountType", accountDetails.accountType);
+    formData.append("branchName", accountDetails.accountOptions.branchName);
+
+    const result = await createAccount(formData);
+    result && setCreateAccountResult(result.message);
+  };
+
   const isStepOneComplete = isStepComplete({ step: 0 });
   const isStepTwoComplete = isStepComplete({ step: 1 });
 
   return (
-    <Stack component="section" sx={{ alignItems: "center", padding: 6 }}>
-      <Typography variant="h1" sx={{ alignSelf: "flex-start", fontSize: 36 }}>
-        {heading}
-      </Typography>
+    <Stack component="section" sx={{ alignItems: "center", padding: 3 }}>
+      {createAccountResult ? (
+        <Typography>{createAccountResult}</Typography>
+      ) : null}
+
+      <Divider textAlign="left" sx={{ width: "100%" }}>
+        <Typography variant="h1" sx={{ alignSelf: "flex-start", fontSize: 36 }}>
+          {heading}
+        </Typography>
+      </Divider>
 
       <Stepper
         orientation="vertical"
@@ -94,7 +131,7 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
         }}
       >
         <Step completed={formStep >= 1}>
-          <StepLabel>Account Setup {formStep}</StepLabel>
+          <StepLabel>Account Setup</StepLabel>
           <StepContent>
             <Card
               elevation={4}
@@ -132,6 +169,34 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
                         label="Branch account"
                       />
                     </RadioGroup>
+
+                    <Box
+                      sx={{
+                        width: "fit-content",
+                        padding: 1,
+                        backgroundColor: "inherit",
+                      }}
+                    >
+                      {accountDetails.accountType === "standard" ? (
+                        <>
+                          <Typography variant="subtitle2">
+                            Browse and favourite properties with Cazzle
+                          </Typography>
+                        </>
+                      ) : accountDetails.accountType === "branch" ? (
+                        <>
+                          <Typography variant="subtitle2">
+                            Manage properties and create listings with Cazzle
+                          </Typography>
+                        </>
+                      ) : (
+                        <>
+                          <Typography variant="subtitle2">
+                            Select account
+                          </Typography>
+                        </>
+                      )}
+                    </Box>
                   </FormControl>
                 </Stack>
               ) : null}
@@ -147,6 +212,11 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
                   cursor: !isStepOneComplete ? "auto" : "pointer",
                   color: !isStepOneComplete ? "darkgrey" : "#fff",
                   backgroundColor: !isStepOneComplete ? "lightgrey" : "#1976d2",
+
+                  boxShadow: !isStepTwoComplete
+                    ? "inset 0px 2px 4px -1px rgba(0,0,0,0.2)"
+                    : "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
+
                   ":hover": {
                     backgroundColor: !isStepOneComplete
                       ? "lightgrey"
@@ -164,7 +234,7 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
         </Step>
 
         <Step completed={formStep >= 2}>
-          <StepLabel>Account Options {formStep}</StepLabel>
+          <StepLabel>Account Options</StepLabel>
           <StepContent>
             {formStep >= 1 && accountDetails.accountType === "standard" ? (
               <StandardAccountStep>
@@ -175,16 +245,75 @@ const NewUserForm = ({ heading, userName }: NewUserFormProps) => {
                 >
                   Back
                 </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={handleFormSubmit}
+                  sx={{
+                    width: "fit-content",
+                    cursor: !isStepTwoComplete ? "auto" : "pointer",
+                    color: !isStepTwoComplete ? "darkgrey" : "#fff",
+                    backgroundColor: !isStepTwoComplete
+                      ? "lightgrey"
+                      : "#1976d2",
+
+                    boxShadow: !isStepTwoComplete
+                      ? "inset 0px 2px 4px -1px rgba(0,0,0,0.2)"
+                      : "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
+
+                    ":hover": {
+                      backgroundColor: !isStepTwoComplete
+                        ? "lightgrey"
+                        : "#1565c0",
+                      boxShadow: !isStepTwoComplete
+                        ? "none"
+                        : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+                    },
+                  }}
+                >
+                  Create Standard Account
+                </Button>
               </StandardAccountStep>
             ) : null}
             {formStep >= 1 && accountDetails.accountType === "branch" ? (
-              <BranchAccountStep>
+              <BranchAccountStep
+                branchNameValue={accountDetails.accountOptions.branchName}
+                handleInputChange={handleTextInputChange}
+              >
                 <Button
                   variant="outlined"
                   onClick={handleMoveToPrevStep}
                   sx={{ width: "fit-content" }}
                 >
                   Back
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={handleFormSubmit}
+                  sx={{
+                    width: "fit-content",
+                    cursor: !isStepTwoComplete ? "auto" : "pointer",
+                    color: !isStepTwoComplete ? "darkgrey" : "#fff",
+                    backgroundColor: !isStepTwoComplete
+                      ? "lightgrey"
+                      : "#1976d2",
+
+                    boxShadow: !isStepTwoComplete
+                      ? "inset 0px 2px 4px -1px rgba(0,0,0,0.2)"
+                      : "0px 3px 1px -2px rgba(0,0,0,0.2),0px 2px 2px 0px rgba(0,0,0,0.14),0px 1px 5px 0px rgba(0,0,0,0.12)",
+
+                    ":hover": {
+                      backgroundColor: !isStepTwoComplete
+                        ? "lightgrey"
+                        : "#1565c0",
+                      boxShadow: !isStepTwoComplete
+                        ? "none"
+                        : "0px 2px 4px -1px rgba(0,0,0,0.2),0px 4px 5px 0px rgba(0,0,0,0.14),0px 1px 10px 0px rgba(0,0,0,0.12)",
+                    },
+                  }}
+                >
+                  Create Branch Account
                 </Button>
               </BranchAccountStep>
             ) : null}
