@@ -8,11 +8,15 @@ import ElevationScroll from "@/components/mui/ElevationOnScroll";
 
 import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
 
 import MenuItems from "./MenuItems";
 import MenuDrawer from "./MenuDrawer";
-import DashboardItem from "./DashboardItem";
+
 import DashboardAppBar from "./DashboardAppBar";
+import DashboardModal from "./DashboardModal";
+import DashboardView from "./DashboardView";
+import DashboardItem from "./DashboardItem";
 
 import theme from "@/theme";
 import { customTheme } from "@/styles/custom";
@@ -25,9 +29,11 @@ type DashboardProps = {
   children?: React.ReactNode;
 };
 
-const Dashboard = ({ children, properties }: DashboardProps) => {
+const Dashboard = (props: DashboardProps) => {
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<string>("properties-view");
+
+  const [openModal, setOpenModal] = useState(false);
 
   const handleDrawerOpen = useCallback(() => {
     setOpen(true);
@@ -37,7 +43,11 @@ const Dashboard = ({ children, properties }: DashboardProps) => {
     setOpen(false);
   }, [open]);
 
+  const handleCloseModal = useCallback(() => setOpenModal(false), [openModal]);
+
   const handleMenuItem = useCallback(() => {}, []);
+
+  const properties = props.properties; // convex.API
 
   return (
     <Box>
@@ -104,6 +114,8 @@ const Dashboard = ({ children, properties }: DashboardProps) => {
           }}
         >
           <DashboardView viewName="properties-view" currentView={view}>
+            <button onClick={() => setOpenModal(true)}>Toggle Modal</button>
+
             {properties?.length ? (
               properties.map((propertyData) => (
                 <DashboardItem item={propertyData} />
@@ -117,6 +129,10 @@ const Dashboard = ({ children, properties }: DashboardProps) => {
           </DashboardView>
         </AdaptiveBox>
       </Box>
+
+      <DashboardModal open={openModal} handleCloseModal={handleCloseModal}>
+        <Typography>Dashboard Modal</Typography>
+      </DashboardModal>
     </Box>
   );
 };
