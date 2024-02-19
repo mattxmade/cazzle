@@ -31,7 +31,10 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
   return (
     <FormControl fullWidth sx={{ m: 1 }} variant="filled">
-      <InputLabel sx={{ fontSize: 24, top: 90 }} htmlFor={labelName}>
+      <InputLabel
+        sx={{ fontSize: 24, inset: "auto", left: -4, bottom: 16 }}
+        htmlFor={labelName}
+      >
         {!text.length ? props.label : ""}
       </InputLabel>
       <TextField
