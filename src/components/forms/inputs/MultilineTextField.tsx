@@ -8,6 +8,7 @@ import generateLabelName from "@/utils/generateLabelName";
 type MultilineTextFieldProps = {
   rows?: number;
   label: string;
+  required?: boolean;
   initialText?: string;
   handleUpdateFormRef: (name: string, data: string) => void;
 };
@@ -30,7 +31,12 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
   };
 
   return (
-    <FormControl fullWidth sx={{ m: 1 }} variant="filled">
+    <FormControl
+      required={props.required}
+      fullWidth
+      sx={{ m: 1 }}
+      variant="filled"
+    >
       <InputLabel
         sx={{ fontSize: 24, inset: "auto", left: -4, bottom: 16 }}
         htmlFor={labelName}
