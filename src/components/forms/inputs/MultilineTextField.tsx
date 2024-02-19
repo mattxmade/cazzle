@@ -4,7 +4,6 @@ import FormControl from "@mui/material/FormControl";
 
 import { useState } from "react";
 import generateLabelName from "@/utils/generateLabelName";
-import { PropertyListing_ } from "@/types";
 
 type MultilineTextFieldProps = {
   rows?: number;
