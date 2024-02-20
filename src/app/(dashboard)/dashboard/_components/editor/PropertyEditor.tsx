@@ -164,7 +164,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
       <MultilineTextField
         label="Description"
         rows={5}
-        initialText={propertyData.description.reduce(
+        defaultValue={propertyData.description.reduce(
           (prev, curr) => (prev += curr)
         )}
         handleUpdateFormRef={() => {}}
@@ -173,7 +173,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
       <MultilineTextField
         label="Summary"
         rows={2}
-        initialText={propertyData.summary}
+        defaultValue={propertyData.summary}
         handleUpdateFormRef={() => {}}
       />
     </Stack>
