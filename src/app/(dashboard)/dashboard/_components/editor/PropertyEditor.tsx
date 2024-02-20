@@ -35,9 +35,117 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
   return (
     <Stack>
       <Stack gap={2} direction="row" alignItems="flex-end">
+        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
+          <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
+            <Typography
+              fontSize={24}
+              color="rgba(0, 0, 0, 0.6)"
+              sx={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              For sale
+            </Typography>
+
+            <Checkbox
+              checked={propertyData.forSale}
+              sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 28 } }}
+            />
+          </Stack>
+          <Divider
+            sx={{
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+              ":hover": {
+                backgroundColor: "black",
+              },
+            }}
+          />
+        </FormControl>
+
+        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
+          <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
+            <Typography
+              fontSize={24}
+              color="rgba(0, 0, 0, 0.6)"
+              sx={{
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
+              }}
+            >
+              New build
+            </Typography>
+
+            <Checkbox
+              checked={propertyData.newBuild}
+              sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 28 } }}
+            />
+          </Stack>
+          <Divider
+            sx={{
+              backgroundColor: "rgba(0, 0, 0, 0.3)",
+              ":hover": {
+                backgroundColor: "black",
+              },
+            }}
+          />
+        </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel htmlFor="availability-status" sx={{ fontSize: 24 }}>
+            Availability
+          </InputLabel>
+          <Select
+            autoWidth
+            id="availability-status"
+            label="Availability"
+            value={""}
+            sx={{ fontSize: 20 }}
+            SelectDisplayProps={{
+              style: {
+                backgroundColor: "inherit",
+              },
+            }}
+          >
+            {dashboard.property.options.availabilityStatus.map((status) => (
+              <MenuItem key={"status_" + status.value} value={status.value}>
+                {status.text}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel htmlFor="council-tax-band" sx={{ fontSize: 24 }}>
+            Council tax
+          </InputLabel>
+          <Select
+            autoWidth
+            id="council-tax-band"
+            label="Council tax"
+            value={""}
+            sx={{ fontSize: 20 }}
+            SelectDisplayProps={{
+              style: {
+                backgroundColor: "inherit",
+              },
+            }}
+          >
+            {dashboard.property.options.councilTaxBand.map((taxBand) => (
+              <MenuItem key={"taxBand_" + taxBand.value} value={taxBand.value}>
+                {taxBand.text}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Stack>
+
+      <Stack gap={2} direction="row" alignItems="flex-end">
         <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
           <InputLabel sx={{ fontSize: 24 }} htmlFor="property-number">
-            Property Number
+            Property number
           </InputLabel>
           <Input id="property-number" sx={{ fontSize: 20 }} />
         </FormControl>
@@ -65,60 +173,25 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
       </Stack>
 
       <Stack gap={2} direction="row" alignItems="flex-end">
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
-          <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
-            <Typography
-              fontSize={24}
-              color="rgba(0, 0, 0, 0.6)"
-              sx={{
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              For Sale
-            </Typography>
-
-            <Checkbox
-              checked={propertyData.forSale}
-              sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 28 } }}
-            />
-          </Stack>
-          <Divider
-            sx={{
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              ":hover": {
-                backgroundColor: "black",
-              },
-            }}
-          />
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="full-market-price">
+            Full market price
+          </InputLabel>
+          <Input id="full-market-price" sx={{ fontSize: 20 }} />
         </FormControl>
 
         <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="property-type" sx={{ fontSize: 24 }}>
-            Property Type
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-value">
+            Deposit value
           </InputLabel>
-          <Select
-            autoWidth
-            id="property-type"
-            label="Property Type"
-            value={""}
-            sx={{ fontSize: 20 }}
-            SelectDisplayProps={{
-              style: {
-                backgroundColor: "inherit",
-              },
-            }}
-          >
-            {dashboard.property.options.propertyType.map((propertyType) => (
-              <MenuItem
-                key={"propertyType_" + propertyType.value}
-                value={propertyType.value}
-              >
-                {propertyType.text}
-              </MenuItem>
-            ))}
-          </Select>
+          <Input id="deposit-value" sx={{ fontSize: 20 }} />
+        </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-percentage">
+            Deposit percentage
+          </InputLabel>
+          <Input id="deposit-percentage" sx={{ fontSize: 20 }} />
         </FormControl>
 
         <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
@@ -145,15 +218,17 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             ))}
           </Select>
         </FormControl>
+      </Stack>
 
+      <Stack gap={2} direction="row" alignItems="flex-end">
         <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="availability-status" sx={{ fontSize: 24 }}>
-            Availability
+          <InputLabel htmlFor="property-type" sx={{ fontSize: 24 }}>
+            Property type
           </InputLabel>
           <Select
             autoWidth
-            id="availability-status"
-            label="Availability Status"
+            id="property-type"
+            label="Property type"
             value={""}
             sx={{ fontSize: 20 }}
             SelectDisplayProps={{
@@ -162,49 +237,38 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               },
             }}
           >
-            {dashboard.property.options.availabilityStatus.map((status) => (
-              <MenuItem key={"status_" + status.value} value={status.value}>
-                {status.text}
+            {dashboard.property.options.propertyType.map((propertyType) => (
+              <MenuItem
+                key={"propertyType_" + propertyType.value}
+                value={propertyType.value}
+              >
+                {propertyType.text}
               </MenuItem>
             ))}
           </Select>
         </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="bedrooms">
+            Bedrooms
+          </InputLabel>
+          <Input id="bedrooms" sx={{ fontSize: 20 }} />
+        </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="bathrooms">
+            Bathrooms
+          </InputLabel>
+          <Input id="bathrooms" sx={{ fontSize: 20 }} />
+        </FormControl>
+
+        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
+          <InputLabel sx={{ fontSize: 24 }} htmlFor="floorplan-area">
+            Floorplan area
+          </InputLabel>
+          <Input id="floorplan-area" sx={{ fontSize: 20 }} />
+        </FormControl>
       </Stack>
-
-      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
-        <InputLabel sx={{ fontSize: 24 }} htmlFor="full-market-price">
-          Full Market Price
-        </InputLabel>
-        <Input id="full-market-price" sx={{ fontSize: 20 }} />
-      </FormControl>
-
-      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
-        <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-value">
-          Deposit Value
-        </InputLabel>
-        <Input id="deposit-value" sx={{ fontSize: 20 }} />
-      </FormControl>
-
-      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
-        <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-percentage">
-          Deposit Percentage
-        </InputLabel>
-        <Input id="deposit-percentage" sx={{ fontSize: 20 }} />
-      </FormControl>
-
-      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
-        <InputLabel sx={{ fontSize: 24 }} htmlFor="bedrooms">
-          Bedrooms
-        </InputLabel>
-        <Input id="bedrooms" sx={{ fontSize: 20 }} />
-      </FormControl>
-
-      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
-        <InputLabel sx={{ fontSize: 24 }} htmlFor="bathrooms">
-          Bathrooms
-        </InputLabel>
-        <Input id="bathrooms" sx={{ fontSize: 20 }} />
-      </FormControl>
 
       <MultilineTextField
         label="Description"
