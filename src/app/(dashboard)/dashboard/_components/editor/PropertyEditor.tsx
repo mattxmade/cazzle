@@ -22,6 +22,7 @@ import { PropertyListing_ } from "@/types";
 import formatPrice from "@/utils/formatPrice";
 
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
+import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
@@ -35,7 +36,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
   return (
     <Stack>
       <Stack gap={2} direction="row" alignItems="flex-end">
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
+        <FormControl sx={{ width: 210 }} variant="outlined">
           <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
             <Typography
               fontSize={24}
@@ -64,7 +65,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
           />
         </FormControl>
 
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
+        <FormControl sx={{ width: 210 }} variant="outlined">
           <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
             <Typography
               fontSize={24}
@@ -93,181 +94,76 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
           />
         </FormControl>
 
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="availability-status" sx={{ fontSize: 24 }}>
-            Availability
-          </InputLabel>
-          <Select
-            autoWidth
-            id="availability-status"
-            label="Availability"
-            value={""}
-            sx={{ fontSize: 20 }}
-            SelectDisplayProps={{
-              style: {
-                backgroundColor: "inherit",
-              },
-            }}
-          >
-            {dashboard.property.options.availabilityStatus.map((status) => (
-              <MenuItem key={"status_" + status.value} value={status.value}>
-                {status.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SelectDropdown
+          id="availability-status"
+          label="Availability"
+          handleUpdateFormRef={() => {}}
+        >
+          {dashboard.property.options.availabilityStatus.map((status) => (
+            <MenuItem key={"status_" + status.value} value={status.value}>
+              {status.text}
+            </MenuItem>
+          ))}
+        </SelectDropdown>
 
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="council-tax-band" sx={{ fontSize: 24 }}>
-            Council tax
-          </InputLabel>
-          <Select
-            autoWidth
-            id="council-tax-band"
-            label="Council tax"
-            value={""}
-            sx={{ fontSize: 20 }}
-            SelectDisplayProps={{
-              style: {
-                backgroundColor: "inherit",
-              },
-            }}
-          >
-            {dashboard.property.options.councilTaxBand.map((taxBand) => (
-              <MenuItem key={"taxBand_" + taxBand.value} value={taxBand.value}>
-                {taxBand.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SelectDropdown
+          id="council-tax-band"
+          label="Council tax"
+          handleUpdateFormRef={() => {}}
+        >
+          {dashboard.property.options.councilTaxBand.map((taxBand) => (
+            <MenuItem key={"taxBand_" + taxBand.value} value={taxBand.value}>
+              {taxBand.text}
+            </MenuItem>
+          ))}
+        </SelectDropdown>
       </Stack>
 
       <Stack gap={2} direction="row" alignItems="flex-end">
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="property-number">
-            Property number
-          </InputLabel>
-          <Input id="property-number" sx={{ fontSize: 20 }} />
-        </FormControl>
+        <TextField label="Property number" id="property-number" />
+        <TextField label="Street" id="street" />
 
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="street">
-            Street
-          </InputLabel>
-          <Input id="street" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="town">
-            Town / City
-          </InputLabel>
-          <Input id="town" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="postcode">
-            Postcode
-          </InputLabel>
-          <Input id="postcode" sx={{ fontSize: 20 }} />
-        </FormControl>
+        <TextField label="Town" id="town" />
+        <TextField label="Postcode" id="postcode" />
       </Stack>
 
       <Stack gap={2} direction="row" alignItems="flex-end">
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="full-market-price">
-            Full market price
-          </InputLabel>
-          <Input id="full-market-price" sx={{ fontSize: 20 }} />
-        </FormControl>
+        <TextField label="Full market price" id="full-market-price" />
+        <TextField label="Deposit value" id="deposit value" />
+        <TextField label="Deposit percentage" id="deposit-percentage" />
 
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-value">
-            Deposit value
-          </InputLabel>
-          <Input id="deposit-value" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-percentage">
-            Deposit percentage
-          </InputLabel>
-          <Input id="deposit-percentage" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="tenure" sx={{ fontSize: 24 }}>
-            Tenure
-          </InputLabel>
-          <Select
-            autoWidth
-            id="tenure"
-            label="Tenure"
-            value={""}
-            sx={{ fontSize: 20 }}
-            SelectDisplayProps={{
-              style: {
-                // paddingBottom: 2,
-                backgroundColor: "inherit",
-              },
-            }}
-          >
-            {dashboard.property.options.tenure.map((tenure) => (
-              <MenuItem key={"tenure_" + tenure.value} value={tenure.value}>
-                {tenure.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SelectDropdown
+          id="tenure"
+          label="Tenure"
+          handleUpdateFormRef={() => {}}
+        >
+          {dashboard.property.options.tenure.map((tenure) => (
+            <MenuItem key={"tenure_" + tenure.value} value={tenure.value}>
+              {tenure.text}
+            </MenuItem>
+          ))}
+        </SelectDropdown>
       </Stack>
 
       <Stack gap={2} direction="row" alignItems="flex-end">
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel htmlFor="property-type" sx={{ fontSize: 24 }}>
-            Property type
-          </InputLabel>
-          <Select
-            autoWidth
-            id="property-type"
-            label="Property type"
-            value={""}
-            sx={{ fontSize: 20 }}
-            SelectDisplayProps={{
-              style: {
-                backgroundColor: "inherit",
-              },
-            }}
-          >
-            {dashboard.property.options.propertyType.map((propertyType) => (
-              <MenuItem
-                key={"propertyType_" + propertyType.value}
-                value={propertyType.value}
-              >
-                {propertyType.text}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <SelectDropdown
+          id="property-type"
+          label="Property type"
+          handleUpdateFormRef={() => {}}
+        >
+          {dashboard.property.options.propertyType.map((propertyType) => (
+            <MenuItem
+              key={"propertyType_" + propertyType.value}
+              value={propertyType.value}
+            >
+              {propertyType.text}
+            </MenuItem>
+          ))}
+        </SelectDropdown>
 
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="bedrooms">
-            Bedrooms
-          </InputLabel>
-          <Input id="bedrooms" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="bathrooms">
-            Bathrooms
-          </InputLabel>
-          <Input id="bathrooms" sx={{ fontSize: 20 }} />
-        </FormControl>
-
-        <FormControl required sx={{ m: 1, width: "25ch" }} variant="standard">
-          <InputLabel sx={{ fontSize: 24 }} htmlFor="floorplan-area">
-            Floorplan area
-          </InputLabel>
-          <Input id="floorplan-area" sx={{ fontSize: 20 }} />
-        </FormControl>
+        <TextField label="Bedrooms" id="bedrooms" />
+        <TextField label="Bathrooms" id="bathrooms" />
+        <TextField label="Floorplan area" id="floorplan-area" />
       </Stack>
 
       <MultilineTextField
