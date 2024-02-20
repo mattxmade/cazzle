@@ -1,21 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
-import Input from "@mui/material/Input";
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-
-import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
 
+import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
 
 import { dashboard } from "@/app/content";
 import { PropertyListing_ } from "@/types";
