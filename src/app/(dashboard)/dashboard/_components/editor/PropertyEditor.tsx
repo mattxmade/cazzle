@@ -168,6 +168,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
           (prev, curr) => (prev += curr)
         )}
         handleUpdateFormRef={() => {}}
+        formControlProps={{ sx: { margin: 0 } }}
       />
 
       <MultilineTextField
@@ -175,6 +176,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         rows={2}
         defaultValue={propertyData.summary}
         handleUpdateFormRef={() => {}}
+        formControlProps={{ sx: { margin: 0 } }}
       />
     </Stack>
   );
