@@ -1,8 +1,13 @@
+"use client";
+
+import { useRef, useState } from "react";
+
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
 import Input from "@mui/material/Input";
+import TextField from "@mui/material/TextField";
 import InputLabel from "@mui/material/InputLabel";
 
 import Select from "@mui/material/Select";
@@ -12,15 +17,21 @@ import Checkbox from "@mui/material/Checkbox";
 import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
+import { dashboard } from "@/app/content";
 import { PropertyListing_ } from "@/types";
 import formatPrice from "@/utils/formatPrice";
-import { dashboard } from "@/app/content";
+
+import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
 };
 
 const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
+  const desc = useRef(
+    propertyData.description.reduce((prev, curr) => (prev += curr))
+  );
+
   return (
     <Stack>
       <Stack gap={2} direction="row" alignItems="flex-end">
@@ -91,6 +102,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             autoWidth
             id="property-type"
             label="Property Type"
+            value={""}
             sx={{ fontSize: 20 }}
             SelectDisplayProps={{
               style: {
@@ -117,6 +129,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             autoWidth
             id="tenure"
             label="Tenure"
+            value={""}
             sx={{ fontSize: 20 }}
             SelectDisplayProps={{
               style: {
@@ -141,6 +154,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             autoWidth
             id="availability-status"
             label="Availability Status"
+            value={""}
             sx={{ fontSize: 20 }}
             SelectDisplayProps={{
               style: {
@@ -157,40 +171,56 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </FormControl>
       </Stack>
 
-      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
         <InputLabel sx={{ fontSize: 24 }} htmlFor="full-market-price">
           Full Market Price
         </InputLabel>
         <Input id="full-market-price" sx={{ fontSize: 20 }} />
       </FormControl>
 
-      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
         <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-value">
           Deposit Value
         </InputLabel>
         <Input id="deposit-value" sx={{ fontSize: 20 }} />
       </FormControl>
 
-      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
         <InputLabel sx={{ fontSize: 24 }} htmlFor="deposit-percentage">
           Deposit Percentage
         </InputLabel>
         <Input id="deposit-percentage" sx={{ fontSize: 20 }} />
       </FormControl>
 
-      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
         <InputLabel sx={{ fontSize: 24 }} htmlFor="bedrooms">
           Bedrooms
         </InputLabel>
         <Input id="bedrooms" sx={{ fontSize: 20 }} />
       </FormControl>
 
-      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+      <FormControl required fullWidth sx={{ m: 1 }} variant="standard">
         <InputLabel sx={{ fontSize: 24 }} htmlFor="bathrooms">
           Bathrooms
         </InputLabel>
         <Input id="bathrooms" sx={{ fontSize: 20 }} />
       </FormControl>
+
+      <MultilineTextField
+        label="Description"
+        rows={5}
+        initialText={propertyData.description.reduce(
+          (prev, curr) => (prev += curr)
+        )}
+        handleUpdateFormRef={() => {}}
+      />
+
+      <MultilineTextField
+        label="Summary"
+        rows={2}
+        initialText={propertyData.summary}
+        handleUpdateFormRef={() => {}}
+      />
     </Stack>
   );
 };
