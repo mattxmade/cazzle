@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
+import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
@@ -11,6 +12,17 @@ import Checkbox from "@mui/material/Checkbox";
 
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
+
+import HomeIcon from "@mui/icons-material/Home";
+import ViewQuiltIcon from "@mui/icons-material/ViewQuilt";
+import CalculateIcon from "@mui/icons-material/Calculate";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+
+import Accordion, { AccordionSlots } from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { dashboard } from "@/app/content";
 import { PropertyListing_ } from "@/types";
@@ -28,8 +40,21 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
     propertyData.description.reduce((prev, curr) => (prev += curr))
   );
 
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpansion = () => {
+    setExpanded((prevExpanded) => !prevExpanded);
+  };
+
+  const cardLayout = {
+    display: "grid",
+    gap: 0.5,
+    padding: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  };
+
   return (
-    <Stack>
+    <Stack gap={2}>
       <Stack gap={2} direction="row" alignItems="flex-end">
         <FormControl sx={{ width: 210 }} variant="outlined">
           <Stack gap={2} direction="row" position="relative" sx={{ top: 2 }}>
@@ -93,6 +118,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
           id="availability-status"
           label="Availability"
           handleUpdateFormRef={() => {}}
+          formControlProps={{ size: "small" }}
         >
           {dashboard.property.options.availabilityStatus.map((status) => (
             <MenuItem key={"status_" + status.value} value={status.value}>
@@ -105,6 +131,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
           id="council-tax-band"
           label="Council tax"
           handleUpdateFormRef={() => {}}
+          formControlProps={{ size: "small" }}
         >
           {dashboard.property.options.councilTaxBand.map((taxBand) => (
             <MenuItem key={"taxBand_" + taxBand.value} value={taxBand.value}>
@@ -114,70 +141,187 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </SelectDropdown>
       </Stack>
 
-      <Stack gap={2} direction="row" alignItems="flex-end">
-        <TextField label="Property number" id="property-number" />
-        <TextField label="Street" id="street" />
+      <Card sx={cardLayout}>
+        <Stack gap={0.5} direction="row" alignItems="center">
+          <LocationOnIcon color="primary" />
+          <Typography variant="h6" color="darkslategrey">
+            Address
+          </Typography>
+        </Stack>
 
-        <TextField label="Town" id="town" />
-        <TextField label="Postcode" id="postcode" />
-      </Stack>
+        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          <Stack gap={2} direction="row" alignItems="flex-end">
+            <TextField
+              required
+              label="Property number"
+              id="property-number"
+              size="small"
+            />
+            <TextField required label="Street" id="street" size="small" />
 
-      <Stack gap={2} direction="row" alignItems="flex-end">
-        <TextField label="Full market price" id="full-market-price" />
-        <TextField label="Deposit value" id="deposit value" />
-        <TextField label="Deposit percentage" id="deposit-percentage" />
+            <TextField required label="Town" id="town" size="small" />
+            <TextField label="Postcode" id="postcode" size="small" />
+          </Stack>
+        </Card>
+      </Card>
 
-        <SelectDropdown
-          id="tenure"
-          label="Tenure"
-          handleUpdateFormRef={() => {}}
-        >
-          {dashboard.property.options.tenure.map((tenure) => (
-            <MenuItem key={"tenure_" + tenure.value} value={tenure.value}>
-              {tenure.text}
-            </MenuItem>
-          ))}
-        </SelectDropdown>
-      </Stack>
+      <Card sx={cardLayout}>
+        <Stack gap={0.5} direction="row" alignItems="center">
+          <CalculateIcon color="primary" />
+          <Typography variant="h6" color="darkslategrey">
+            Value & Tenure
+          </Typography>
+        </Stack>
 
-      <Stack gap={2} direction="row" alignItems="flex-end">
-        <SelectDropdown
-          id="property-type"
-          label="Property type"
-          handleUpdateFormRef={() => {}}
-        >
-          {dashboard.property.options.propertyType.map((propertyType) => (
-            <MenuItem
-              key={"propertyType_" + propertyType.value}
-              value={propertyType.value}
+        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          <Stack gap={2} direction="row" alignItems="flex-end">
+            <TextField
+              required
+              label="Full market price"
+              id="full-market-price"
+              size="small"
+            />
+            <TextField
+              required
+              label="Deposit value"
+              id="deposit value"
+              size="small"
+            />
+            <TextField
+              required
+              label="Deposit percentage"
+              id="deposit-percentage"
+              size="small"
+            />
+
+            <SelectDropdown
+              id="tenure"
+              label="Tenure"
+              handleUpdateFormRef={() => {}}
+              formControlProps={{ size: "small" }}
             >
-              {propertyType.text}
-            </MenuItem>
-          ))}
-        </SelectDropdown>
+              {dashboard.property.options.tenure.map((tenure) => (
+                <MenuItem key={"tenure_" + tenure.value} value={tenure.value}>
+                  {tenure.text}
+                </MenuItem>
+              ))}
+            </SelectDropdown>
+          </Stack>
+        </Card>
+      </Card>
 
-        <TextField label="Bedrooms" id="bedrooms" />
-        <TextField label="Bathrooms" id="bathrooms" />
-        <TextField label="Floorplan area" id="floorplan-area" />
-      </Stack>
+      <Card sx={cardLayout}>
+        <Stack gap={0.5} direction="row" alignItems="center">
+          <HomeIcon color="primary" />
+          <Typography variant="h6" color="darkslategrey">
+            Details
+          </Typography>
+        </Stack>
 
-      <MultilineTextField
-        label="Description"
-        rows={5}
-        defaultValue={propertyData.description.reduce(
-          (prev, curr) => (prev += curr)
-        )}
-        handleUpdateFormRef={() => {}}
-        formControlProps={{ sx: { margin: 0 } }}
-      />
+        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          <Stack gap={2} direction="row" alignItems="flex-end">
+            <SelectDropdown
+              id="property-type"
+              label="Property type"
+              handleUpdateFormRef={() => {}}
+              formControlProps={{ size: "small" }}
+            >
+              {dashboard.property.options.propertyType.map((propertyType) => (
+                <MenuItem
+                  key={"propertyType_" + propertyType.value}
+                  value={propertyType.value}
+                >
+                  {propertyType.text}
+                </MenuItem>
+              ))}
+            </SelectDropdown>
 
-      <MultilineTextField
-        label="Summary"
-        rows={2}
-        defaultValue={propertyData.summary}
-        handleUpdateFormRef={() => {}}
-        formControlProps={{ sx: { margin: 0 } }}
-      />
+            <TextField required label="Bedrooms" id="bedrooms" size="small" />
+            <TextField required label="Bathrooms" id="bathrooms" size="small" />
+            <TextField
+              required
+              label="Floorplan area"
+              id="floorplan-area"
+              size="small"
+            />
+          </Stack>
+        </Card>
+      </Card>
+
+      <Card sx={cardLayout}>
+        <Stack gap={0.5} direction="row" alignItems="center">
+          <TextFieldsIcon color="primary" />
+          <Typography variant="h6" color="darkslategrey">
+            Summary
+          </Typography>
+        </Stack>
+
+        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          <MultilineTextField
+            label="Summary"
+            defaultValue={propertyData.summary}
+            handleUpdateFormRef={() => {}}
+            formControlProps={{ sx: { margin: 0 } }}
+          />
+        </Card>
+      </Card>
+
+      <Accordion
+        expanded={expanded}
+        onChange={handleExpansion}
+        sx={{
+          ...cardLayout,
+          "& .MuiAccordion-region": {
+            height: expanded ? "auto" : 0,
+          },
+          "& .MuiAccordionDetails-root": {
+            display: expanded ? "block" : "none",
+          },
+
+          "& .mui-18rrg16-MuiPaper-root-MuiAccordion-root.Mui-expanded, .mui-o4b71y-MuiAccordionSummary-content":
+            {
+              margin: 0,
+            },
+
+          "& .mui-1my88c9-MuiButtonBase-root-MuiAccordionSummary-root": {
+            paddingLeft: 0,
+            minHeight: 0,
+          },
+          margin: "0 !important",
+        }}
+      >
+        <AccordionSummary
+          id="description-header"
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="description-content"
+          sx={{
+            "& .mui-o4b71y-MuiAccordionSummary-content.Mui-expanded": {
+              margin: 0,
+            },
+          }}
+        >
+          <Stack gap={0.5} direction="row" alignItems="center">
+            <TextFieldsIcon color="primary" />
+            <Typography variant="h6" color="darkslategrey">
+              Description
+            </Typography>
+          </Stack>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Card
+            sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}
+          >
+            <MultilineTextField
+              label="Description"
+              defaultValue={propertyData.description.reduce(
+                (prev, curr) => (prev += curr)
+              )}
+              handleUpdateFormRef={() => {}}
+              formControlProps={{ sx: { margin: 0 } }}
+            />
+          </Card>
+        </AccordionDetails>
+      </Accordion>
     </Stack>
   );
 };
