@@ -1,6 +1,6 @@
-import TextField from "@mui/material/TextField";
-import InputLabel from "@mui/material/InputLabel";
-import FormControl from "@mui/material/FormControl";
+import TextField, { type TextFieldProps } from "@mui/material/TextField";
+import InputLabel, { type InputLabelProps } from "@mui/material/InputLabel";
+import FormControl, { type FormControlProps } from "@mui/material/FormControl";
 
 import { useState } from "react";
 import generateLabelName from "@/utils/generateLabelName";
@@ -8,13 +8,15 @@ import generateLabelName from "@/utils/generateLabelName";
 type MultilineTextFieldProps = {
   rows?: number;
   label: string;
-  required?: boolean;
-  initialText?: string;
+  defaultValue?: string;
+  formControlProps?: FormControlProps;
+  inputLabelProps?: InputLabelProps;
+  textFieldProps?: TextFieldProps;
   handleUpdateFormRef: (name: string, data: string) => void;
 };
 
 const MultilineTextField = (props: MultilineTextFieldProps) => {
-  const [text, setText] = useState(props.initialText ?? "");
+  const [text, setText] = useState(props.defaultValue ?? "");
 
   const rows = props.rows ?? 5;
   const labelName = generateLabelName(props.label.toLowerCase());
@@ -32,14 +34,16 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
   return (
     <FormControl
-      required={props.required}
       fullWidth
-      sx={{ m: 1 }}
       variant="filled"
+      required
+      sx={{ m: 1 }}
+      {...props.formControlProps}
     >
       <InputLabel
-        sx={{ fontSize: 24, inset: "auto", left: -4, bottom: 16 }}
         htmlFor={labelName}
+        sx={{ fontSize: 24, inset: "auto", left: -4, bottom: 16 }}
+        {...props.inputLabelProps}
       >
         {!text.length ? props.label : ""}
       </InputLabel>
@@ -49,6 +53,7 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
         value={text}
         variant="outlined"
         onChange={handleTextChange}
+        {...props.textFieldProps}
       />
     </FormControl>
   );
