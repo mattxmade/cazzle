@@ -30,7 +30,7 @@ const SelectDropdown = (props: Props) => {
         autoWidth
         id={props.id}
         label={props.label}
-        value={props.defaultValue ?? ""}
+        defaultValue={props.defaultValue ?? ""}
         SelectDisplayProps={{
           style: {
             backgroundColor: "inherit",
