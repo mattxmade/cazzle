@@ -74,7 +74,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
                 </Typography>
 
                 <Checkbox
-                  checked={propertyData.forSale}
+                  defaultChecked={propertyData.forSale}
                   sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 26 } }}
                 />
               </Stack>
@@ -106,7 +106,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
                 </Typography>
 
                 <Checkbox
-                  checked={propertyData.newBuild}
+                  defaultChecked={propertyData.newBuild}
                   sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 26 } }}
                 />
               </Stack>
@@ -115,6 +115,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <SelectDropdown
               id="availability-status"
               label="Availability"
+              defaultValue={propertyData.availabilityStatus}
               handleUpdateFormRef={() => {}}
               formControlProps={{ size: "small" }}
             >
@@ -128,6 +129,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <SelectDropdown
               id="tenure"
               label="Tenure"
+              defaultValue={propertyData.tenure}
               handleUpdateFormRef={() => {}}
               formControlProps={{ size: "small" }}
             >
@@ -156,11 +158,29 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               label="Property number"
               id="property-number"
               size="small"
+              defaultValue={""}
             />
-            <TextField required label="Street" id="street" size="small" />
+            <TextField
+              required
+              label="Street"
+              id="street"
+              size="small"
+              defaultValue={propertyData.street}
+            />
 
-            <TextField required label="Town" id="town" size="small" />
-            <TextField label="Postcode" id="postcode" size="small" />
+            <TextField
+              required
+              label="Town"
+              id="town"
+              size="small"
+              defaultValue={propertyData.town}
+            />
+            <TextField
+              label="Postcode"
+              id="postcode"
+              size="small"
+              defaultValue={propertyData.postcode}
+            />
           </Stack>
         </Card>
       </Card>
@@ -180,23 +200,27 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               label="Full market price"
               id="full-market-price"
               size="small"
+              defaultValue={formatPrice(propertyData.fullMarketPrice, "GBP")}
             />
             <TextField
               required
               label="Deposit value"
               id="deposit value"
               size="small"
+              defaultValue={formatPrice(propertyData.depositValue, "GBP")}
             />
             <TextField
               required
               label="Deposit percentage"
               id="deposit-percentage"
               size="small"
+              defaultValue={"%" + propertyData.depositPercentage}
             />
 
             <SelectDropdown
               id="council-tax-band"
               label="Council tax"
+              defaultValue={propertyData.councilTaxBand}
               handleUpdateFormRef={() => {}}
               formControlProps={{ size: "small" }}
             >
@@ -226,6 +250,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <SelectDropdown
               id="property-type"
               label="Property type"
+              defaultValue={propertyData.propertyType.code}
               handleUpdateFormRef={() => {}}
               formControlProps={{ size: "small" }}
             >
@@ -239,13 +264,26 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               ))}
             </SelectDropdown>
 
-            <TextField required label="Bedrooms" id="bedrooms" size="small" />
-            <TextField required label="Bathrooms" id="bathrooms" size="small" />
+            <TextField
+              required
+              label="Bedrooms"
+              id="bedrooms"
+              size="small"
+              defaultValue={propertyData.bedrooms}
+            />
+            <TextField
+              required
+              label="Bathrooms"
+              id="bathrooms"
+              size="small"
+              defaultValue={propertyData.bathrooms}
+            />
             <TextField
               required
               label="Floorplan area"
               id="floorplan-area"
               size="small"
+              defaultValue={propertyData.floorArea + "0" + " SqM"}
             />
           </Stack>
         </Card>
