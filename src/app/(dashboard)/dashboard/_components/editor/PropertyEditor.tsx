@@ -30,6 +30,7 @@ import formatPrice from "@/utils/formatPrice";
 
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
+import Concertina from "@/components/ui/Concertina";
 
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
@@ -46,7 +47,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
 
-  const cardLayout = {
+  const layout = {
     display: "grid",
     gap: 0.5,
     padding: 1,
@@ -141,7 +142,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </SelectDropdown>
       </Stack>
 
-      <Card sx={cardLayout}>
+      <Card sx={layout}>
         <Stack gap={0.5} direction="row" alignItems="center">
           <LocationOnIcon color="primary" />
           <Typography variant="h6" color="darkslategrey">
@@ -165,7 +166,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </Card>
       </Card>
 
-      <Card sx={cardLayout}>
+      <Card sx={layout}>
         <Stack gap={0.5} direction="row" alignItems="center">
           <CalculateIcon color="primary" />
           <Typography variant="h6" color="darkslategrey">
@@ -210,7 +211,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </Card>
       </Card>
 
-      <Card sx={cardLayout}>
+      <Card sx={layout}>
         <Stack gap={0.5} direction="row" alignItems="center">
           <HomeIcon color="primary" />
           <Typography variant="h6" color="darkslategrey">
@@ -248,14 +249,23 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         </Card>
       </Card>
 
-      <Card sx={cardLayout}>
-        <Stack gap={0.5} direction="row" alignItems="center">
-          <TextFieldsIcon color="primary" />
-          <Typography variant="h6" color="darkslategrey">
-            Summary
-          </Typography>
-        </Stack>
-
+      <Concertina
+        muiProps={{
+          accordionProps: { sx: { ...layout } },
+          accordionSummaryProps: {
+            id: "summary-header",
+            "aria-controls": "summary-content",
+          },
+        }}
+        summaryContent={
+          <Stack gap={0.5} direction="row" alignItems="center">
+            <TextFieldsIcon color="primary" />
+            <Typography variant="h6" color="darkslategrey">
+              Summary
+            </Typography>
+          </Stack>
+        }
+      >
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <MultilineTextField
             label="Summary"
@@ -264,64 +274,36 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             formControlProps={{ sx: { margin: 0 } }}
           />
         </Card>
-      </Card>
+      </Concertina>
 
-      <Accordion
-        expanded={expanded}
-        onChange={handleExpansion}
-        sx={{
-          ...cardLayout,
-          "& .MuiAccordion-region": {
-            height: expanded ? "auto" : 0,
+      <Concertina
+        muiProps={{
+          accordionProps: { sx: { ...layout } },
+          accordionSummaryProps: {
+            id: "description-header",
+            "aria-controls": "description-content",
           },
-          "& .MuiAccordionDetails-root": {
-            display: expanded ? "block" : "none",
-          },
-
-          "& .mui-18rrg16-MuiPaper-root-MuiAccordion-root.Mui-expanded, .mui-o4b71y-MuiAccordionSummary-content":
-            {
-              margin: 0,
-            },
-
-          "& .mui-1my88c9-MuiButtonBase-root-MuiAccordionSummary-root": {
-            paddingLeft: 0,
-            minHeight: 0,
-          },
-          margin: "0 !important",
         }}
-      >
-        <AccordionSummary
-          id="description-header"
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="description-content"
-          sx={{
-            "& .mui-o4b71y-MuiAccordionSummary-content.Mui-expanded": {
-              margin: 0,
-            },
-          }}
-        >
+        summaryContent={
           <Stack gap={0.5} direction="row" alignItems="center">
             <TextFieldsIcon color="primary" />
             <Typography variant="h6" color="darkslategrey">
               Description
             </Typography>
           </Stack>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Card
-            sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}
-          >
-            <MultilineTextField
-              label="Description"
-              defaultValue={propertyData.description.reduce(
-                (prev, curr) => (prev += curr)
-              )}
-              handleUpdateFormRef={() => {}}
-              formControlProps={{ sx: { margin: 0 } }}
-            />
-          </Card>
-        </AccordionDetails>
-      </Accordion>
+        }
+      >
+        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
+          <MultilineTextField
+            label="Description"
+            defaultValue={propertyData.description.reduce(
+              (prev, curr) => (prev += curr)
+            )}
+            handleUpdateFormRef={() => {}}
+            formControlProps={{ sx: { margin: 0 } }}
+          />
+        </Card>
+      </Concertina>
     </Stack>
   );
 };
