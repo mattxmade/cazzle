@@ -1,54 +1,82 @@
 "use client";
 
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent/DialogContent";
+import DialogContent, {
+  type DialogContentProps,
+} from "@mui/material/DialogContent/DialogContent";
+
+import Dialog, { type DialogProps } from "@mui/material/Dialog";
 import SlideTransition from "@/components/mui/transitions/SlideTransition";
 
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
+import AppBar, { type AppBarProps } from "@mui/material/AppBar";
+import Toolbar, { type ToolbarProps } from "@mui/material/Toolbar";
+import IconButton, { type IconButtonProps } from "@mui/material/IconButton";
 
-import Stack from "@mui/material/Stack/Stack";
-import Button from "@mui/material/Button";
+import Button, { type ButtonProps } from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
+import Typography, { type TypographyProps } from "@mui/material/Typography";
+import { SvgIconProps } from "@mui/material";
+
+type MuiProps = {
+  dialogProps: DialogProps;
+  dialogContent?: DialogContentProps;
+  appBarProps?: AppBarProps;
+  toolbarProps?: ToolbarProps;
+  buttonProps?: ButtonProps;
+  iconButtonProps?: IconButtonProps;
+  svgIconProps?: SvgIconProps;
+  typographyProps?: TypographyProps;
+};
 
 type DashboardModalProps = {
-  open: boolean;
+  title?: string;
   children?: React.ReactNode;
+  muiProps: MuiProps;
   handleCloseModal: () => void;
 };
 
 const DashboardModal = (props: DashboardModalProps) => {
-  const { open, children, handleCloseModal } = props;
+  const { title, children, handleCloseModal } = props;
 
   return (
     <Dialog
       fullScreen
-      open={open}
       onClose={handleCloseModal}
       TransitionComponent={SlideTransition}
+      {...props.muiProps?.dialogProps}
     >
       <AppBar sx={{ position: "relative" }}>
-        <Toolbar>
+        <Toolbar {...props.muiProps?.toolbarProps}>
           <IconButton
             edge="start"
             color="inherit"
             onClick={handleCloseModal}
-            aria-label="close property editor modal"
+            aria-label={title ? `close ${title} editor modal` : "close modal"}
+            {...props.muiProps?.iconButtonProps}
           >
-            <CloseIcon />
+            <CloseIcon {...props.muiProps?.svgIconProps} />
           </IconButton>
-          <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-            Property Edit
+          <Typography
+            sx={{ ml: 2, flex: 1 }}
+            variant="h6"
+            component="div"
+            {...props.muiProps?.typographyProps}
+          >
+            {title ? title + " Editor" : "Modal"}
           </Typography>
-          <Button autoFocus color="inherit" onClick={handleCloseModal}>
+          <Button
+            autoFocus
+            color="inherit"
+            onClick={handleCloseModal}
+            {...props.muiProps?.buttonProps}
+          >
             save
           </Button>
         </Toolbar>
       </AppBar>
 
-      <DialogContent>{children}</DialogContent>
+      <DialogContent {...props.muiProps?.dialogContent}>
+        {children}
+      </DialogContent>
     </Dialog>
   );
 };
