@@ -18,7 +18,7 @@ type MultilineTextFieldProps = {
 const MultilineTextField = (props: MultilineTextFieldProps) => {
   const [text, setText] = useState(props.defaultValue ?? "");
 
-  const rows = props.rows ?? 5;
+  const rows = props.rows;
   const labelName = generateLabelName(props.label.toLowerCase());
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,23 +35,17 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
   return (
     <FormControl
       fullWidth
-      variant="filled"
       required
+      variant="filled"
       sx={{ m: 1 }}
       {...props.formControlProps}
     >
-      <InputLabel
-        htmlFor={labelName}
-        sx={{ fontSize: 24, inset: "auto", left: -4, bottom: 16 }}
-        {...props.inputLabelProps}
-      >
-        {!text.length ? props.label : ""}
-      </InputLabel>
       <TextField
         {...layout}
         id={labelName}
-        value={text}
         variant="outlined"
+        defaultValue={text}
+        placeholder={props.label}
         onChange={handleTextChange}
         {...props.textFieldProps}
       />
