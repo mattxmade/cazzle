@@ -18,14 +18,15 @@ import AccordionDetails, {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 type MuiProps = {
-  accordionProps?: AccordionProps;
+  accordionProps?: Partial<AccordionProps>;
   accordionSummaryProps?: AccordionSummaryProps;
   accordionDetailsProps?: AccordionDetailsProps;
 };
 
 type ConcertinaProps = {
-  muiProps: MuiProps;
+  muiProps?: MuiProps;
   children?: React.ReactNode;
+  summaryContent?: React.ReactNode;
 };
 
 const Concertina = (props: ConcertinaProps) => {
@@ -35,7 +36,24 @@ const Concertina = (props: ConcertinaProps) => {
     setExpanded((prevExpanded) => !prevExpanded);
   };
 
-  return <h2>Concertina</h2>;
+  return (
+    <Accordion
+      expanded={expanded}
+      onChange={handleExpansion}
+      {...props.muiProps?.accordionProps}
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        {...props.muiProps?.accordionSummaryProps}
+      >
+        {props.summaryContent}
+      </AccordionSummary>
+
+      <AccordionDetails {...props.muiProps?.accordionDetailsProps}>
+        {props.children}
+      </AccordionDetails>
+    </Accordion>
+  );
 };
 
 export default Concertina;
