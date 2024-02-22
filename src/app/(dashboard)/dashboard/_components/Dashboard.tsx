@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import Box from "@mui/material/Box";
 import AdaptiveBox from "@/components/mui/box/AdaptiveBox";
 import ElevationScroll from "@/components/mui/ElevationOnScroll";
 
 import Paper from "@mui/material/Paper";
+import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 
@@ -24,6 +25,7 @@ import DashboardItem from "./DashboardItem";
 import theme from "@/theme";
 import { customTheme } from "@/styles/custom";
 import { PropertyListing_ } from "@/types";
+import PropertyEditor from "./editor/PropertyEditor";
 
 const menuDrawerWidth = 240;
 
@@ -37,6 +39,9 @@ const Dashboard = (props: DashboardProps) => {
   const [view, setView] = useState<string>("properties-view");
 
   const [openModal, setOpenModal] = useState(false);
+  const modalData = useRef<{ type: string; data: PropertyListing_ } | null>(
+    null
+  );
 
   const handleDrawerOpen = useCallback(() => {
     setOpen(true);
@@ -46,8 +51,19 @@ const Dashboard = (props: DashboardProps) => {
     setOpen(false);
   }, [open]);
 
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = useCallback(() => setOpenModal(false), [openModal]);
+  const handleOpenModal = (type: string, data: PropertyListing_) => {
+    modalData.current = { type, data };
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = useCallback(() => {
+    setOpenModal(false);
+
+    const resetModalDataAfterDelay = setTimeout(() => {
+      clearTimeout(resetModalDataAfterDelay);
+      modalData.current = null;
+    }, 10);
+  }, [openModal]);
 
   const handleMenuItem = useCallback(() => {}, []);
 
@@ -115,6 +131,7 @@ const Dashboard = (props: DashboardProps) => {
             gap: theme.spacing(1),
             display: "grid",
             flex: "auto",
+            alignContent: "flex-start",
             marginTop: 9,
             marginBottom: 2,
           }}
@@ -123,7 +140,10 @@ const Dashboard = (props: DashboardProps) => {
             {properties?.length ? (
               properties.map((propertyData) => (
                 <DashboardItem key={propertyData._id} item={propertyData}>
-                  <Button aria-label="edit property" onClick={handleOpenModal}>
+                  <Button
+                    aria-label="edit property"
+                    onClick={() => handleOpenModal("Property", propertyData)}
+                  >
                     <BorderColorOutlinedIcon />
                   </Button>
                 </DashboardItem>
@@ -145,8 +165,23 @@ const Dashboard = (props: DashboardProps) => {
         </AdaptiveBox>
       </Box>
 
-      <DashboardModal open={openModal} handleCloseModal={handleCloseModal}>
-        <Typography>Dashboard Modal</Typography>
+      <DashboardModal
+        title={modalData.current?.type}
+        handleCloseModal={handleCloseModal}
+        muiProps={{
+          dialogProps: {
+            open: openModal,
+          },
+          dialogContent: {
+            sx: { backgroundColor: customTheme.backgroundColor.dashboard.main },
+          },
+        }}
+      >
+        {modalData.current?.type === "Property" ? (
+          <PropertyEditor
+            propertyData={modalData.current.data as PropertyListing_}
+          />
+        ) : null}
       </DashboardModal>
     </Box>
   );
