@@ -1,6 +1,9 @@
 "use client";
 
-import Select, { type SelectProps } from "@mui/material/Select";
+import Select, {
+  type SelectProps,
+  type SelectChangeEvent,
+} from "@mui/material/Select";
 import InputLabel, { type InputLabelProps } from "@mui/material/InputLabel";
 import FormControl, { type FormControlProps } from "@mui/material/FormControl";
 
@@ -16,6 +19,11 @@ type Props = {
 };
 
 const SelectDropdown = (props: Props) => {
+  const handleSelectChange = (e: SelectChangeEvent<unknown>) => {
+    if (!e.target.value) return;
+    const selectOption = e.target as HTMLSelectElement;
+  };
+
   return (
     <FormControl
       required
@@ -31,6 +39,7 @@ const SelectDropdown = (props: Props) => {
         id={props.id}
         label={props.label}
         defaultValue={props.defaultValue ?? ""}
+        onChange={handleSelectChange}
         SelectDisplayProps={{
           style: {
             backgroundColor: "inherit",
