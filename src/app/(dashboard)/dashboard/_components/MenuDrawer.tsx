@@ -11,11 +11,12 @@ import DrawerHeader from "@/components/mui/drawer/DrawerHeader";
 type MenuDrawerProps = {
   open: boolean;
   drawerWidth: number;
+  children?: React.ReactNode;
   handleDrawerClose: () => void;
 };
 
 const MenuDrawer = (props: MenuDrawerProps) => {
-  const { open, drawerWidth, handleDrawerClose } = props;
+  const { open, drawerWidth, children, handleDrawerClose } = props;
   const theme = useTheme();
 
   return (
@@ -29,6 +30,7 @@ const MenuDrawer = (props: MenuDrawerProps) => {
           )}
         </IconButton>
       </DrawerHeader>
+      {children}
     </Drawer>
   );
 };
