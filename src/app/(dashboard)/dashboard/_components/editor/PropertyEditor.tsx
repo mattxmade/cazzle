@@ -10,6 +10,7 @@ import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 
+import Chip from "@mui/material/Chip";
 import HomeIcon from "@mui/icons-material/Home";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -285,6 +286,33 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               size="small"
               defaultValue={propertyData.floorArea + "0" + " SqM"}
             />
+          </Stack>
+        </Card>
+
+        <Card
+          sx={{
+            gap: 2,
+            display: "flex",
+            padding: 2,
+            backgroundColor: "rgba(255, 255, 255, 0.5)",
+          }}
+        >
+          <Stack gap={2} direction="row" alignItems="flex-end">
+            <SelectDropdown
+              id="features"
+              label="Features"
+              defaultValue={"Features"}
+              handleUpdateFormRef={() => {}}
+              formControlProps={{ size: "small" }}
+            >
+              <MenuItem value={"Features"}>Features</MenuItem>
+            </SelectDropdown>
+          </Stack>
+
+          <Stack gap={1} direction="row" flexWrap="wrap">
+            {propertyData.features.map((feature) => (
+              <Chip label={feature} />
+            ))}
           </Stack>
         </Card>
       </Card>
