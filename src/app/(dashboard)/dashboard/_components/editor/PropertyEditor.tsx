@@ -10,7 +10,6 @@ import Checkbox from "@mui/material/Checkbox";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
 
-import Chip from "@mui/material/Chip";
 import HomeIcon from "@mui/icons-material/Home";
 import CalculateIcon from "@mui/icons-material/Calculate";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
@@ -21,10 +20,10 @@ import { dashboard } from "@/app/content";
 import { PropertyListing_ } from "@/types";
 import formatPrice from "@/utils/formatPrice";
 
+import TextFieldChipSelect from "@/components/forms/inputs/TextFieldChipSelect";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
-import { useState } from "react";
 
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
@@ -36,17 +35,6 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
     gap: 0.5,
     padding: 1,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-  };
-
-  const [currentFeature, setCurrentFeature] = useState<string | null>("");
-
-  const handleFeatureSelect = (e: React.MouseEvent<HTMLDivElement>) => {
-    const chip = e.currentTarget;
-
-    if (!chip.textContent) return;
-    if (!propertyData.features.includes(chip.textContent)) return;
-
-    chip.textContent && setCurrentFeature(chip.textContent);
   };
 
   return (
@@ -309,27 +297,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             backgroundColor: "rgba(255, 255, 255, 0.5)",
           }}
         >
-          <Stack gap={2} direction="row" alignItems="flex-end">
-            <TextField
-              required
-              label="Feature"
-              id="feature"
-              size="small"
-              value={currentFeature}
-              placeholder={!currentFeature ? "Enter feature" : ""}
-            />
-          </Stack>
-
-          <Stack gap={1} direction="row" flexWrap="wrap">
-            {propertyData.features.map((feature, i) => (
-              <Chip
-                key={`${feature}-${i}`}
-                label={feature}
-                onClick={handleFeatureSelect}
-                onDelete={() => {}}
-              />
-            ))}
-          </Stack>
+          <TextFieldChipSelect chipValues={propertyData.features} />
         </Card>
       </Card>
 
