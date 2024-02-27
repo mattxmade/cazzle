@@ -15,21 +15,54 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
   const mode = useRef<"edit" | "add" | "">("");
 
   const [chipValues, setChipValues] = useState([...values]);
-  const [currentValue, setCurrentValue] = useState<string>("");
+  const [currentChip, setCurrentChip] = useState<{
+    value: string;
+    index: number | null;
+  }>({ value: "", index: null });
 
-  const handleChipValueSelection = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleChipSelect = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
     const chip = e.currentTarget;
 
     if (!chip.textContent) return;
     if (!chipValues.includes(chip.textContent)) return;
 
     mode.current = "edit";
-    chip.textContent && setCurrentValue(chip.textContent);
+    chip.textContent && setCurrentChip({ value: chip.textContent, index: i });
+  };
+
+  const handleChipRemove = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
+    const chip = e.currentTarget;
+
+    if (!chip.textContent && currentChip.index === i) {
+      setCurrentChip({ value: "", index: null });
+    }
+
+    setChipValues((prevChipValues) =>
+      prevChipValues.filter(
+        (chipValue, index) => chip.textContent !== chipValue && i !== index
+      )
+    );
   };
 
   const handleUpdateTextField = (e: React.ChangeEvent<HTMLInputElement>) => {
     const textFieldInput = e.currentTarget;
-    setCurrentValue(textFieldInput.value);
+
+    if (mode.current === "add") {
+    }
+
+    if (mode.current === "edit") {
+      setCurrentChip({ value: textFieldInput.value, index: currentChip.index });
+
+      const updateChipValues = chipValues.map((chip, i) => {
+        if (currentChip.value === chip && currentChip.index === i)
+          return textFieldInput.value;
+
+        return chip;
+      });
+
+      console.log(updateChipValues);
+      setChipValues(updateChipValues);
+    }
   };
 
   return (
@@ -37,13 +70,13 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
       <Stack gap={2} direction="row" alignItems="flex-end">
         <TextField
           required
-          focused={currentValue ? true : false}
-          label={currentValue ? `Edit ${name}` : `New ${name}`}
+          focused={currentChip.value ? true : false}
+          label={currentChip.value ? `Edit ${name}` : `New ${name}`}
           id={name}
           size="small"
-          value={currentValue}
+          value={currentChip.value}
           onChange={handleUpdateTextField}
-          placeholder={!currentValue ? `Edit ${name}` : ""}
+          placeholder={!currentChip ? `Edit ${name}` : ""}
         />
       </Stack>
 
@@ -52,14 +85,16 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
           <Chip
             key={`${value}-${i}`}
             label={value}
-            onClick={handleChipValueSelection}
-            onDelete={() => {}}
+            onClick={(e) => handleChipSelect(e, i)}
+            onDelete={(e) => handleChipRemove(e, i)}
             sx={{
-              color: currentValue === value ? "HighlightText" : "ButtonText",
-              backgroundColor: currentValue === value ? "Highlight" : "Button",
+              color:
+                currentChip.value === value ? "HighlightText" : "ButtonText",
+              backgroundColor:
+                currentChip.value === value ? "Highlight" : "Button",
               ":hover": {
                 backgroundColor:
-                  currentValue === value ? "Highlight" : "Button",
+                  currentChip.value === value ? "Highlight" : "Button",
               },
             }}
           />
