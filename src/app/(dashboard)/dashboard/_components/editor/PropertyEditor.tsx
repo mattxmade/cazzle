@@ -297,10 +297,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             backgroundColor: "rgba(255, 255, 255, 0.5)",
           }}
         >
-          <TextFieldChipSelect
-            name="feature"
-            chipValues={propertyData.features}
-          />
+          <TextFieldChipSelect name="feature" values={propertyData.features} />
         </Card>
       </Card>
 
