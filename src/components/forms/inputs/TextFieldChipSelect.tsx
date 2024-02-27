@@ -8,11 +8,13 @@ import TextField from "@mui/material/TextField";
 
 type ComponentProps = {
   name: string;
-  chipValues: string[];
+  values: string[];
 };
 
-const TextFieldChipSelect = ({ name, chipValues }: ComponentProps) => {
+const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
   const mode = useRef<"edit" | "add" | "">("");
+
+  const [chipValues, setChipValues] = useState([...values]);
   const [currentValue, setCurrentValue] = useState<string>("");
 
   const handleChipValueSelection = (e: React.MouseEvent<HTMLDivElement>) => {
