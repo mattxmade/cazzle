@@ -39,7 +39,10 @@ export type DataRef = {
   data: Partial<PropertyListing_>;
 } | null;
 
-export type UpdateDataFunction = (updatedData: DataRef) => void;
+export type UpdateDataFunction = (
+  type: string,
+  updatedData: Partial<PropertyListing_>
+) => void;
 
 const Dashboard = (props: DashboardProps) => {
   const [open, setOpen] = useState(true);
@@ -48,37 +51,27 @@ const Dashboard = (props: DashboardProps) => {
   const [openModal, setOpenModal] = useState(false);
   const initialData = useRef<DataRef>(null);
 
-  const handleUpdateData: UpdateDataFunction = (updatedData) => {
-    let saveData = false;
-
+  const handleUpdateLocalData: UpdateDataFunction = (type, updatedData) => {
     if (!initialData.current || !updatedData) return;
-    if (initialData.current.type !== updatedData.type) return;
+    if (initialData.current.type.toLowerCase() !== type.toLowerCase()) return;
 
-    const dataType = initialData.current.type;
-
-    const currData = Object.getOwnPropertyNames(updatedData.data);
+    const currData = Object.getOwnPropertyNames(updatedData);
     const prevData = Object.getOwnPropertyNames(initialData.current.data);
-
-    if (currData.length !== prevData.length) return;
-
-    console.log(prevData);
-    console.log(currData);
 
     const valuesToUpdate: Partial<PropertyListing_> = {};
 
     for (let i = 0; i < prevData.length; i++) {
       const prevDataValue = initialData.current.data[prevData[i]];
-      const currDataValue = updatedData.data[currData[i]];
-
-      console.log(prevDataValue, currDataValue);
+      const currDataValue = updatedData[currData[i]];
 
       currDataValue !== prevDataValue &&
-        (valuesToUpdate[currData[i]] = updatedData.data[currData[i]]);
+        updatedData[currData[i]] &&
+        (valuesToUpdate[currData[i]] = updatedData[currData[i]]);
     }
 
     console.log(valuesToUpdate);
 
-    initialData.current = null;
+    handleClearData();
   };
 
   const handleClearData = () => (initialData.current = null);
@@ -98,11 +91,6 @@ const Dashboard = (props: DashboardProps) => {
 
   const handleCloseModal = useCallback(() => {
     setOpenModal(false);
-
-    const resetDataAfterDelay = setTimeout(() => {
-      clearTimeout(resetDataAfterDelay);
-      handleClearData();
-    }, 10);
   }, [openModal]);
 
   const handleMenuItem = useCallback(() => {}, []);
@@ -219,7 +207,7 @@ const Dashboard = (props: DashboardProps) => {
       >
         {initialData.current?.type === "Property" ? (
           <PropertyEditor
-            handleUpdateData={handleUpdateData}
+            handleUpdateLocalData={handleUpdateLocalData}
             propertyData={initialData.current.data as PropertyListing_}
           />
         ) : null}
