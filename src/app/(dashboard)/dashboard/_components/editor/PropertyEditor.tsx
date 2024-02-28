@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -25,17 +27,48 @@ import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
 
+import type { UpdateDataFunction } from "../Dashboard";
+
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
+  handleUpdateLocalData: UpdateDataFunction;
 };
 
-const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
-  const layout = {
-    display: "grid",
-    gap: 0.5,
-    padding: 1,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+export type UpdateFormRefFunction = (key: string, value: any) => void;
+
+const layout = {
+  display: "grid",
+  gap: 0.5,
+  padding: 1,
+  backgroundColor: "rgba(255, 255, 255, 0.5)",
+};
+
+const PropertyEditor = (props: PropertyEditorProps) => {
+  const { propertyData, handleUpdateLocalData } = props;
+  const editedData = useRef<Partial<PropertyListing_> | null>(null);
+
+  const handleUpdateFormRef = (key: string, value: any) => {
+    console.log(key, value);
+
+    if (
+      !Object.hasOwn(propertyData, key) ||
+      typeof propertyData[key] !== typeof value
+    )
+      return;
+
+    !editedData.current
+      ? (editedData.current = { [key]: value })
+      : (editedData.current = { ...editedData.current, [key]: value });
+
+    console.log(editedData.current);
   };
+
+  useEffect(() => {
+    return () => {
+      if (!editedData.current) return;
+      handleUpdateLocalData("property", editedData.current);
+    };
+  }, []);
 
   return (
     <Stack gap={2}>
@@ -76,6 +109,9 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
 
                 <Checkbox
                   defaultChecked={propertyData.forSale}
+                  onChange={(e) =>
+                    handleUpdateFormRef("forSale", e.target.checked)
+                  }
                   sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 26 } }}
                 />
               </Stack>
@@ -108,16 +144,19 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
 
                 <Checkbox
                   defaultChecked={propertyData.newBuild}
+                  onChange={(e) =>
+                    handleUpdateFormRef("newBuild", e.target.checked)
+                  }
                   sx={{ padding: 0, "& .MuiSvgIcon-root": { fontSize: 26 } }}
                 />
               </Stack>
             </FormControl>
 
             <SelectDropdown
-              id="availability-status"
+              id="availabilityStatus"
               label="Availability"
               defaultValue={propertyData.availabilityStatus}
-              handleUpdateFormRef={() => {}}
+              handleUpdateFormRef={handleUpdateFormRef}
               formControlProps={{ size: "small" }}
             >
               {dashboard.property.options.availabilityStatus.map((status) => (
@@ -131,7 +170,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               id="tenure"
               label="Tenure"
               defaultValue={propertyData.tenure}
-              handleUpdateFormRef={() => {}}
+              handleUpdateFormRef={handleUpdateFormRef}
               formControlProps={{ size: "small" }}
             >
               {dashboard.property.options.tenure.map((tenure) => (
@@ -157,7 +196,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <TextField
               required
               label="Property number"
-              id="property-number"
+              id="propertyNumber"
               size="small"
               defaultValue={""}
             />
@@ -167,6 +206,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               id="street"
               size="small"
               defaultValue={propertyData.street}
+              onChange={(e) => handleUpdateFormRef("street", e.target.value)}
             />
 
             <TextField
@@ -175,6 +215,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
               id="town"
               size="small"
               defaultValue={propertyData.town}
+              onChange={(e) => handleUpdateFormRef("town", e.target.value)}
             />
             <TextField
               label="Postcode"
@@ -199,30 +240,30 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <TextField
               required
               label="Full market price"
-              id="full-market-price"
+              id="fullMarketPrice"
               size="small"
               defaultValue={formatPrice(propertyData.fullMarketPrice, "GBP")}
             />
             <TextField
               required
               label="Deposit value"
-              id="deposit value"
+              id="depositValue"
               size="small"
               defaultValue={formatPrice(propertyData.depositValue, "GBP")}
             />
             <TextField
               required
               label="Deposit percentage"
-              id="deposit-percentage"
+              id="depositPercentage"
               size="small"
-              defaultValue={"%" + propertyData.depositPercentage}
+              defaultValue={propertyData.depositPercentage + "%"}
             />
 
             <SelectDropdown
-              id="council-tax-band"
+              id="councilTaxBand"
               label="Council tax"
               defaultValue={propertyData.councilTaxBand}
-              handleUpdateFormRef={() => {}}
+              handleUpdateFormRef={handleUpdateFormRef}
               formControlProps={{ size: "small" }}
             >
               {dashboard.property.options.councilTaxBand.map((taxBand) => (
@@ -249,10 +290,10 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <Stack gap={2} direction="row" alignItems="flex-end">
             <SelectDropdown
-              id="property-type"
+              id="propertyType"
               label="Property type"
               defaultValue={propertyData.propertyType.code}
-              handleUpdateFormRef={() => {}}
+              handleUpdateFormRef={handleUpdateFormRef}
               formControlProps={{ size: "small" }}
             >
               {dashboard.property.options.propertyType.map((propertyType) => (
@@ -282,7 +323,7 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
             <TextField
               required
               label="Floorplan area"
-              id="floorplan-area"
+              id="floorArea"
               size="small"
               defaultValue={propertyData.floorArea + "0" + " SqM"}
             />
@@ -291,13 +332,18 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
 
         <Card
           sx={{
-            gap: 2,
+            gap: 4,
             display: "flex",
             padding: 2,
             backgroundColor: "rgba(255, 255, 255, 0.5)",
           }}
         >
-          <TextFieldChipSelect name="feature" values={propertyData.features} />
+          <TextFieldChipSelect
+            id="features"
+            label="feature"
+            values={propertyData.features}
+            updateFormRef={handleUpdateFormRef}
+          />
         </Card>
       </Card>
 
@@ -320,9 +366,10 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
       >
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <MultilineTextField
+            id="summary"
             label="Summary"
             defaultValue={propertyData.summary}
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             formControlProps={{ sx: { margin: 0 } }}
           />
         </Card>
@@ -347,11 +394,12 @@ const PropertyEditor = ({ propertyData }: PropertyEditorProps) => {
       >
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <MultilineTextField
+            id="description"
             label="Description"
             defaultValue={propertyData.description.reduce(
               (prev, curr) => (prev += curr)
             )}
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             formControlProps={{ sx: { margin: 0 } }}
           />
         </Card>
