@@ -34,14 +34,54 @@ type DashboardProps = {
   children?: React.ReactNode;
 };
 
+export type DataRef = {
+  type: string;
+  data: Partial<PropertyListing_>;
+} | null;
+
+export type UpdateDataFunction = (updatedData: DataRef) => void;
+
 const Dashboard = (props: DashboardProps) => {
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<string>("properties-view");
 
   const [openModal, setOpenModal] = useState(false);
-  const modalData = useRef<{ type: string; data: PropertyListing_ } | null>(
-    null
-  );
+  const initialData = useRef<DataRef>(null);
+
+  const handleUpdateData: UpdateDataFunction = (updatedData) => {
+    let saveData = false;
+
+    if (!initialData.current || !updatedData) return;
+    if (initialData.current.type !== updatedData.type) return;
+
+    const dataType = initialData.current.type;
+
+    const currData = Object.getOwnPropertyNames(updatedData.data);
+    const prevData = Object.getOwnPropertyNames(initialData.current.data);
+
+    if (currData.length !== prevData.length) return;
+
+    console.log(prevData);
+    console.log(currData);
+
+    const valuesToUpdate: Partial<PropertyListing_> = {};
+
+    for (let i = 0; i < prevData.length; i++) {
+      const prevDataValue = initialData.current.data[prevData[i]];
+      const currDataValue = updatedData.data[currData[i]];
+
+      console.log(prevDataValue, currDataValue);
+
+      currDataValue !== prevDataValue &&
+        (valuesToUpdate[currData[i]] = updatedData.data[currData[i]]);
+    }
+
+    console.log(valuesToUpdate);
+
+    initialData.current = null;
+  };
+
+  const handleClearData = () => (initialData.current = null);
 
   const handleDrawerOpen = useCallback(() => {
     setOpen(true);
@@ -52,16 +92,16 @@ const Dashboard = (props: DashboardProps) => {
   }, [open]);
 
   const handleOpenModal = (type: string, data: PropertyListing_) => {
-    modalData.current = { type, data };
+    initialData.current = { type, data };
     setOpenModal(true);
   };
 
   const handleCloseModal = useCallback(() => {
     setOpenModal(false);
 
-    const resetModalDataAfterDelay = setTimeout(() => {
-      clearTimeout(resetModalDataAfterDelay);
-      modalData.current = null;
+    const resetDataAfterDelay = setTimeout(() => {
+      clearTimeout(resetDataAfterDelay);
+      handleClearData();
     }, 10);
   }, [openModal]);
 
@@ -166,7 +206,7 @@ const Dashboard = (props: DashboardProps) => {
       </Box>
 
       <DashboardModal
-        title={modalData.current?.type}
+        title={initialData.current?.type}
         handleCloseModal={handleCloseModal}
         muiProps={{
           dialogProps: {
@@ -177,9 +217,10 @@ const Dashboard = (props: DashboardProps) => {
           },
         }}
       >
-        {modalData.current?.type === "Property" ? (
+        {initialData.current?.type === "Property" ? (
           <PropertyEditor
-            propertyData={modalData.current.data as PropertyListing_}
+            handleUpdateData={handleUpdateData}
+            propertyData={initialData.current.data as PropertyListing_}
           />
         ) : null}
       </DashboardModal>
