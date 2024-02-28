@@ -6,6 +6,7 @@ import { useState } from "react";
 import generateLabelName from "@/utils/generateLabelName";
 
 type MultilineTextFieldProps = {
+  id: string;
   rows?: number;
   label: string;
   defaultValue?: string;
@@ -23,6 +24,8 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.currentTarget;
+
+    props.handleUpdateFormRef(props.id, input.value);
     setText(input.value);
   };
 
