@@ -11,7 +11,6 @@ import AppBar, { type AppBarProps } from "@mui/material/AppBar";
 import Toolbar, { type ToolbarProps } from "@mui/material/Toolbar";
 import IconButton, { type IconButtonProps } from "@mui/material/IconButton";
 
-import Button, { type ButtonProps } from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import Typography, { type TypographyProps } from "@mui/material/Typography";
 import { SvgIconProps } from "@mui/material";
@@ -21,7 +20,6 @@ type MuiProps = {
   dialogContent?: DialogContentProps;
   appBarProps?: AppBarProps;
   toolbarProps?: ToolbarProps;
-  buttonProps?: ButtonProps;
   iconButtonProps?: IconButtonProps;
   svgIconProps?: SvgIconProps;
   typographyProps?: TypographyProps;
@@ -29,13 +27,14 @@ type MuiProps = {
 
 type DashboardModalProps = {
   title?: string;
+  action?: React.ReactNode;
   children?: React.ReactNode;
   muiProps: MuiProps;
   handleCloseModal: () => void;
 };
 
 const DashboardModal = (props: DashboardModalProps) => {
-  const { title, children, handleCloseModal } = props;
+  const { title, action, children, handleCloseModal } = props;
 
   return (
     <Dialog
@@ -63,14 +62,7 @@ const DashboardModal = (props: DashboardModalProps) => {
           >
             {title ? title + " Editor" : "Modal"}
           </Typography>
-          <Button
-            autoFocus
-            color="inherit"
-            onClick={handleCloseModal}
-            {...props.muiProps?.buttonProps}
-          >
-            save
-          </Button>
+          {action}
         </Toolbar>
       </AppBar>
 
