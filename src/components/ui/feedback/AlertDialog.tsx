@@ -1,5 +1,5 @@
-const Alert = () => {
-  return <h2>Alert</h2>;
+const AlertDialog = () => {
+  return <h2>AlertDialog</h2>;
 };
 
-export default Alert;
+export default AlertDialog;
