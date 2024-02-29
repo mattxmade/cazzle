@@ -7,6 +7,8 @@ import Select, {
 import InputLabel, { type InputLabelProps } from "@mui/material/InputLabel";
 import FormControl, { type FormControlProps } from "@mui/material/FormControl";
 
+import type { UpdateFormRefFunction } from "@/app/(dashboard)/dashboard/_components/editor/PropertyEditor";
+
 type Props = {
   id: string;
   label: string;
@@ -15,13 +17,14 @@ type Props = {
   inputLabelProps?: InputLabelProps;
   selectProps?: SelectProps;
   children?: React.ReactNode;
-  handleUpdateFormRef: () => void;
+  handleUpdateFormRef: UpdateFormRefFunction;
 };
 
 const SelectDropdown = (props: Props) => {
   const handleSelectChange = (e: SelectChangeEvent<unknown>) => {
     if (!e.target.value) return;
     const selectOption = e.target as HTMLSelectElement;
+    props.handleUpdateFormRef(props.id, selectOption.value);
   };
 
   return (
