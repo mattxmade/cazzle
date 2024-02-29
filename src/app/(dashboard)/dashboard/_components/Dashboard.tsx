@@ -26,6 +26,7 @@ import theme from "@/theme";
 import { customTheme } from "@/styles/custom";
 import { PropertyListing_ } from "@/types";
 import PropertyEditor from "./editor/PropertyEditor";
+import AlertDialog from "@/components/ui/feedback/AlertDialog";
 
 const menuDrawerWidth = 240;
 
@@ -33,6 +34,8 @@ type DashboardProps = {
   properties: PropertyListing_[];
   children?: React.ReactNode;
 };
+
+type Action = "save" | "close";
 
 export type DataRef = {
   type: string;
@@ -50,6 +53,10 @@ const Dashboard = (props: DashboardProps) => {
 
   const [openModal, setOpenModal] = useState(false);
   const initialData = useRef<DataRef>(null);
+  const unsavedData = useRef<Partial<PropertyListing_> | null>(null);
+
+  const alertMessage = useRef<{ title: string; desc?: string } | null>(null);
+  const [showAlert, setShowAlert] = useState(false);
 
   const handleUpdateLocalData: UpdateDataFunction = (type, updatedData) => {
     if (!initialData.current || !updatedData) return;
@@ -69,12 +76,23 @@ const Dashboard = (props: DashboardProps) => {
         (valuesToUpdate[currData[i]] = updatedData[currData[i]]);
     }
 
-    console.log(valuesToUpdate);
+    unsavedData.current = valuesToUpdate;
+  };
 
+  const handleSaveChanges = async () => {
+    // TODO: implement db patch
     handleClearData();
   };
 
-  const handleClearData = () => (initialData.current = null);
+  const handleCloseWithoutSaving = () => {
+    handleClearData();
+    handleCloseAllDialogs();
+  };
+
+  const handleClearData = () => {
+    initialData.current = null;
+    unsavedData.current = null;
+  };
 
   const handleDrawerOpen = useCallback(() => {
     setOpen(true);
@@ -84,13 +102,25 @@ const Dashboard = (props: DashboardProps) => {
     setOpen(false);
   }, [open]);
 
+  const handleCloseAllDialogs = () => {
+    alertMessage.current = null;
+    setOpenModal(false);
+    setShowAlert(false);
+  };
+
+  const handleAlertSetup = (title: string, desc?: string) => {
+    alertMessage.current = { title, desc };
+    setShowAlert(true);
+  };
+
   const handleOpenModal = (type: string, data: PropertyListing_) => {
     initialData.current = { type, data };
     setOpenModal(true);
   };
 
   const handleCloseModal = useCallback(() => {
-    setOpenModal(false);
+    if (!unsavedData.current) return setOpenModal(false);
+    handleAlertSetup("Data has changed, would you like to save them?");
   }, [openModal]);
 
   const handleMenuItem = useCallback(() => {}, []);
@@ -196,6 +226,11 @@ const Dashboard = (props: DashboardProps) => {
       <DashboardModal
         title={initialData.current?.type}
         handleCloseModal={handleCloseModal}
+        action={
+          <Button autoFocus color="inherit" onClick={handleSaveChanges}>
+            Save
+          </Button>
+        }
         muiProps={{
           dialogProps: {
             open: openModal,
@@ -205,6 +240,20 @@ const Dashboard = (props: DashboardProps) => {
           },
         }}
       >
+        {showAlert && alertMessage.current ? (
+          <AlertDialog
+            open={showAlert}
+            title={alertMessage.current.title}
+            desc={alertMessage.current.desc}
+            handleClose={() => {}}
+          >
+            <Button onClick={handleCloseWithoutSaving}>Close</Button>
+            <Button onClick={handleSaveChanges} autoFocus>
+              Save
+            </Button>
+          </AlertDialog>
+        ) : null}
+
         {initialData.current?.type === "Property" ? (
           <PropertyEditor
             handleUpdateLocalData={handleUpdateLocalData}
