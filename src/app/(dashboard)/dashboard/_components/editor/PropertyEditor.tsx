@@ -202,10 +202,11 @@ const PropertyEditor = (props: PropertyEditorProps) => {
             />
             <TextField
               required
-              label="Street"
               id="street"
+              label="Street"
               size="small"
               defaultValue={propertyData.street}
+              inputProps={{ inputMode: "text", pattern: "^[a-zA-Z]*" }}
               onChange={(e) => handleUpdateFormRef("street", e.target.value)}
             />
 
