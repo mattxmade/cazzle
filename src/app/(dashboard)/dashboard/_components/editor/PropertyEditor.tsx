@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
@@ -48,8 +48,6 @@ const PropertyEditor = (props: PropertyEditorProps) => {
   const editedData = useRef<Partial<PropertyListing_> | null>(null);
 
   const handleUpdateFormRef = (key: string, value: any) => {
-    console.log(key, value);
-
     if (
       !Object.hasOwn(propertyData, key) ||
       typeof propertyData[key] !== typeof value
@@ -60,15 +58,8 @@ const PropertyEditor = (props: PropertyEditorProps) => {
       ? (editedData.current = { [key]: value })
       : (editedData.current = { ...editedData.current, [key]: value });
 
-    console.log(editedData.current);
+    editedData.current && handleUpdateLocalData("property", editedData.current);
   };
-
-  useEffect(() => {
-    return () => {
-      if (!editedData.current) return;
-      handleUpdateLocalData("property", editedData.current);
-    };
-  }, []);
 
   return (
     <Stack gap={2}>
