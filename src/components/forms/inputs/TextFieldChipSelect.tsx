@@ -8,12 +8,17 @@ import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SaveIcon from "@mui/icons-material/Save";
 
+import type { UpdateFormRefFunction } from "@/app/(dashboard)/dashboard/_components/editor/PropertyEditor";
+
 type ComponentProps = {
-  name: string;
+  id: string;
+  label: string;
   values: string[];
+  updateFormRef: UpdateFormRefFunction;
 };
 
-const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
+const TextFieldChipSelect = (props: ComponentProps) => {
+  const { id, label, values, updateFormRef } = props;
   const mode = useRef<"edit" | "add" | "">("");
 
   const [chipValues, setChipValues] = useState([...values]);
@@ -47,6 +52,7 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
       });
 
       setChipValues(updateChipValues);
+      updateFormRef(id, updateChipValues);
       return handleClear();
     }
 
@@ -64,11 +70,14 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
       handleClear();
     }
 
-    setChipValues((prevChipValues) =>
-      prevChipValues.filter(
+    setChipValues((prevChipValues) => {
+      const values = prevChipValues.filter(
         (chipValue, index) => chip.textContent !== chipValue && i !== index
-      )
-    );
+      );
+
+      updateFormRef(id, values);
+      return values;
+    });
   };
 
   const handleUpdateTextField = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,19 +93,19 @@ const TextFieldChipSelect = ({ name, values }: ComponentProps) => {
           focused={currentChip.value ? true : false}
           label={
             currentChip.value || mode.current === "edit"
-              ? `Edit ${name}`
-              : `New ${name}`
+              ? `Edit ${label}`
+              : `New ${label}`
           }
-          id={name}
+          id={id}
           size="small"
           value={currentChip.value}
           onChange={handleUpdateTextField}
-          placeholder={!currentChip ? `Edit ${name}` : ""}
+          placeholder={!currentChip ? `Edit ${label}` : ""}
         />
 
         <IconButton
           onClick={handleChipSave}
-          aria-label={"save " + name}
+          aria-label={"save " + label}
           aria-disabled={!currentChip.value}
           sx={{
             padding: 0.1,
