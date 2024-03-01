@@ -8,9 +8,8 @@ import Typography from "@mui/material/Typography";
 
 import MenuItem from "@mui/material/MenuItem";
 import Checkbox from "@mui/material/Checkbox";
-
-import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
+import InputAdornment from "@mui/material/InputAdornment";
 
 import HomeIcon from "@mui/icons-material/Home";
 import CalculateIcon from "@mui/icons-material/Calculate";
@@ -19,15 +18,16 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 import { dashboard } from "@/app/content";
-import { PropertyListing_ } from "@/types";
+import type { PropertyListing_ } from "@/types";
+import type { UpdateDataFunction } from "../Dashboard";
+
+import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
 
 import TextFieldChipSelect from "@/components/forms/inputs/TextFieldChipSelect";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
-
-import type { UpdateDataFunction } from "../Dashboard";
 
 type PropertyEditorProps = {
   propertyData: PropertyListing_;
@@ -184,36 +184,34 @@ const PropertyEditor = (props: PropertyEditorProps) => {
 
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <Stack gap={2} direction="row" alignItems="flex-end">
-            <TextField
-              required
-              label="Property number"
+            <MultilineTextField
               id="propertyNumber"
-              size="small"
+              label="Property number"
+              validation="number"
               defaultValue={""}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
-            <TextField
-              required
+            <MultilineTextField
               id="street"
               label="Street"
-              size="small"
+              validation="lettersWithHyphen"
               defaultValue={propertyData.street}
-              inputProps={{ inputMode: "text", pattern: "^[a-zA-Z]*" }}
-              onChange={(e) => handleUpdateFormRef("street", e.target.value)}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
 
-            <TextField
-              required
-              label="Town"
+            <MultilineTextField
               id="town"
-              size="small"
+              label="Town"
+              validation="lettersWithHyphen"
               defaultValue={propertyData.town}
-              onChange={(e) => handleUpdateFormRef("town", e.target.value)}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
-            <TextField
-              label="Postcode"
+            <MultilineTextField
               id="postcode"
-              size="small"
-              defaultValue={propertyData.postcode}
+              label="Postcode"
+              validation="postcode"
+              defaultValue={propertyData.postcode ?? ""}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
           </Stack>
         </Card>
@@ -223,32 +221,58 @@ const PropertyEditor = (props: PropertyEditorProps) => {
         <Stack gap={0.5} direction="row" alignItems="center">
           <CalculateIcon color="primary" />
           <Typography variant="h6" color="darkslategrey">
-            Value & Tenure
+            Value
           </Typography>
         </Stack>
 
         <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
           <Stack gap={2} direction="row" alignItems="flex-end">
-            <TextField
-              required
-              label="Full market price"
+            <MultilineTextField
               id="fullMarketPrice"
-              size="small"
+              label="Full market price"
+              validation="currency"
+              handleUpdateFormRef={handleUpdateFormRef}
               defaultValue={formatPrice(propertyData.fullMarketPrice, "GBP")}
+              textFieldProps={{
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {currencies["GBP"].symbol}
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
-            <TextField
-              required
-              label="Deposit value"
+            <MultilineTextField
               id="depositValue"
-              size="small"
+              label="Deposit value"
+              validation="number"
+              handleUpdateFormRef={handleUpdateFormRef}
               defaultValue={formatPrice(propertyData.depositValue, "GBP")}
+              textFieldProps={{
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      {currencies["GBP"].symbol}
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
-            <TextField
-              required
-              label="Deposit percentage"
+            <MultilineTextField
               id="depositPercentage"
-              size="small"
-              defaultValue={propertyData.depositPercentage + "%"}
+              validation="number"
+              label="Deposit percentage"
+              defaultValue={propertyData.depositPercentage}
+              handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                inputProps: { inputMode: "numeric", pattern: "[0-9]*" },
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">%</InputAdornment>
+                  ),
+                },
+              }}
             />
 
             <SelectDropdown
@@ -297,27 +321,34 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                 </MenuItem>
               ))}
             </SelectDropdown>
-
-            <TextField
-              required
-              label="Bedrooms"
+            <MultilineTextField
               id="bedrooms"
-              size="small"
+              label="Bedrooms"
+              validation="number"
               defaultValue={propertyData.bedrooms}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
-            <TextField
-              required
-              label="Bathrooms"
+            <MultilineTextField
               id="bathrooms"
-              size="small"
+              label="Bathrooms"
+              validation="number"
               defaultValue={propertyData.bathrooms}
+              handleUpdateFormRef={handleUpdateFormRef}
             />
-            <TextField
-              required
-              label="Floorplan area"
+            <MultilineTextField
               id="floorArea"
-              size="small"
-              defaultValue={propertyData.floorArea + "0" + " SqM"}
+              label="Floorplan area"
+              validation="number"
+              defaultValue={propertyData.floorArea}
+              handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                inputProps: { inputMode: "numeric", pattern: "[0-9]*" },
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">m²</InputAdornment>
+                  ),
+                },
+              }}
             />
           </Stack>
         </Card>
@@ -360,9 +391,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
           <MultilineTextField
             id="summary"
             label="Summary"
+            validation="singleline"
             defaultValue={propertyData.summary}
             handleUpdateFormRef={handleUpdateFormRef}
-            formControlProps={{ sx: { margin: 0 } }}
+            textFieldProps={{ fullWidth: true, multiline: true }}
           />
         </Card>
       </Concertina>
@@ -388,11 +420,12 @@ const PropertyEditor = (props: PropertyEditorProps) => {
           <MultilineTextField
             id="description"
             label="Description"
+            validation="multiline"
             defaultValue={propertyData.description.reduce(
               (prev, curr) => (prev += curr)
             )}
             handleUpdateFormRef={handleUpdateFormRef}
-            formControlProps={{ sx: { margin: 0 } }}
+            textFieldProps={{ fullWidth: true, multiline: true }}
           />
         </Card>
       </Concertina>
