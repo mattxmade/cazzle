@@ -43,7 +43,7 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
         const priceAsNumber = extractNumberFromString(input.value);
         props.handleUpdateFormRef(props.id, priceAsNumber);
-        setText(formatPrice(priceAsNumber, "GBP"));
+        setText(formatPrice(priceAsNumber, "GBP", undefined, true));
         break;
 
       case "multiline":
