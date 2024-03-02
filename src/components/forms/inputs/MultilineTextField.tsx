@@ -1,65 +1,87 @@
 import { useState } from "react";
-
 import TextField, { type TextFieldProps } from "@mui/material/TextField";
-import InputLabel, { type InputLabelProps } from "@mui/material/InputLabel";
-import FormControl, { type FormControlProps } from "@mui/material/FormControl";
 
+import formatPrice from "@/utils/formatPrice";
 import generateLabelName from "@/utils/generateLabelName";
-import { type Pattern, isValidTextInput } from "@/utils/validateInputs";
+import extractNumberFromString from "@/utils/extractNumberFromString";
+import { type Pattern, isValidInput } from "@/utils/validateInputs";
 
 type MultilineTextFieldProps = {
   id: string;
-  rows?: number;
   label: string;
-  defaultValue?: string;
-  formControlProps?: FormControlProps;
-  inputLabelProps?: InputLabelProps;
+  formatter?: { method: Function; args: any };
+  validation?: Pattern;
+  defaultValue?: string | number;
   textFieldProps?: TextFieldProps;
-  handleUpdateFormRef: (name: string, data: string) => void;
+  handleUpdateFormRef: (name: string, data: string | number) => void;
 };
 
 const MultilineTextField = (props: MultilineTextFieldProps) => {
   const [text, setText] = useState(props.defaultValue ?? "");
-
-  const rows = props.rows;
   const labelName = generateLabelName(props.label.toLowerCase());
+
+  const handleValidInput = (value: any) => {
+    props.handleUpdateFormRef(props.id, value);
+
+    !props.formatter
+      ? setText(value)
+      : setText(props.formatter.method(value, ...props.formatter.args));
+  };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.currentTarget;
+    if (!props.validation) return handleValidInput(input.value);
 
-    const paragraphs = input.value.split("\n\n\n");
-    if (paragraphs.some((p) => !isValidTextInput(p, props.id as Pattern))) {
-      return;
+    switch (props.validation) {
+      case "number":
+        isValidInput(input.value, "number") &&
+          handleValidInput(extractNumberFromString(input.value));
+        break;
+
+      case "currency":
+        if (!isValidInput(input.value, "currency")) return;
+
+        const priceAsNumber = extractNumberFromString(input.value);
+        props.handleUpdateFormRef(props.id, priceAsNumber);
+        setText(formatPrice(priceAsNumber, "GBP"));
+        break;
+
+      case "multiline":
+        const paragraphs = input.value.split("\n\n\n");
+
+        if (paragraphs.some((p) => !isValidInput(p, "multiline"))) {
+          return;
+        }
+
+        handleValidInput(input.value);
+        break;
+
+      default:
+        isValidInput(input.value, props.validation) &&
+          handleValidInput(input.value);
     }
-
-    props.handleUpdateFormRef(props.id, input.value);
-    setText(input.value);
-  };
-
-  const layout = {
-    rows,
-    multiline: true,
-    fullWidth: true,
   };
 
   return (
-    <FormControl
-      fullWidth
-      required
-      variant="filled"
-      sx={{ m: 1 }}
-      {...props.formControlProps}
-    >
-      <TextField
-        id={labelName}
-        value={text}
-        placeholder={props.label}
-        onChange={handleTextChange}
-        variant="outlined"
-        {...layout}
-        {...props.textFieldProps}
-      />
-    </FormControl>
+    <TextField
+      id={props.id}
+      label={labelName}
+      value={text}
+      placeholder={props.label}
+      onChange={handleTextChange}
+      size="small"
+      required={true}
+      variant="outlined"
+      {...props.textFieldProps}
+      sx={{
+        maxWidth: props.textFieldProps?.fullWidth ? "100%" : 210,
+        ...props.textFieldProps?.sx,
+      }}
+      InputProps={{
+        sx: { alignItems: "baseline" },
+        ...props.textFieldProps?.InputProps,
+      }}
+    />
   );
 };
 
