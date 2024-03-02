@@ -35,8 +35,6 @@ type DashboardProps = {
   children?: React.ReactNode;
 };
 
-type Action = "save" | "close";
-
 export type DataRef = {
   type: string;
   data: Partial<PropertyListing_>;
@@ -120,7 +118,7 @@ const Dashboard = (props: DashboardProps) => {
 
   const handleCloseModal = useCallback(() => {
     if (!unsavedData.current) return setOpenModal(false);
-    handleAlertSetup("Data has changed, would you like to save them?");
+    handleAlertSetup("Changes will be lost, would you like to save data?");
   }, [openModal]);
 
   const handleMenuItem = useCallback(() => {}, []);
