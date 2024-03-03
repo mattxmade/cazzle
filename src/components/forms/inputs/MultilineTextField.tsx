@@ -13,7 +13,7 @@ type MultilineTextFieldProps = {
   validation?: Pattern;
   defaultValue?: string | number;
   textFieldProps?: TextFieldProps;
-  handleUpdateFormRef: (name: string, data: string | number) => void;
+  handleUpdateFormRef: (name: string, data: string[] | string | number) => void;
 };
 
 const MultilineTextField = (props: MultilineTextFieldProps) => {
@@ -47,13 +47,15 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
         break;
 
       case "multiline":
-        const paragraphs = input.value.split("\n\n\n");
+        const paragraphs: string[] = [];
+        input.value.split("\n").forEach((text) => paragraphs.push(text));
 
         if (paragraphs.some((p) => !isValidInput(p, "multiline"))) {
           return;
         }
 
-        handleValidInput(input.value);
+        setText(input.value);
+        props.handleUpdateFormRef(props.id, paragraphs);
         break;
 
       default:
