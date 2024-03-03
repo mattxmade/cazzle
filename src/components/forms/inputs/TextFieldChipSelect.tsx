@@ -59,6 +59,7 @@ const TextFieldChipSelect = (props: ComponentProps) => {
     // NEW ENTRY
     if (currentChip.value && !currentChip.index) {
       setChipValues((prevChipValues) => [...prevChipValues, currentChip.value]);
+      updateFormRef(id, [...chipValues, currentChip.value]);
       return handleClear();
     }
   };
