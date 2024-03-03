@@ -23,6 +23,11 @@ import type { UpdateDataFunction } from "../Dashboard";
 
 import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
+import extractNumberFromString from "@/utils/extractNumberFromString";
+import {
+  type PropertyDocument,
+  propertyDataHelper,
+} from "@/helpers/dataHelper";
 
 import TextFieldChipSelect from "@/components/forms/inputs/TextFieldChipSelect";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
@@ -57,6 +62,11 @@ const PropertyEditor = (props: PropertyEditorProps) => {
     !editedData.current
       ? (editedData.current = { [key]: value })
       : (editedData.current = { ...editedData.current, [key]: value });
+
+    editedData.current = propertyDataHelper(key as keyof PropertyDocument, {
+      server: propertyData,
+      client: editedData.current,
+    }) as Partial<PropertyListing_>;
 
     editedData.current && handleUpdateLocalData("property", editedData.current);
   };
@@ -188,7 +198,9 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               id="propertyNumber"
               label="Property number"
               validation="number"
-              defaultValue={""}
+              defaultValue={extractNumberFromString(
+                propertyData.displayAddress
+              )}
               handleUpdateFormRef={handleUpdateFormRef}
             />
             <MultilineTextField
@@ -232,7 +244,12 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Full market price"
               validation="currency"
               handleUpdateFormRef={handleUpdateFormRef}
-              defaultValue={formatPrice(propertyData.fullMarketPrice, "GBP")}
+              defaultValue={formatPrice(
+                propertyData.fullMarketPrice,
+                "GBP",
+                undefined,
+                true
+              )}
               textFieldProps={{
                 InputProps: {
                   startAdornment: (
@@ -248,7 +265,12 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Deposit value"
               validation="number"
               handleUpdateFormRef={handleUpdateFormRef}
-              defaultValue={formatPrice(propertyData.depositValue, "GBP")}
+              defaultValue={formatPrice(
+                propertyData.depositValue,
+                "GBP",
+                undefined,
+                true
+              )}
               textFieldProps={{
                 InputProps: {
                   startAdornment: (
