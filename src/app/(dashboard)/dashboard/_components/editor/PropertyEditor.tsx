@@ -19,7 +19,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 import { dashboard } from "@/app/content";
 import type { PropertyListing_ } from "@/types";
-import type { PropertyErrors, UpdateDataFunction } from "../Dashboard";
+import type { PropertyErrors, UpdateFormDataFuncion } from "../Dashboard";
 
 import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
@@ -37,7 +37,7 @@ import Concertina from "@/components/ui/Concertina";
 type PropertyEditorProps = {
   formErrors: PropertyErrors | null;
   propertyData: PropertyListing_;
-  handleUpdateLocalData: UpdateDataFunction;
+  handleUpdateLocalData: UpdateFormDataFuncion;
 };
 
 export type UpdateFormRefFunction = (key: string, value: any) => void;
