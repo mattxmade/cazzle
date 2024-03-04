@@ -159,7 +159,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Availability"
               defaultValue={propertyData.availabilityStatus}
               handleUpdateFormRef={handleUpdateFormRef}
-              formControlProps={{ size: "small" }}
+              formControlProps={{
+                size: "small",
+                error: props.formErrors?.availabilityStatus ? true : false,
+              }}
             >
               {dashboard.property.options.availabilityStatus.map((status) => (
                 <MenuItem key={"status_" + status.value} value={status.value}>
@@ -173,7 +176,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Tenure"
               defaultValue={propertyData.tenure}
               handleUpdateFormRef={handleUpdateFormRef}
-              formControlProps={{ size: "small" }}
+              formControlProps={{
+                size: "small",
+                error: props.formErrors?.tenure ? true : false,
+              }}
             >
               {dashboard.property.options.tenure.map((tenure) => (
                 <MenuItem key={"tenure_" + tenure.value} value={tenure.value}>
@@ -328,7 +334,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Council tax"
               defaultValue={propertyData.councilTaxBand}
               handleUpdateFormRef={handleUpdateFormRef}
-              formControlProps={{ size: "small" }}
+              formControlProps={{
+                size: "small",
+                error: props.formErrors?.councilTaxBand ? true : false,
+              }}
             >
               {dashboard.property.options.councilTaxBand.map((taxBand) => (
                 <MenuItem
@@ -358,7 +367,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Property type"
               defaultValue={propertyData.propertyType.code}
               handleUpdateFormRef={handleUpdateFormRef}
-              formControlProps={{ size: "small" }}
+              formControlProps={{
+                size: "small",
+                error: props.formErrors?.propertyType ? true : false,
+              }}
             >
               {dashboard.property.options.propertyType.map((propertyType) => (
                 <MenuItem
@@ -425,6 +437,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
             label="feature"
             values={propertyData.features}
             updateFormRef={handleUpdateFormRef}
+            textFieldProps={{
+              error: props.formErrors?.features ? true : false,
+              helperText: props.formErrors?.features,
+            }}
           />
         </Card>
       </Card>
