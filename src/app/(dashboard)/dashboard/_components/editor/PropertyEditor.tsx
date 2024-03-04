@@ -19,7 +19,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 import { dashboard } from "@/app/content";
 import type { PropertyListing_ } from "@/types";
-import type { UpdateDataFunction } from "../Dashboard";
+import type { PropertyErrors, UpdateDataFunction } from "../Dashboard";
 
 import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
@@ -35,6 +35,7 @@ import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
 
 type PropertyEditorProps = {
+  formErrors: PropertyErrors | null;
   propertyData: PropertyListing_;
   handleUpdateLocalData: UpdateDataFunction;
 };
@@ -202,6 +203,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                 propertyData.displayAddress
               )}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.propertyNumber ? true : false,
+                helperText: props.formErrors?.propertyNumber ?? "",
+              }}
             />
             <MultilineTextField
               id="street"
@@ -209,6 +214,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               validation="lettersWithHyphen"
               defaultValue={propertyData.street}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.street ? true : false,
+                helperText: props.formErrors?.street ?? "",
+              }}
             />
 
             <MultilineTextField
@@ -217,6 +226,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               validation="lettersWithHyphen"
               defaultValue={propertyData.town}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.town ? true : false,
+                helperText: props.formErrors?.town ?? "",
+              }}
             />
             <MultilineTextField
               id="postcode"
@@ -224,6 +237,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               validation="postcode"
               defaultValue={propertyData.postcode ?? ""}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.postcode ? true : false,
+                helperText: props.formErrors?.postcode ?? "",
+              }}
             />
           </Stack>
         </Card>
@@ -258,6 +275,9 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                     </InputAdornment>
                   ),
                 },
+
+                error: props.formErrors?.fullMarketPrice ? true : false,
+                helperText: props.formErrors?.fullMarketPrice ?? "",
               }}
             />
             <MultilineTextField
@@ -279,6 +299,9 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                     </InputAdornment>
                   ),
                 },
+
+                error: props.formErrors?.depositValue ? true : false,
+                helperText: props.formErrors?.depositValue ?? "",
               }}
             />
             <MultilineTextField
@@ -294,6 +317,9 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                     <InputAdornment position="start">%</InputAdornment>
                   ),
                 },
+
+                error: props.formErrors?.depositPercentage ? true : false,
+                helperText: props.formErrors?.depositPercentage ?? "",
               }}
             />
 
@@ -349,6 +375,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               validation="number"
               defaultValue={propertyData.bedrooms}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.bedrooms ? true : false,
+                helperText: props.formErrors?.bedrooms ?? "",
+              }}
             />
             <MultilineTextField
               id="bathrooms"
@@ -356,6 +386,10 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               validation="number"
               defaultValue={propertyData.bathrooms}
               handleUpdateFormRef={handleUpdateFormRef}
+              textFieldProps={{
+                error: props.formErrors?.bathrooms ? true : false,
+                helperText: props.formErrors?.bathrooms ?? "",
+              }}
             />
             <MultilineTextField
               id="floorArea"
@@ -370,6 +404,9 @@ const PropertyEditor = (props: PropertyEditorProps) => {
                     <InputAdornment position="start">m²</InputAdornment>
                   ),
                 },
+
+                error: props.formErrors?.floorArea ? true : false,
+                helperText: props.formErrors?.floorArea ?? "",
               }}
             />
           </Stack>
@@ -416,7 +453,12 @@ const PropertyEditor = (props: PropertyEditorProps) => {
             validation="singleline"
             defaultValue={propertyData.summary}
             handleUpdateFormRef={handleUpdateFormRef}
-            textFieldProps={{ fullWidth: true, multiline: true }}
+            textFieldProps={{
+              fullWidth: true,
+              multiline: true,
+              error: props.formErrors?.summary ? true : false,
+              helperText: props.formErrors?.summary ?? "",
+            }}
           />
         </Card>
       </Concertina>
@@ -447,7 +489,12 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               (prev, curr) => (prev += curr)
             )}
             handleUpdateFormRef={handleUpdateFormRef}
-            textFieldProps={{ fullWidth: true, multiline: true }}
+            textFieldProps={{
+              fullWidth: true,
+              multiline: true,
+              error: props.formErrors?.description ? true : false,
+              helperText: props.formErrors?.description ?? "",
+            }}
           />
         </Card>
       </Concertina>
