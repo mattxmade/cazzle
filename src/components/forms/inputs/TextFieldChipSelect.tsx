@@ -103,6 +103,7 @@ const TextFieldChipSelect = (props: ComponentProps) => {
           value={currentChip.value}
           onChange={handleUpdateTextField}
           placeholder={!currentChip ? `Edit ${label}` : ""}
+          {...props.textFieldProps}
         />
 
         <IconButton
