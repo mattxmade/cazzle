@@ -22,41 +22,57 @@ import DashboardModal from "./DashboardModal";
 import DashboardView from "./DashboardView";
 import DashboardItem from "./DashboardItem";
 
-import theme from "@/theme";
-import { customTheme } from "@/styles/custom";
-import { PropertyListing_ } from "@/types";
 import PropertyEditor from "./editor/PropertyEditor";
 import AlertDialog from "@/components/ui/feedback/AlertDialog";
 
-const menuDrawerWidth = 240;
+import theme from "@/theme";
+import { customTheme } from "@/styles/custom";
+import type { PropertyListing_ } from "@/types";
+import { validate } from "@/data/validate";
+
+export type FormDataRef = {
+  type: string;
+  data: Partial<PropertyListing_>;
+} | null;
+
+export type FormErrors = {
+  for: "property" | "listing";
+  errors: PropertyErrors;
+};
+
+export type PropertyErrors = {
+  [key in keyof Partial<PropertyListing_>]: string;
+};
+
+export type UpdateFormDataFuncion = (
+  type: string,
+  updatedData: Partial<PropertyListing_>
+) => void;
 
 type DashboardProps = {
   properties: PropertyListing_[];
   children?: React.ReactNode;
 };
 
-export type DataRef = {
-  type: string;
-  data: Partial<PropertyListing_>;
-} | null;
-
-export type UpdateDataFunction = (
-  type: string,
-  updatedData: Partial<PropertyListing_>
-) => void;
+const menuDrawerWidth = 240;
 
 const Dashboard = (props: DashboardProps) => {
   const [open, setOpen] = useState(true);
   const [view, setView] = useState<string>("properties-view");
 
   const [openModal, setOpenModal] = useState(false);
-  const initialData = useRef<DataRef>(null);
+  const initialData = useRef<FormDataRef>(null);
   const unsavedData = useRef<Partial<PropertyListing_> | null>(null);
+
+  const [formErrors, setFormErrors] = useState<{
+    for: "property" | "listing";
+    errors: PropertyErrors;
+  } | null>(null);
 
   const alertMessage = useRef<{ title: string; desc?: string } | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
-  const handleUpdateLocalData: UpdateDataFunction = (type, updatedData) => {
+  const handleUpdateLocalData: UpdateFormDataFuncion = (type, updatedData) => {
     if (!initialData.current || !updatedData) return;
     if (initialData.current.type.toLowerCase() !== type.toLowerCase()) return;
 
@@ -77,9 +93,27 @@ const Dashboard = (props: DashboardProps) => {
     unsavedData.current = valuesToUpdate;
   };
 
+  let canUpdate = false;
+
   const handleSaveChanges = async () => {
+    showAlert && setShowAlert(false);
+
+    if (!initialData.current || !unsavedData.current) return;
+    const data = { ...initialData.current.data, ...unsavedData.current };
+
+    const result = validate("property", data);
+
+    if (result.errors) {
+      console.log(result.errors);
+      setFormErrors({ for: "property", errors: result.errors });
+      return;
+    }
+
     // TODO: implement db patch
-    handleClearData();
+    // await update db
+
+    formErrors && setFormErrors(null);
+    canUpdate && handleClearData();
   };
 
   const handleCloseWithoutSaving = () => {
@@ -90,6 +124,7 @@ const Dashboard = (props: DashboardProps) => {
   const handleClearData = () => {
     initialData.current = null;
     unsavedData.current = null;
+    setFormErrors(null);
   };
 
   const handleDrawerOpen = useCallback(() => {
@@ -254,6 +289,9 @@ const Dashboard = (props: DashboardProps) => {
 
         {initialData.current?.type === "Property" ? (
           <PropertyEditor
+            formErrors={
+              formErrors?.for === "property" ? formErrors.errors : null
+            }
             handleUpdateLocalData={handleUpdateLocalData}
             propertyData={initialData.current.data as PropertyListing_}
           />
