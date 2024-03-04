@@ -4,7 +4,7 @@ import React, { useRef, useState } from "react";
 
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
+import TextField, { TextFieldProps } from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -14,6 +14,7 @@ type ComponentProps = {
   id: string;
   label: string;
   values: string[];
+  textFieldProps?: TextFieldProps;
   updateFormRef: UpdateFormRefFunction;
 };
 
