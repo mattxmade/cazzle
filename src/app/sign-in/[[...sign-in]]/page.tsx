@@ -1,9 +1,9 @@
+import { redirect } from "next/navigation";
 import { SignIn } from "@clerk/nextjs";
 
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-
 import theme from "@/theme";
 
 const backgroundColor = theme.palette?.mode
@@ -12,7 +12,14 @@ const backgroundColor = theme.palette?.mode
     : theme.palette.grey[900]
   : "";
 
-export default function SignInPage() {
+type PageParams = {
+  params: string;
+  searchParams: { redirect_url?: string };
+};
+
+export default function SignInPage({ params, searchParams }: PageParams) {
+  if (searchParams.redirect_url) redirect("/sign-in");
+
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <Grid
