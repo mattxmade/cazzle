@@ -1,14 +1,25 @@
 "use client";
 
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+
+import {
+  ClerkLoaded,
+  ClerkLoading,
+  SignedIn,
+  SignedOut,
+  SignInButton,
+} from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import AppBar from "@/components/mui/app-bar/AppBar";
+import AccountMenu from "@/components/ui/AccountMenu";
 
 type DashboardAppBarProps = {
   open?: boolean;
@@ -18,6 +29,12 @@ type DashboardAppBarProps = {
 };
 
 const DashboardAppBar = (props: DashboardAppBarProps) => {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!loaded && document) setLoaded(true);
+  }, []);
+
   const { open, title, drawerWidth, handleDrawerOpen } = props;
 
   return (
@@ -39,9 +56,21 @@ const DashboardAppBar = (props: DashboardAppBarProps) => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             {title}
           </Typography>
+
+          {!loaded ? (
+            <ClerkLoading>
+              <IconButton>
+                <CircularProgress size={25} sx={{ color: "white" }} />
+              </IconButton>
+            </ClerkLoading>
+          ) : null}
+
           <SignedIn>
-            <UserButton />
+            <ClerkLoaded>
+              <AccountMenu />
+            </ClerkLoaded>
           </SignedIn>
+
           <SignedOut>
             <SignInButton mode="modal">
               <Button color="inherit" aria-label="sign in">
