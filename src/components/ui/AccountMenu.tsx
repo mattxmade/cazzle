@@ -1,6 +1,8 @@
 "use client";
 
+import NextLink from "next/link";
 import { Fragment, useState } from "react";
+import { SignOutButton, UserButton, UserProfile } from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -13,10 +15,20 @@ import Tooltip from "@mui/material/Tooltip";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
+import Dialog from "@mui/material/Dialog";
+
+import CloseIcon from "@mui/icons-material/Close";
+import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
+
+import Typography from "@mui/material/Typography";
+
+let agent = true;
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -24,14 +36,57 @@ const AccountMenu = () => {
 
   const handleClose = () => setAnchorEl(null);
 
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <Fragment>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        PaperProps={{ sx: { maxWidth: "100%", overflow: "hidden" } }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            px: 4,
+            py: 1,
+            borderBottom: "1px solid rgba(0, 0, 0, 0.16)",
+          }}
+        >
+          <Typography variant="h6" sx={{ px: 1 }}>
+            Account
+          </Typography>
+          <IconButton
+            onClick={handleCloseDialog}
+            aria-label="close account dialog"
+            sx={{
+              width: "fit-content",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+
+        <UserProfile
+          appearance={{
+            elements: {
+              rootBox: { overflowY: "scroll" },
+              card: { margin: 0, borderRadius: 0 },
+            },
+          }}
+        />
+      </Dialog>
+
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}
             size="small"
-            sx={{ ml: 2 }}
             aria-controls={open ? "account-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
@@ -77,36 +132,53 @@ const AccountMenu = () => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
+        <MenuItem onClick={() => setOpenDialog(true)}>
+          <Avatar /> My Account
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> My account
-        </MenuItem>
+
+        {agent ? (
+          <MenuItem href="/dashboard" component={NextLink}>
+            <Avatar>
+              <WysiwygTwoToneIcon />
+            </Avatar>
+            Branch Dashboard
+          </MenuItem>
+        ) : null}
+
         <Divider />
-        <MenuItem onClick={handleClose}>
+
+        <MenuItem href="/" component={NextLink}>
           <ListItemIcon>
             <PersonAdd fontSize="small" />
           </ListItemIcon>
-          Add another account
+          Home
         </MenuItem>
+
+        <MenuItem href="/" component={NextLink}>
+          <ListItemIcon>
+            <PersonAdd fontSize="small" />
+          </ListItemIcon>
+          View branch profile
+        </MenuItem>
+
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="small" />
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+
+        <SignOutButton>
+          <MenuItem>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </SignOutButton>
       </Menu>
     </Fragment>
   );
 };
 
 export default AccountMenu;
-
-// https://mui.com/material-ui/react-menu/#account-menu
