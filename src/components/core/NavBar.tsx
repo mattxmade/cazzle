@@ -7,15 +7,16 @@ import {
   SignedOut,
   SignOutButton,
   SignInButton,
-  UserButton,
 } from "@clerk/nextjs";
 
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { content } from "@/app/content";
+import AccountMenu from "../ui/AccountMenu";
 
 type NavBarProps = {
   navItems?: { name: string; slug: string }[];
@@ -48,24 +49,35 @@ const NavBar = ({ navItems }: NavBarProps) => {
 
       <Stack spacing={1}>
         <ClerkLoading>
-          <Button>
-            <CircularProgress size={25} />
-          </Button>
+          <SignedIn>
+            <IconButton
+              aria-disabled="true"
+              sx={{ ":hover": { cursor: "auto", backgroundColor: "inherit" } }}
+            >
+              <CircularProgress size={25} />
+            </IconButton>
+          </SignedIn>
+
+          <SignedOut>
+            <Button
+              aria-disabled="true"
+              sx={{ ":hover": { cursor: "auto", backgroundColor: "inherit" } }}
+            >
+              <CircularProgress size={25} />
+            </Button>
+          </SignedOut>
         </ClerkLoading>
 
         <ClerkLoaded>
           <SignedIn>
             <SignOutButton>
-              {/* <Button>
-                <Typography variant="button">Sign Out</Typography>
-              </Button> */}
-
-              <UserButton />
+              <AccountMenu />
             </SignOutButton>
           </SignedIn>
+
           <SignedOut>
             <SignInButton mode="modal">
-              <Button>
+              <Button aria-label="sign-in">
                 <Typography variant="button">Sign In</Typography>
               </Button>
             </SignInButton>
