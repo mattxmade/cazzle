@@ -17,9 +17,9 @@ import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import Dialog from "@mui/material/Dialog";
 
+import HomeIcon from "@mui/icons-material/Home";
 import CloseIcon from "@mui/icons-material/Close";
 import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
-
 import Typography from "@mui/material/Typography";
 
 let agent = true;
@@ -149,7 +149,7 @@ const AccountMenu = () => {
 
         <MenuItem href="/" component={NextLink}>
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <HomeIcon fontSize="small" />
           </ListItemIcon>
           Home
         </MenuItem>
