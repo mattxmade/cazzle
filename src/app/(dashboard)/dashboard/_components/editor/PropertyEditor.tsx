@@ -56,7 +56,7 @@ const PropertyEditor = (props: PropertyEditorProps) => {
   const handleUpdateFormRef = (key: string, value: any) => {
     if (
       !Object.hasOwn(propertyData, key) ||
-      typeof propertyData[key] !== typeof value
+      (typeof propertyData[key] !== typeof value && propertyData[key] !== null)
     )
       return;
 
