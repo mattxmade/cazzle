@@ -12,7 +12,7 @@ type ToastProps = {
   action?: React.ReactNode;
   handleClose?: () => void;
   children?: React.ReactNode;
-  snackbarProps: SnackbarProps;
+  snackbarProps?: SnackbarProps;
 };
 
 const Toast = (props: ToastProps) => {
