@@ -1,4 +1,4 @@
-import Snackbar from "@mui/material/Snackbar/Snackbar";
+import Snackbar, { SnackbarProps } from "@mui/material/Snackbar/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent/SnackbarContent";
 import Slide, { SlideProps } from "@mui/material/Slide";
 
@@ -12,6 +12,7 @@ type ToastProps = {
   action?: React.ReactNode;
   handleClose?: () => void;
   children?: React.ReactNode;
+  snackbarProps: SnackbarProps;
 };
 
 const Toast = (props: ToastProps) => {
@@ -22,6 +23,7 @@ const Toast = (props: ToastProps) => {
       onClose={props.handleClose}
       autoHideDuration={2200}
       TransitionComponent={SlideTransition}
+      {...props.snackbarProps}
     >
       {!props.children ? (
         <SnackbarContent message={props.message} />
