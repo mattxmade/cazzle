@@ -1,6 +1,7 @@
 import Snackbar, { SnackbarProps } from "@mui/material/Snackbar/Snackbar";
 import SnackbarContent from "@mui/material/SnackbarContent/SnackbarContent";
 import Slide, { SlideProps } from "@mui/material/Slide";
+import { Alert, AlertProps } from "@mui/material";
 
 function SlideTransition(props: SlideProps) {
   return <Slide {...props} direction="up" />;
@@ -12,6 +13,7 @@ type ToastProps = {
   action?: React.ReactNode;
   handleClose?: () => void;
   children?: React.ReactNode;
+  alertProps?: AlertProps;
   snackbarProps?: SnackbarProps;
 };
 
@@ -28,7 +30,9 @@ const Toast = (props: ToastProps) => {
       {!props.children ? (
         <SnackbarContent message={props.message} />
       ) : (
-        <>{props.children}</>
+        <Alert variant="filled" sx={{ width: "100%" }} {...props.alertProps}>
+          {props.children}
+        </Alert>
       )}
     </Snackbar>
   );
