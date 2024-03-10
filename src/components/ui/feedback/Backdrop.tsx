@@ -7,7 +7,7 @@ type Props = {
 
 const Backdrop = ({ open }: Props) => {
   return (
-    <MuiBackdrop sx={{ color: "#fff", zIndex: 1000 }} open={open}>
+    <MuiBackdrop sx={{ color: "#fff", zIndex: 10000 }} open={open}>
       <CircularProgress color="inherit" />
     </MuiBackdrop>
   );
