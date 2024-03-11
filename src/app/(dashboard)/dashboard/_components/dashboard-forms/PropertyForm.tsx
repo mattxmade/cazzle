@@ -34,7 +34,7 @@ import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
 
-type PropertyEditorProps = {
+type PropertyFormProps = {
   formErrors: PropertyErrors | null;
   propertyData: PropertyListing_;
   handleUpdateLocalData: UpdateFormDataFuncion;
@@ -49,9 +49,9 @@ const layout = {
   backgroundColor: "rgba(255, 255, 255, 0.5)",
 };
 
-const PropertyEditor = (props: PropertyEditorProps) => {
+const PropertyForm = (props: PropertyFormProps) => {
   const { propertyData, handleUpdateLocalData } = props;
-  const editedData = useRef<Partial<PropertyListing_> | null>(null);
+  const formData = useRef<Partial<PropertyListing_> | null>(null);
 
   const handleUpdateFormRef = (key: string, value: any) => {
     if (
@@ -60,16 +60,16 @@ const PropertyEditor = (props: PropertyEditorProps) => {
     )
       return;
 
-    !editedData.current
-      ? (editedData.current = { [key]: value })
-      : (editedData.current = { ...editedData.current, [key]: value });
+    !formData.current
+      ? (formData.current = { [key]: value })
+      : (formData.current = { ...formData.current, [key]: value });
 
-    editedData.current = propertyDataHelper(key as keyof PropertyDocument, {
+    formData.current = propertyDataHelper(key as keyof PropertyDocument, {
       server: propertyData,
-      client: editedData.current,
+      client: formData.current,
     }) as Partial<PropertyListing_>;
 
-    editedData.current && handleUpdateLocalData("property", editedData.current);
+    formData.current && handleUpdateLocalData("property", formData.current);
   };
 
   return (
@@ -205,9 +205,11 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               id="propertyNumber"
               label="Property number"
               validation="number"
-              defaultValue={extractNumberFromString(
+              defaultValue={
                 propertyData.displayAddress
-              )}
+                  ? extractNumberFromString(propertyData.displayAddress)
+                  : ""
+              }
               handleUpdateFormRef={handleUpdateFormRef}
               textFieldProps={{
                 error: props.formErrors?.propertyNumber ? true : false,
@@ -267,12 +269,16 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Full market price"
               validation="currency"
               handleUpdateFormRef={handleUpdateFormRef}
-              defaultValue={formatPrice(
-                propertyData.fullMarketPrice,
-                "GBP",
-                undefined,
-                true
-              )}
+              defaultValue={
+                propertyData.fullMarketPrice
+                  ? formatPrice(
+                      propertyData.fullMarketPrice,
+                      "GBP",
+                      undefined,
+                      true
+                    )
+                  : ""
+              }
               textFieldProps={{
                 InputProps: {
                   startAdornment: (
@@ -291,12 +297,16 @@ const PropertyEditor = (props: PropertyEditorProps) => {
               label="Deposit value"
               validation="number"
               handleUpdateFormRef={handleUpdateFormRef}
-              defaultValue={formatPrice(
-                propertyData.depositValue,
-                "GBP",
-                undefined,
-                true
-              )}
+              defaultValue={
+                propertyData.depositValue
+                  ? formatPrice(
+                      propertyData.depositValue,
+                      "GBP",
+                      undefined,
+                      true
+                    )
+                  : ""
+              }
               textFieldProps={{
                 InputProps: {
                   startAdornment: (
@@ -365,7 +375,7 @@ const PropertyEditor = (props: PropertyEditorProps) => {
             <SelectDropdown
               id="propertyType"
               label="Property type"
-              defaultValue={propertyData.propertyType.code}
+              defaultValue={propertyData?.propertyType?.code ?? ""}
               handleUpdateFormRef={handleUpdateFormRef}
               formControlProps={{
                 size: "small",
@@ -435,7 +445,7 @@ const PropertyEditor = (props: PropertyEditorProps) => {
           <TextFieldChipSelect
             id="features"
             label="feature"
-            values={propertyData.features}
+            values={propertyData.features ?? []}
             updateFormRef={handleUpdateFormRef}
             textFieldProps={{
               error: props.formErrors?.features ? true : false,
@@ -501,9 +511,11 @@ const PropertyEditor = (props: PropertyEditorProps) => {
             id="description"
             label="Description"
             validation="multiline"
-            defaultValue={propertyData.description.reduce(
-              (prev, curr) => (prev += curr)
-            )}
+            defaultValue={
+              propertyData?.description?.reduce(
+                (prev, curr) => (prev += curr)
+              ) ?? ""
+            }
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{
               fullWidth: true,
@@ -518,4 +530,4 @@ const PropertyEditor = (props: PropertyEditorProps) => {
   );
 };
 
-export default PropertyEditor;
+export default PropertyForm;
