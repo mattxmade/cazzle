@@ -54,11 +54,7 @@ const PropertyForm = (props: PropertyFormProps) => {
   const formData = useRef<Partial<PropertyListing_> | null>(null);
 
   const handleUpdateFormRef = (key: string, value: any) => {
-    if (
-      !Object.hasOwn(propertyData, key) ||
-      (typeof propertyData[key] !== typeof value && propertyData[key] !== null)
-    )
-      return;
+    if (!Object.hasOwn(propertyData, key)) return;
 
     !formData.current
       ? (formData.current = { [key]: value })
@@ -295,7 +291,7 @@ const PropertyForm = (props: PropertyFormProps) => {
             <MultilineTextField
               id="depositValue"
               label="Deposit value"
-              validation="number"
+              validation="currency"
               handleUpdateFormRef={handleUpdateFormRef}
               defaultValue={
                 propertyData.depositValue
