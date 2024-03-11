@@ -30,6 +30,12 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.currentTarget;
+    if (input.value === "") {
+      props.handleUpdateFormRef(props.id, "");
+      setText(input.value);
+      return;
+    }
+
     if (!props.validation) return handleValidInput(input.value);
 
     switch (props.validation) {
