@@ -25,6 +25,7 @@ type DashboardAppBarProps = {
   open?: boolean;
   title: string;
   drawerWidth: 240;
+  children?: React.ReactNode;
   handleDrawerOpen: () => void;
 };
 
@@ -64,6 +65,17 @@ const DashboardAppBar = (props: DashboardAppBarProps) => {
               </IconButton>
             </ClerkLoading>
           ) : null}
+
+          <Box
+            sx={{
+              right: 0,
+              transition: "0.3s",
+              position: "fixed",
+              transform: `translate(-80px, ${loaded ? 0 : "-80px"})`,
+            }}
+          >
+            {props.children}
+          </Box>
 
           <SignedIn>
             <ClerkLoaded>
