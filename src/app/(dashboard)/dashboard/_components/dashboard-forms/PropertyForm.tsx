@@ -19,7 +19,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 import { dashboard } from "@/app/content";
 import type { PropertyListing_ } from "@/types";
-import type { PropertyErrors, UpdateFormDataFuncion } from "../Dashboard";
+import type { PropertyErrors, FormDataFuncion } from "../Dashboard";
 
 import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
@@ -35,9 +35,10 @@ import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
 
 type PropertyFormProps = {
+  newForm?: boolean;
   formErrors: PropertyErrors | null;
   propertyData: PropertyListing_;
-  handleUpdateLocalData: UpdateFormDataFuncion;
+  handleUpdateLocalData: FormDataFuncion;
 };
 
 export type UpdateFormRefFunction = (key: string, value: any) => void;
@@ -54,7 +55,7 @@ const PropertyForm = (props: PropertyFormProps) => {
   const formData = useRef<Partial<PropertyListing_> | null>(null);
 
   const handleUpdateFormRef = (key: string, value: any) => {
-    if (!Object.hasOwn(propertyData, key)) return;
+    if (!props.newForm && !Object.hasOwn(propertyData, key)) return;
 
     !formData.current
       ? (formData.current = { [key]: value })
