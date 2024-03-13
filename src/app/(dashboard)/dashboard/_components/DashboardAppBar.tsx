@@ -58,27 +58,24 @@ const DashboardAppBar = (props: DashboardAppBarProps) => {
             {title}
           </Typography>
 
-          {!loaded ? (
-            <ClerkLoading>
-              <IconButton>
-                <CircularProgress size={25} sx={{ color: "white" }} />
-              </IconButton>
-            </ClerkLoading>
-          ) : null}
-
-          <Box
-            sx={{
-              right: 0,
-              transition: "0.3s",
-              position: "fixed",
-              transform: `translate(-80px, ${loaded ? 0 : "-80px"})`,
-            }}
-          >
-            {props.children}
-          </Box>
+          <ClerkLoading>
+            <IconButton>
+              <CircularProgress size={25} sx={{ color: "white" }} />
+            </IconButton>
+          </ClerkLoading>
 
           <SignedIn>
             <ClerkLoaded>
+              <Box
+                sx={{
+                  height: 64,
+                  overflowY: "hidden",
+                  width: loaded ? "fit-content" : 0,
+                }}
+              >
+                {props.children}
+              </Box>
+
               <AccountMenu />
             </ClerkLoaded>
           </SignedIn>
