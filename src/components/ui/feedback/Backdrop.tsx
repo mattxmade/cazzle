@@ -1,13 +1,17 @@
-import MuiBackdrop from "@mui/material/Backdrop";
+import MuiBackdrop, { BackdropProps } from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 type Props = {
   open: boolean;
+  backdropProps?: Partial<BackdropProps>;
 };
 
-const Backdrop = ({ open }: Props) => {
+const Backdrop = ({ open, backdropProps }: Props) => {
   return (
-    <MuiBackdrop sx={{ color: "#fff", zIndex: 10000 }} open={open}>
+    <MuiBackdrop
+      open={open}
+      sx={{ ...backdropProps?.sx, color: "#fff", zIndex: 10000 }}
+    >
       <CircularProgress color="inherit" />
     </MuiBackdrop>
   );
