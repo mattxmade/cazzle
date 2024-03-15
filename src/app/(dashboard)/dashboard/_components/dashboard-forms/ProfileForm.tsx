@@ -51,7 +51,7 @@ const ProfileForm = () => {
         <FormSection heading="Address">
           <MultilineTextField
             id="street-number"
-            label="Street number"
+            label="number"
             validation="number"
             handleUpdateFormRef={() => {}}
             textFieldProps={{ ...textFieldProps }}
@@ -119,8 +119,8 @@ const ProfileForm = () => {
           />
 
           <MultilineTextField
-            id="banner"
-            label="Banner"
+            id="ad"
+            label="Ad"
             validation="singleline"
             handleUpdateFormRef={() => {}}
             textFieldProps={{ ...textFieldProps }}
