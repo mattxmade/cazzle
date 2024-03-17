@@ -16,8 +16,8 @@ const MenuItems = ({ menuItems, handleMenuItem }: MenuItemsProps) => {
   return (
     <List>
       {menuItems.map((menuItem, i) => (
-        <Tooltip title={menuItem.text} placement={"right"}>
-          <ListItem key={menuItem.name} disablePadding>
+        <Tooltip key={menuItem.name} title={menuItem.text} placement={"right"}>
+          <ListItem disablePadding>
             <ListItemButton
               aria-label={menuItem.text.toLowerCase()}
               onClick={() => handleMenuItem(menuItem.name)}
