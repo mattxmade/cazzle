@@ -19,7 +19,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 
 import { dashboard } from "@/app/content";
 import type { PropertyListing_ } from "@/types";
-import type { PropertyErrors, FormDataFuncion } from "../Dashboard";
+import type { PropertyErrors, FormDataFunction } from "../Dashboard";
 
 import currencies from "@/utils/currencies";
 import formatPrice from "@/utils/formatPrice";
@@ -38,7 +38,7 @@ type PropertyFormProps = {
   newForm?: boolean;
   formErrors: PropertyErrors | null;
   propertyData: PropertyListing_;
-  handleUpdateLocalData: FormDataFuncion;
+  handleUpdateLocalData: FormDataFunction;
 };
 
 export type UpdateFormRefFunction = (key: string, value: any) => void;
