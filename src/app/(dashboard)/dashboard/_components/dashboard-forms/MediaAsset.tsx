@@ -48,12 +48,6 @@ const MediaAsset = (props: MediaAssetProps) => {
       <ButtonGroup>
         <Tooltip title={`Add ${props.title}`}>
           <Button variant="contained" aria-label="add asset">
-            <AddPhotoAlternateIcon />
-          </Button>
-        </Tooltip>
-
-        <Tooltip title={`Upload ${props.title}`}>
-          <Button variant="contained" color="info" aria-label="upload asset">
             <Input
               aria-hidden
               type="file"
@@ -61,17 +55,23 @@ const MediaAsset = (props: MediaAssetProps) => {
               inputProps={{ accept: "image/jpg" }}
               sx={{ display: "none" }}
             />
+            <AddPhotoAlternateIcon />
+          </Button>
+        </Tooltip>
+
+        <Tooltip title={`Upload ${props.title}`}>
+          <Button
+            type="submit"
+            color="info"
+            variant="contained"
+            aria-label="upload asset"
+          >
             <UploadFileIcon />
           </Button>
         </Tooltip>
 
         <Tooltip title={`Remove ${props.title}`}>
-          <Button
-            variant="contained"
-            color="error"
-            aria-label="delete asset"
-            sx={{ width: "fit-content" }}
-          >
+          <Button variant="contained" color="error" aria-label="delete asset">
             <DeleteIcon />
           </Button>
         </Tooltip>
