@@ -1,46 +1,62 @@
 "use client";
 
 import { useCallback, useRef, useState, useTransition } from "react";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { ClerkLoaded, SignedIn, SignedOut } from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
-import AdaptiveBox from "@/components/mui/box/AdaptiveBox";
-import ElevationScroll from "@/components/mui/ElevationOnScroll";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-
-import Button from "@mui/material/Button";
+import AddHomeWorkIcon from "@mui/icons-material/AddHomeWork";
 import CircularProgress from "@mui/material/CircularProgress";
+
+import PostAddIcon from "@mui/icons-material/PostAdd";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import HolidayVillageIcon from "@mui/icons-material/HolidayVillage";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
+
+import AdaptiveBox from "@/components/mui/box/AdaptiveBox";
+import ElevationScroll from "@/components/mui/ElevationOnScroll";
 
 import MenuItems from "./MenuItems";
 import MenuDrawer from "./MenuDrawer";
-
 import DashboardAppBar from "./DashboardAppBar";
 import DashboardModal from "./DashboardModal";
 import DashboardView from "./DashboardView";
 import DashboardItem from "./DashboardItem";
 
-import PropertyEditor from "./editor/PropertyEditor";
+import ProfileForm from "./dashboard-forms/ProfileForm";
+import PropertyForm from "./dashboard-forms/PropertyForm";
 import AlertDialog from "@/components/ui/feedback/AlertDialog";
 import Backdrop from "@/components/ui/feedback/Backdrop";
+
+import Toast from "@/components/ui/feedback/toast/Toast";
+import useToast from "@/components/ui/feedback/toast/useToast";
 
 import theme from "@/theme";
 import { customTheme } from "@/styles/custom";
 
-import { validate } from "@/data/validate";
 import type { PropertyListing_ } from "@/types";
-import { type DbResponse } from "@/data/dbStatus";
-import { type AgentModel, updateDocument } from "@/server/actions/agent/agent";
+import { validate } from "@/data/validate";
+import { getStatus, type DbResponse } from "@/data/dbStatus";
+import { saveDocument, getDocuments } from "@/server/actions/agent/agent";
+import { BranchDetails, genNewData, validDocumentData } from "@/types/runtime";
+
+export type PartialData = Partial<BranchDetails> | Partial<PropertyListing_>;
+type DashboardKey = "property" | "agent";
+type DocumentType = "properties" | "agents" | "";
 
 export type FormDataRef = {
-  type: string;
-  data: Partial<PropertyListing_>;
+  type: DashboardKey;
+  data: PartialData;
 } | null;
 
 export type FormErrors = {
-  for: "property" | "listing";
+  for: DashboardKey;
   errors: PropertyErrors;
 };
 
@@ -48,38 +64,58 @@ export type PropertyErrors = {
   [key in keyof Partial<PropertyListing_>]: string;
 };
 
-export type UpdateFormDataFuncion = (
-  type: string,
-  updatedData: Partial<PropertyListing_>
-) => void;
+export type ProfileErrors = {
+  [key in keyof Partial<BranchDetails>]: string;
+};
+
+export type FormDataFunction = (type: DashboardKey, data: PartialData) => void;
 
 type DashboardProps = {
+  branch: Partial<BranchDetails>;
   properties: PropertyListing_[];
   children?: React.ReactNode;
 };
 
 const menuDrawerWidth = 240;
 
+const menuCarousel = {
+  "agent-profile": 0,
+  "new-property": 64,
+  "properties-list": 64 * 2,
+  "new-listing": 64 * 3,
+  "view-listings": 64 * 4,
+};
+
 const Dashboard = (props: DashboardProps) => {
+  const [properties, setProperties] = useState(props.properties);
+
   const [pending, startTransition] = useTransition();
-  const [serverResponse, setServerResponse] = useState<DbResponse | null>(null);
+  const [taskResponse, setTaskResponse] = useState<Omit<
+    DbResponse,
+    "data"
+  > | null>(null);
 
   const [open, setOpen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const [view, setView] = useState<string>("properties-view");
+  const [view, setView] = useState("new-property");
 
   const initialData = useRef<FormDataRef>(null);
-  const unsavedData = useRef<Partial<PropertyListing_> | null>(null);
+  const unsavedData = useRef<PartialData | null>(null);
+
+  const [canSubmitData, setCanSubmitData] = useState(false);
+  const [hasDataChanged, setHasDataChanged] = useState(false);
 
   const alertMessage = useRef<{ title: string; desc?: string } | null>(null);
   const [showAlert, setShowAlert] = useState(false);
 
   const [formErrors, setFormErrors] = useState<{
-    for: "property" | "listing";
+    for: "agent" | "property";
     errors: PropertyErrors;
   } | null>(null);
 
-  const handleUpdateLocalData: UpdateFormDataFuncion = (type, updatedData) => {
+  const toastTools = useToast();
+
+  const handleUpdateLocalData: FormDataFunction = (type, updatedData) => {
     if (!initialData.current || !updatedData) return;
     if (initialData.current.type.toLowerCase() !== type.toLowerCase()) return;
 
@@ -89,55 +125,123 @@ const Dashboard = (props: DashboardProps) => {
     const valuesToUpdate: Partial<PropertyListing_> = {};
 
     for (let i = 0; i < prevData.length; i++) {
-      const prevDataValue = initialData.current.data[prevData[i]];
-      const currDataValue = updatedData[currData[i]];
+      const key = currData[i];
 
-      currDataValue !== prevDataValue &&
-        updatedData[currData[i]] &&
-        (valuesToUpdate[currData[i]] = updatedData[currData[i]]);
+      if (key) {
+        const currDataValue = updatedData[currData[i]];
+        valuesToUpdate[currData[i]] = currDataValue;
+      }
     }
 
     unsavedData.current = valuesToUpdate;
+    console.log(unsavedData.current);
   };
 
-  const handleSaveChanges = async (
-    e: React.PointerEvent<HTMLButtonElement>
-  ) => {
+  const handleNewFormData: FormDataFunction = (type, newData) => {
+    if (!genNewData[type] || !newData) return;
+
+    switch (type) {
+      case "agent":
+        unsavedData.current = {
+          ...genNewData[type],
+          ...newData,
+        } as Partial<BranchDetails>;
+
+        break;
+
+      case "property":
+        unsavedData.current = {
+          ...genNewData[type],
+          ...newData,
+        } as Partial<PropertyListing_>;
+        break;
+    }
+
+    unsavedData.current && !hasDataChanged && setHasDataChanged(true);
+
+    console.log(unsavedData.current);
+
+    unsavedData.current &&
+      validDocumentData(type, unsavedData.current) &&
+      setCanSubmitData(true);
+  };
+
+  const handleSaveChanges = (e: React.PointerEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     if (pending) return;
     showAlert && setShowAlert(false);
 
+    console.log(unsavedData.current);
+
     if (!initialData.current || !unsavedData.current) return;
 
-    // TODO
-    const documentType =
-      initialData.current.type === "Property" ? "properties" : "agents";
+    let documentType: DocumentType = "";
+    let data: any = {};
 
-    const data = {
-      ...initialData.current.data,
-      ...unsavedData.current,
-    } as PropertyListing_;
+    if (initialData.current.type === "property") {
+      documentType = "properties";
 
-    const result = validate("property", data);
+      data = {
+        ...initialData.current.data,
+        ...unsavedData.current,
+      } as PropertyListing_;
+    }
 
+    // TODO: user feedback data is invalid
+    if (!data || !documentType) return;
+
+    // Client side validation
+    const { type } = initialData.current;
+    const result = validate(type, data);
+
+    // Feedback if form fields are invalid or incomplete
     if (result.errors) {
       console.log(result.errors);
-      setFormErrors({ for: "property", errors: result.errors });
+      setFormErrors({ for: type, errors: result.errors });
       return;
     }
 
+    // Data is ok, so create new FormData instance
     const formData = new FormData();
 
     formData.append("type", documentType);
     formData.append("data", JSON.stringify(data));
 
     startTransition(async () => {
-      const response = await updateDocument(formData);
+      const response = await saveDocument(formData);
       console.log(response);
 
-      response && setServerResponse(response);
-      response.status === "success" ? completeDashboardTask() : null;
+      if (!response) return setTaskResponse(getStatus.server.error);
+
+      const { status, message } = response;
+
+      // Update Properties state
+      if (response.data && response.data.type === "properties") {
+        console.log(response.data.document);
+
+        setProperties((prevData) => {
+          if (!response.data) return prevData;
+
+          return prevData.map((item) => {
+            const dataItem =
+              item._id === response.data?.document._id
+                ? response.data.document
+                : item;
+
+            return dataItem as PropertyListing_;
+          });
+        });
+      }
+
+      const timeout = setTimeout(() => {
+        clearTimeout(timeout);
+
+        setTaskResponse({ status, message });
+        toastTools.handleOpen();
+      }, 2000);
+
+      completeDashboardTask();
     });
   };
 
@@ -151,10 +255,28 @@ const Dashboard = (props: DashboardProps) => {
     handleCloseAllDialogs();
   };
 
+  const handlLoadscreen = () => {
+    setView("loadscreen");
+
+    const resetFlow = setTimeout(() => {
+      clearTimeout(resetFlow);
+
+      const lastView = view;
+      setView(lastView);
+
+      setTaskResponse({ status: "success", message: "Data cleared" });
+      toastTools.handleOpen();
+    }, 2000);
+  };
+
   const handleClearData = () => {
-    initialData.current = null;
+    unsavedData.current && handlLoadscreen();
+
     unsavedData.current = null;
+    initialData.current = null;
+
     setFormErrors(null);
+    setHasDataChanged(false);
   };
 
   const handleDrawerOpen = useCallback(() => {
@@ -176,7 +298,7 @@ const Dashboard = (props: DashboardProps) => {
     setShowAlert(true);
   };
 
-  const handleOpenModal = (type: string, data: PropertyListing_) => {
+  const handleOpenModal = (type: DashboardKey, data: PropertyListing_) => {
     initialData.current = { type, data };
     setOpenModal(true);
   };
@@ -186,9 +308,14 @@ const Dashboard = (props: DashboardProps) => {
     handleAlertSetup("Changes will be lost, would you like to save data?");
   }, [openModal]);
 
-  const handleMenuItem = useCallback(() => {}, []);
+  const handleSetView = useCallback((requestedView: string) => {
+    setView(requestedView);
+    handleClearData();
 
-  const properties = props.properties; // convex.API
+    if (requestedView === "agent-profile") {
+      initialData.current = { type: "agent", data: props.branch };
+    }
+  }, []);
 
   return (
     <Box>
@@ -198,7 +325,94 @@ const Dashboard = (props: DashboardProps) => {
           open={open}
           drawerWidth={menuDrawerWidth}
           handleDrawerOpen={handleDrawerOpen}
-        />
+        >
+          <ClerkLoaded>
+            <Stack
+              sx={{
+                mx: 3,
+                position: "relative",
+                overflowY: "hidden",
+                transition: "0.3s",
+                transform: `translate(0 , -${
+                  menuCarousel[view as keyof typeof menuCarousel] ?? 0
+                }px)`,
+              }}
+            >
+              <Stack sx={{ height: 64 }} justifyContent="center">
+                {view === "agent-profile" ? (
+                  <ButtonGroup>
+                    <Button
+                      disabled={!hasDataChanged}
+                      variant="contained"
+                      color="success"
+                    >
+                      Save profile
+                    </Button>
+                    <Button
+                      disabled={!hasDataChanged}
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleClearData}
+                    >
+                      Discard changes
+                    </Button>
+                  </ButtonGroup>
+                ) : null}
+              </Stack>
+
+              <Stack sx={{ height: 64 }} justifyContent="center">
+                {view === "new-property" ? (
+                  <ButtonGroup>
+                    <Button
+                      disabled={!canSubmitData}
+                      variant="contained"
+                      color="success"
+                    >
+                      Submit property
+                    </Button>
+                    <Button
+                      disabled={!hasDataChanged}
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleClearData}
+                    >
+                      Clear fields
+                    </Button>
+                  </ButtonGroup>
+                ) : null}
+              </Stack>
+
+              <Stack sx={{ height: 64 }} justifyContent="center">
+                {view === "properties-list" ? <></> : null}
+              </Stack>
+
+              <Stack sx={{ height: 64 }} justifyContent="center">
+                {view === "new-listing" ? (
+                  <ButtonGroup>
+                    <Button
+                      disabled={!hasDataChanged}
+                      variant="contained"
+                      color="success"
+                    >
+                      Submit listing
+                    </Button>
+                    <Button
+                      disabled={!hasDataChanged}
+                      variant="contained"
+                      color="secondary"
+                    >
+                      Clear fields
+                    </Button>
+                  </ButtonGroup>
+                ) : null}
+              </Stack>
+
+              <Stack sx={{ height: 64 }} justifyContent="center">
+                {view === "view-listings" ? <></> : null}
+              </Stack>
+            </Stack>
+          </ClerkLoaded>
+        </DashboardAppBar>
       </ElevationScroll>
       <MenuDrawer
         open={open}
@@ -208,39 +422,63 @@ const Dashboard = (props: DashboardProps) => {
         <Divider />
         <MenuItems
           menuItems={[
-            { name: "details", icon: "details", text: "Agency Details" },
+            {
+              name: "agent-profile",
+              Icon: <AccountCircleIcon />,
+              text: "Agency Profile",
+            },
           ]}
-          handleMenuItem={handleMenuItem}
+          handleMenuItem={handleSetView}
         />
 
         <Divider />
 
         <MenuItems
           menuItems={[
-            { name: "addProperty", icon: "addProperty", text: "Add Property" },
-            { name: "properties", icon: "properties", text: "Properties List" },
+            {
+              name: "new-property",
+              Icon: <AddHomeWorkIcon />,
+              text: "New Property",
+            },
+            {
+              name: "properties-list",
+              Icon: <HolidayVillageIcon />,
+              text: "Properties List",
+            },
           ]}
-          handleMenuItem={handleMenuItem}
+          handleMenuItem={handleSetView}
         />
 
         <Divider />
 
         <MenuItems
           menuItems={[
-            { name: "newListing", icon: "newListing", text: "New Listing" },
-            { name: "listings", icon: "listings", text: "View Listings" },
+            {
+              name: "new-listing",
+              Icon: <PostAddIcon />,
+              text: "New Listing",
+            },
+            {
+              name: "view-listings",
+              Icon: <ListAltIcon />,
+              text: "View Listings",
+            },
           ]}
-          handleMenuItem={handleMenuItem}
+          handleMenuItem={handleSetView}
         />
       </MenuDrawer>
 
       <Box
+        className="dashboard-view"
         sx={{
+          top: 64,
+          position: "relative",
           width: "100%",
           display: "flex",
-          minHeight: "100vh",
+          height: "calc(100vh - 64px)",
           overflowX: "hidden",
-          padding: theme.spacing(4),
+          padding: view === "loadscreen" ? 0 : theme.spacing(4),
+          paddingTop: theme.spacing(0),
           backgroundColor: customTheme.backgroundColor.dashboard.main,
         }}
       >
@@ -255,20 +493,54 @@ const Dashboard = (props: DashboardProps) => {
             margin={65}
             sx={{
               gap: theme.spacing(1),
+              height: "max-content",
               display: "grid",
               flex: "auto",
               alignContent: "flex-start",
-              marginTop: 9,
-              marginBottom: 2,
+              marginTop: view === "loadscreen" ? 0 : 6,
+              marginBottom: view === "loadscreen" ? 0 : 2,
+              zIndex: 0,
             }}
           >
-            <DashboardView viewName="properties-view" currentView={view}>
+            <DashboardView viewName="loadscreen" currentView={view}>
+              <Backdrop
+                open={true}
+                backdropProps={{
+                  sx: { height: "calc(100vh - 64px)", position: "relative" },
+                }}
+              />
+            </DashboardView>
+            <DashboardView viewName="dashboard" currentView={view}>
+              <Typography variant="h2" fontSize={28}>
+                Choose a view
+              </Typography>
+            </DashboardView>
+            <DashboardView viewName="agent-profile" currentView={view}>
+              <Typography variant="h2" fontSize={28}>
+                Agent Profile
+              </Typography>
+              <ProfileForm />
+            </DashboardView>
+            <DashboardView viewName="new-property" currentView={view}>
+              <Typography variant="h2" fontSize={28}>
+                New Property
+              </Typography>
+              <PropertyForm
+                newForm={true}
+                propertyData={{} as PropertyListing_}
+                handleUpdateLocalData={handleNewFormData}
+                formErrors={
+                  formErrors?.for === "property" ? formErrors.errors : null
+                }
+              />
+            </DashboardView>
+            <DashboardView viewName="properties-list" currentView={view}>
               {properties?.length ? (
                 properties.map((propertyData) => (
                   <DashboardItem key={propertyData._id} item={propertyData}>
                     <Button
                       aria-label="edit property"
-                      onClick={() => handleOpenModal("Property", propertyData)}
+                      onClick={() => handleOpenModal("property", propertyData)}
                     >
                       <BorderColorOutlinedIcon />
                     </Button>
@@ -288,9 +560,30 @@ const Dashboard = (props: DashboardProps) => {
                 </Box>
               )}
             </DashboardView>
+            <DashboardView viewName="new-listing" currentView={view}>
+              <Typography>New Listing</Typography>
+            </DashboardView>
+            <DashboardView viewName="view-listings" currentView={view}>
+              <Typography>View Listings</Typography>
+            </DashboardView>
           </AdaptiveBox>
         </SignedIn>
       </Box>
+
+      {taskResponse ? (
+        <Toast
+          open={toastTools.open}
+          message={taskResponse.message}
+          handleClose={toastTools.handleClose}
+          alertProps={{ severity: taskResponse.status }}
+          snackbarProps={{
+            autoHideDuration: 5000,
+            anchorOrigin: { vertical: "bottom", horizontal: "right" },
+          }}
+        >
+          {taskResponse.message}
+        </Toast>
+      ) : null}
 
       <DashboardModal
         title={initialData.current?.type}
@@ -328,8 +621,8 @@ const Dashboard = (props: DashboardProps) => {
           </AlertDialog>
         ) : null}
 
-        {initialData.current?.type === "Property" ? (
-          <PropertyEditor
+        {initialData.current?.type === "property" ? (
+          <PropertyForm
             formErrors={
               formErrors?.for === "property" ? formErrors.errors : null
             }
