@@ -1,9 +1,9 @@
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack/Stack";
-import Input from "@mui/material/Input";
+import Input, { InputProps } from "@mui/material/Input";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
 
@@ -18,13 +18,40 @@ import NoItemCard from "@/components/NoItemCard";
 type MediaAssetProps = {
   title: string;
   Icon?: React.ReactNode;
-  image?: { src: string; alt: string };
+  asset?: { src: string; alt: string };
   label?: string;
+  inputAccepts: "image/jpg";
 };
 
 const MediaAsset = (props: MediaAssetProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState(props.asset ?? null);
+  const [upload, setUpload] = useState<File | null>(null);
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileInput = e.currentTarget as HTMLInputElement;
+    const { files } = fileInput;
+
+    if (!files?.length) return;
+
+    const fileData = files[0];
+    const blobUrl = URL.createObjectURL(files[0]);
+
+    fileData && setUpload(fileData);
+    blobUrl && setFile({ src: blobUrl, alt: fileData.name });
+  };
+
+  const handleRemoveFile = () => {
+    if (!file) return;
+
+    URL.revokeObjectURL(file.src);
+    setFile(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (file) URL.revokeObjectURL(file.src);
+    };
+  }, [file]);
 
   return (
     <Stack width={210} alignItems="center" spacing={1}>
@@ -37,11 +64,11 @@ const MediaAsset = (props: MediaAssetProps) => {
         overflow="hidden"
         borderRadius={1}
       >
-        {props.image ? (
+        {file ? (
           <Image
             fill
-            src={props.image.src}
-            alt={props.image.alt}
+            src={file.src}
+            alt={file.alt}
             style={{ objectFit: "cover" }}
           />
         ) : (
@@ -54,10 +81,10 @@ const MediaAsset = (props: MediaAssetProps) => {
           <Button component="label" variant="contained" aria-label="add asset">
             <Input
               aria-hidden
-              ref={inputRef}
               type="file"
               name="file"
-              inputProps={{ accept: "image/jpg" }}
+              onChange={handleFileInputChange}
+              inputProps={{ accept: props.inputAccepts }}
               sx={{
                 clip: "rect(0 0 0 0)",
                 clipPath: "inset(50%)",
@@ -92,11 +119,12 @@ const MediaAsset = (props: MediaAssetProps) => {
         <Tooltip title={`Remove ${props.title}`}>
           <Box>
             <Button
-              disabled={!props.image}
+              disabled={!file}
               variant="contained"
               color="error"
               aria-label="delete asset"
-              aria-disabled={!props.image}
+              aria-disabled={!file}
+              onClick={handleRemoveFile}
             >
               <DeleteIcon />
             </Button>
