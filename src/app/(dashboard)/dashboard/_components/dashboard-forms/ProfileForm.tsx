@@ -1,6 +1,8 @@
 import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
 import { type TextFieldProps } from "@mui/material";
 
+import MediaAsset from "./MediaAsset";
 import FormCard from "@/components/forms/FormCard";
 import FormSection from "@/components/forms/FormSection";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
@@ -125,6 +127,18 @@ const ProfileForm = () => {
             handleUpdateFormRef={() => {}}
             textFieldProps={{ ...textFieldProps }}
           />
+        </FormSection>
+      </FormCard>
+
+      <FormCard>
+        <FormSection heading="Media">
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <MediaAsset title="banner" inputAccepts="image/jpg" />
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <MediaAsset title="logo" inputAccepts="image/jpg" />
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <MediaAsset title="ad" inputAccepts="image/jpg" />
+          <Divider orientation="vertical" variant="middle" flexItem />
         </FormSection>
       </FormCard>
     </Stack>
