@@ -11,23 +11,25 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import CircularProgress from "@mui/material/CircularProgress";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 
 import NoItemCard from "@/components/NoItemCard";
 
 type MediaAssetProps = {
-  title: string;
-  Icon?: React.ReactNode;
+  name: string;
+  isPending: boolean;
+  isUploading: boolean;
   asset?: { src: string; alt: string };
-  label?: string;
   inputAccepts: "image/jpg";
+  handleFile: (file: File, asset: string) => void;
 };
 
 const MediaAsset = (props: MediaAssetProps) => {
-  const [file, setFile] = useState(props.asset ?? null);
-  const [upload, setUpload] = useState<File | null>(null);
+  const file = useRef<File | null>(null);
+  const [blob, setBlob] = useState(props.asset ?? null);
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChooseFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileInput = e.currentTarget as HTMLInputElement;
     const { files } = fileInput;
 
@@ -36,39 +38,47 @@ const MediaAsset = (props: MediaAssetProps) => {
     const fileData = files[0];
     const blobUrl = URL.createObjectURL(files[0]);
 
-    fileData && setUpload(fileData);
-    blobUrl && setFile({ src: blobUrl, alt: fileData.name });
+    file.current = fileData;
+    blobUrl && setBlob({ src: blobUrl, alt: fileData.name });
+  };
+
+  const handleUploadFile = () => {
+    if (!file.current) return;
+    props.handleFile(file.current, props.name);
   };
 
   const handleRemoveFile = () => {
-    if (!file) return;
+    if (!blob) return;
 
-    URL.revokeObjectURL(file.src);
-    setFile(null);
+    URL.revokeObjectURL(blob.src);
+
+    setBlob(null);
+    file.current = null;
   };
 
   useEffect(() => {
+    // Cleanup function
     return () => {
-      if (file) URL.revokeObjectURL(file.src);
+      blob && URL.revokeObjectURL(blob.src);
     };
-  }, [file]);
+  }, [blob]);
 
   return (
     <Stack width={210} alignItems="center" spacing={1}>
-      <Typography variant="button">{props.title}</Typography>
+      <Typography variant="button">{props.name}</Typography>
 
       <Box
         width={110}
         height={110}
         position="relative"
         overflow="hidden"
-        borderRadius={1}
+        borderRadius={2}
       >
-        {file ? (
+        {blob ? (
           <Image
             fill
-            src={file.src}
-            alt={file.alt}
+            src={blob.src}
+            alt={blob.alt}
             style={{ objectFit: "cover" }}
           />
         ) : (
@@ -77,13 +87,19 @@ const MediaAsset = (props: MediaAssetProps) => {
       </Box>
 
       <ButtonGroup>
-        <Tooltip title={`Add ${props.title}`}>
-          <Button component="label" variant="contained" aria-label="add asset">
+        <Tooltip title={`Add ${props.name}`}>
+          <Button
+            component="label"
+            variant="contained"
+            aria-label="add asset"
+            aria-disabled={props.isPending}
+            disabled={props.isPending}
+          >
             <Input
               aria-hidden
               type="file"
               name="file"
-              onChange={handleFileInputChange}
+              onChange={handleChooseFile}
               inputProps={{ accept: props.inputAccepts }}
               sx={{
                 clip: "rect(0 0 0 0)",
@@ -101,29 +117,34 @@ const MediaAsset = (props: MediaAssetProps) => {
           </Button>
         </Tooltip>
 
-        <Tooltip title={`Upload ${props.title}`}>
+        <Tooltip title={`Upload ${props.name}`}>
           <Box>
             <Button
-              disabled={!file}
+              disabled={!blob || props.isPending}
               type="submit"
               color="info"
               variant="contained"
               aria-label="upload asset"
-              aria-disabled={!file}
+              aria-disabled={!blob || props.isPending}
+              onClick={handleUploadFile}
             >
-              <UploadFileIcon />
+              {!props.isUploading ? (
+                <UploadFileIcon />
+              ) : (
+                <CircularProgress color="inherit" size={24} />
+              )}
             </Button>
           </Box>
         </Tooltip>
 
-        <Tooltip title={`Remove ${props.title}`}>
+        <Tooltip title={`Remove ${props.name}`}>
           <Box>
             <Button
-              disabled={!file}
+              disabled={!blob || props.isPending}
               variant="contained"
               color="error"
               aria-label="delete asset"
-              aria-disabled={!file}
+              aria-disabled={!blob || props.isPending}
               onClick={handleRemoveFile}
             >
               <DeleteIcon />
