@@ -1,9 +1,7 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack/Stack";
-import Input, { InputProps } from "@mui/material/Input";
+import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
 
@@ -18,50 +16,30 @@ import NoItemCard from "@/components/NoItemCard";
 
 type MediaAssetProps = {
   name: string;
+  file: File | null;
+  lastFile: File | null;
   isPending: boolean;
   isUploading: boolean;
-  asset?: { src: string; alt: string };
+  asset: { src: string; alt: string } | null;
   inputAccepts: "image/jpg";
-  handleFile: (file: File, asset: string) => void;
+  handlers: {
+    chooseFile: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    uploadFile: () => void;
+    removeFile: () => void;
+  };
 };
 
 const MediaAsset = (props: MediaAssetProps) => {
-  const file = useRef<File | null>(null);
-  const [blob, setBlob] = useState(props.asset ?? null);
+  const { asset, file, lastFile, handlers } = props;
 
-  const handleChooseFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileInput = e.currentTarget as HTMLInputElement;
-    const { files } = fileInput;
+  const isChooseButtonDisabled = props.isPending;
+  const isRemoveButtonDisabled = !asset || props.isPending;
+  let isUploadButtonDisabled = !asset || props.isPending;
 
-    if (!files?.length) return;
-
-    const fileData = files[0];
-    const blobUrl = URL.createObjectURL(files[0]);
-
-    file.current = fileData;
-    blobUrl && setBlob({ src: blobUrl, alt: fileData.name });
-  };
-
-  const handleUploadFile = () => {
-    if (!file.current) return;
-    props.handleFile(file.current, props.name);
-  };
-
-  const handleRemoveFile = () => {
-    if (!blob) return;
-
-    URL.revokeObjectURL(blob.src);
-
-    setBlob(null);
-    file.current = null;
-  };
-
-  useEffect(() => {
-    // Cleanup function
-    return () => {
-      blob && URL.revokeObjectURL(blob.src);
-    };
-  }, [blob]);
+  if (file && lastFile) {
+    if (file.name === lastFile.name && file.size === lastFile.size)
+      isUploadButtonDisabled = true;
+  }
 
   return (
     <Stack width={210} alignItems="center" spacing={1}>
@@ -74,11 +52,11 @@ const MediaAsset = (props: MediaAssetProps) => {
         overflow="hidden"
         borderRadius={2}
       >
-        {blob ? (
+        {asset ? (
           <Image
             fill
-            src={blob.src}
-            alt={blob.alt}
+            src={asset.src}
+            alt={asset.alt}
             style={{ objectFit: "cover" }}
           />
         ) : (
@@ -92,14 +70,14 @@ const MediaAsset = (props: MediaAssetProps) => {
             component="label"
             variant="contained"
             aria-label="add asset"
-            aria-disabled={props.isPending}
-            disabled={props.isPending}
+            aria-disabled={isChooseButtonDisabled}
+            disabled={isChooseButtonDisabled}
           >
             <Input
-              aria-hidden
               type="file"
               name="file"
-              onChange={handleChooseFile}
+              aria-hidden={true}
+              onChange={handlers.chooseFile}
               inputProps={{ accept: props.inputAccepts }}
               sx={{
                 clip: "rect(0 0 0 0)",
@@ -120,13 +98,13 @@ const MediaAsset = (props: MediaAssetProps) => {
         <Tooltip title={`Upload ${props.name}`}>
           <Box>
             <Button
-              disabled={!blob || props.isPending}
               type="submit"
               color="info"
               variant="contained"
               aria-label="upload asset"
-              aria-disabled={!blob || props.isPending}
-              onClick={handleUploadFile}
+              aria-disabled={isUploadButtonDisabled}
+              disabled={isUploadButtonDisabled}
+              onClick={handlers.uploadFile}
             >
               {!props.isUploading ? (
                 <UploadFileIcon />
@@ -140,12 +118,12 @@ const MediaAsset = (props: MediaAssetProps) => {
         <Tooltip title={`Remove ${props.name}`}>
           <Box>
             <Button
-              disabled={!blob || props.isPending}
               variant="contained"
               color="error"
               aria-label="delete asset"
-              aria-disabled={!blob || props.isPending}
-              onClick={handleRemoveFile}
+              aria-disabled={isRemoveButtonDisabled}
+              disabled={isRemoveButtonDisabled}
+              onClick={handlers.removeFile}
             >
               <DeleteIcon />
             </Button>
@@ -157,3 +135,6 @@ const MediaAsset = (props: MediaAssetProps) => {
 };
 
 export default MediaAsset;
+
+// [ 1 ] : Allow user to select same file
+// INFO  : https://github.com/ngokevin/react-file-reader-input/issues/11#issuecomment-363484861
