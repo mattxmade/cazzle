@@ -2,8 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 
 type UseMediaAssetParams = {
   name: string;
-  asset?: { src: string; alt: string };
   accepts: "image/jpg";
+  setters: {
+    setPending: React.Dispatch<React.SetStateAction<boolean>>;
+    setActiveAsset: React.Dispatch<React.SetStateAction<string | null>>;
+  };
+  asset?: { src: string; alt: string };
 };
 
 const useMediaAsset = (params: UseMediaAssetParams) => {
@@ -29,7 +33,24 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
 
   const handleUploadFile = () => {
     if (!file) return;
-    setLastFile(file);
+
+    if (file && lastFile) {
+      if (file.name === lastFile.name && file.size === lastFile.size) return;
+    }
+
+    const { setPending, setActiveAsset } = params.setters;
+
+    setPending(true);
+    setActiveAsset(params.name);
+
+    const timeout = setTimeout(() => {
+      clearTimeout(timeout);
+
+      setPending(false);
+      setActiveAsset(null);
+
+      setLastFile(file);
+    }, 5000);
   };
 
   const handleRevokeObjectUrl = () => {
@@ -47,6 +68,8 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
 
   return {
     blob,
+    file,
+    lastFile,
     name: params.name,
     accepts: params.accepts,
     handlers: {
