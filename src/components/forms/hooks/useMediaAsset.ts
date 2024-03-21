@@ -41,12 +41,19 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
     setBlob(null);
   };
 
-  useEffect(handleRevokeObjectUrl, [blob]);
+  useEffect(() => {
+    return () => handleRevokeObjectUrl();
+  }, [blob]);
 
   return {
-    handleChooseFile,
-    handleUploadFile,
-    handleRemoveFile,
+    blob,
+    name: params.name,
+    accepts: params.accepts,
+    handlers: {
+      chooseFile: handleChooseFile,
+      uploadFile: handleUploadFile,
+      removeFile: handleRemoveFile,
+    },
   };
 };
 
