@@ -28,7 +28,7 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
     blobUrl && setBlob({ src: blobUrl, alt: params.name });
 
     const input = e.currentTarget as HTMLInputElement;
-    input.value = "";
+    input.value = ""; // [1]
   };
 
   const handleUploadFile = () => {
@@ -81,3 +81,6 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
 };
 
 export default useMediaAsset;
+
+// [ 1 ] : Allow user to select same file
+// INFO  : https://github.com/ngokevin/react-file-reader-input/issues/11#issuecomment-363484861
