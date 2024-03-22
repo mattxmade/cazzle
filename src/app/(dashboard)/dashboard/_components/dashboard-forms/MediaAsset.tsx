@@ -135,6 +135,3 @@ const MediaAsset = (props: MediaAssetProps) => {
 };
 
 export default MediaAsset;
-
-// [ 1 ] : Allow user to select same file
-// INFO  : https://github.com/ngokevin/react-file-reader-input/issues/11#issuecomment-363484861
