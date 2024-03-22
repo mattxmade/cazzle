@@ -1,17 +1,47 @@
+import { useState } from "react";
+
+import Card from "@mui/material/Card/Card";
 import Stack from "@mui/material/Stack";
-import Divider from "@mui/material/Divider";
 import { type TextFieldProps } from "@mui/material";
 
 import MediaAsset from "./MediaAsset";
 import FormCard from "@/components/forms/FormCard";
 import FormSection from "@/components/forms/FormSection";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
+import useMediaAsset from "@/components/forms/hooks/useMediaAsset";
 
 const textFieldProps: TextFieldProps = {
   required: false,
 };
 
+const cardSxProps = {
+  paddingBottom: 1.5,
+  flex: "auto",
+  display: "flex",
+  justifyContent: "center",
+};
+
 const ProfileForm = () => {
+  const [pending, setPending] = useState(false);
+  const [activeAsset, setActiveAsset] = useState<string | null>(null);
+
+  // Profile media assets
+  const logo = useMediaAsset({
+    name: "logo",
+    accepts: "image/jpg",
+    setters: { setPending, setActiveAsset },
+  });
+  const advert = useMediaAsset({
+    name: "advert",
+    accepts: "image/jpg",
+    setters: { setPending, setActiveAsset },
+  });
+  const banner = useMediaAsset({
+    name: "banner",
+    accepts: "image/jpg",
+    setters: { setPending, setActiveAsset },
+  });
+
   return (
     <Stack gap={2}>
       <FormCard>
@@ -103,42 +133,48 @@ const ProfileForm = () => {
       </FormCard>
 
       <FormCard>
-        <FormSection heading="Media">
-          <MultilineTextField
-            id="banner"
-            label="Banner"
-            validation="multiline"
-            handleUpdateFormRef={() => {}}
-            textFieldProps={{ ...textFieldProps }}
-          />
+        <FormSection
+          heading="Media"
+          stackProps={{ flexWrap: "wrap", justifyContent: "center" }}
+        >
+          <Card sx={cardSxProps}>
+            <MediaAsset
+              name={logo.name}
+              asset={logo.blob}
+              file={logo.file}
+              lastFile={logo.lastFile}
+              handlers={logo.handlers}
+              inputAccepts={logo.accepts}
+              isPending={pending}
+              isUploading={activeAsset === logo.name}
+            />
+          </Card>
 
-          <MultilineTextField
-            id="logo"
-            label="Logo"
-            validation="singleline"
-            handleUpdateFormRef={() => {}}
-            textFieldProps={{ ...textFieldProps }}
-          />
+          <Card sx={cardSxProps}>
+            <MediaAsset
+              name={advert.name}
+              asset={advert.blob}
+              file={advert.file}
+              lastFile={advert.lastFile}
+              handlers={advert.handlers}
+              inputAccepts={advert.accepts}
+              isPending={pending}
+              isUploading={activeAsset === advert.name}
+            />
+          </Card>
 
-          <MultilineTextField
-            id="ad"
-            label="Ad"
-            validation="singleline"
-            handleUpdateFormRef={() => {}}
-            textFieldProps={{ ...textFieldProps }}
-          />
-        </FormSection>
-      </FormCard>
-
-      <FormCard>
-        <FormSection heading="Media">
-          <Divider orientation="vertical" variant="middle" flexItem />
-          <MediaAsset title="banner" inputAccepts="image/jpg" />
-          <Divider orientation="vertical" variant="middle" flexItem />
-          <MediaAsset title="logo" inputAccepts="image/jpg" />
-          <Divider orientation="vertical" variant="middle" flexItem />
-          <MediaAsset title="ad" inputAccepts="image/jpg" />
-          <Divider orientation="vertical" variant="middle" flexItem />
+          <Card sx={cardSxProps}>
+            <MediaAsset
+              name={banner.name}
+              asset={banner.blob}
+              file={banner.file}
+              lastFile={banner.lastFile}
+              handlers={banner.handlers}
+              inputAccepts={banner.accepts}
+              isPending={pending}
+              isUploading={activeAsset === banner.name}
+            />
+          </Card>
         </FormSection>
       </FormCard>
     </Stack>
