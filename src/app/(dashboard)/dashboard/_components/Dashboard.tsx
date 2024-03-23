@@ -48,7 +48,7 @@ import { BranchDetails, genNewData, validDocumentData } from "@/types/runtime";
 
 export type PartialData = Partial<BranchDetails> | Partial<PropertyListing_>;
 type DashboardKey = "property" | "agent";
-type DocumentType = "properties" | "agents" | "";
+type DocumentModel = "properties" | "agents" | "";
 
 export type FormDataRef = {
   type: DashboardKey;
@@ -97,7 +97,7 @@ const Dashboard = (props: DashboardProps) => {
 
   const [open, setOpen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const [view, setView] = useState("new-property");
+  const [view, setView] = useState("agent-profile");
 
   const initialData = useRef<FormDataRef>(null);
   const unsavedData = useRef<PartialData | null>(null);
@@ -176,11 +176,20 @@ const Dashboard = (props: DashboardProps) => {
 
     if (!initialData.current || !unsavedData.current) return;
 
-    let documentType: DocumentType = "";
+    let documentModel: DocumentModel = "";
     let data: any = {};
 
+    if (initialData.current.type === "agent") {
+      documentModel = "agents";
+
+      data = {
+        ...initialData.current.data,
+        ...unsavedData.current,
+      } as BranchDetails;
+    }
+
     if (initialData.current.type === "property") {
-      documentType = "properties";
+      documentModel = "properties";
 
       data = {
         ...initialData.current.data,
@@ -189,7 +198,7 @@ const Dashboard = (props: DashboardProps) => {
     }
 
     // TODO: user feedback data is invalid
-    if (!data || !documentType) return;
+    if (!data || !documentModel) return;
 
     // Client side validation
     const { type } = initialData.current;
@@ -205,7 +214,7 @@ const Dashboard = (props: DashboardProps) => {
     // Data is ok, so create new FormData instance
     const formData = new FormData();
 
-    formData.append("type", documentType);
+    formData.append("type", documentModel);
     formData.append("data", JSON.stringify(data));
 
     startTransition(async () => {
@@ -308,14 +317,17 @@ const Dashboard = (props: DashboardProps) => {
     handleAlertSetup("Changes will be lost, would you like to save data?");
   }, [openModal]);
 
-  const handleSetView = useCallback((requestedView: string) => {
-    setView(requestedView);
-    handleClearData();
+  const handleSetView = useCallback(
+    (requestedView: string) => {
+      setView(requestedView);
+      handleClearData();
 
-    if (requestedView === "agent-profile") {
-      initialData.current = { type: "agent", data: props.branch };
-    }
-  }, []);
+      if (requestedView === "agent-profile") {
+        initialData.current = { type: "agent", data: props.branch };
+      }
+    },
+    [view]
+  );
 
   return (
     <Box>
