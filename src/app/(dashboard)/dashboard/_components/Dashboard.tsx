@@ -122,7 +122,7 @@ const Dashboard = (props: DashboardProps) => {
     const currData = Object.getOwnPropertyNames(updatedData);
     const prevData = Object.getOwnPropertyNames(initialData.current.data);
 
-    const valuesToUpdate: Partial<PropertyListing_> = {};
+    const valuesToUpdate: PartialData = {};
 
     for (let i = 0; i < prevData.length; i++) {
       const key = currData[i];
@@ -531,7 +531,7 @@ const Dashboard = (props: DashboardProps) => {
               <Typography variant="h2" fontSize={28}>
                 Agent Profile
               </Typography>
-              <ProfileForm />
+              <ProfileForm handleUpdateLocalData={handleUpdateLocalData} />
             </DashboardView>
             <DashboardView viewName="new-property" currentView={view}>
               <Typography variant="h2" fontSize={28}>
