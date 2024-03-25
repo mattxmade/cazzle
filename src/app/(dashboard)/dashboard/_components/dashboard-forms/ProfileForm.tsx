@@ -1,14 +1,17 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import Card from "@mui/material/Card/Card";
 import Stack from "@mui/material/Stack";
 import { type TextFieldProps } from "@mui/material";
 
-import MediaAsset from "./MediaAsset";
 import FormCard from "@/components/forms/FormCard";
 import FormSection from "@/components/forms/FormSection";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
+import MediaAsset from "./MediaAsset";
 import useMediaAsset from "@/components/forms/hooks/useMediaAsset";
+
+import { type BranchDetails } from "@/types/runtime";
+import { type FormDataFunction } from "../Dashboard";
 
 const textFieldProps: TextFieldProps = {
   required: false,
@@ -21,7 +24,11 @@ const cardSxProps = {
   justifyContent: "center",
 };
 
-const ProfileForm = () => {
+type ProfileFormProps = {
+  handleUpdateLocalData: FormDataFunction;
+};
+
+const ProfileForm = (props: ProfileFormProps) => {
   const [pending, setPending] = useState(false);
   const [activeAsset, setActiveAsset] = useState<string | null>(null);
 
@@ -42,6 +49,18 @@ const ProfileForm = () => {
     setters: { setPending, setActiveAsset },
   });
 
+  const formData = useRef<Partial<BranchDetails> | null>(null);
+
+  const handleUpdateFormRef = (key: string, value: any) => {
+    const { handleUpdateLocalData } = props;
+
+    !formData.current
+      ? (formData.current = { [key]: value })
+      : (formData.current = { ...formData.current, [key]: value });
+
+    formData.current && handleUpdateLocalData("agent", formData.current);
+  };
+
   return (
     <Stack gap={2}>
       <FormCard>
@@ -50,14 +69,14 @@ const ProfileForm = () => {
             id="branch-name"
             label="Branch name"
             validation="lettersWithHyphen"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
           />
 
           <MultilineTextField
             id="telephone"
             label="Telephone"
             validation="number"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
 
@@ -65,7 +84,7 @@ const ProfileForm = () => {
             id="email"
             label="Email"
             validation="lettersOnly"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
 
@@ -73,7 +92,7 @@ const ProfileForm = () => {
             id="website"
             label="Website"
             validation="lettersOnly"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
         </FormSection>
@@ -85,28 +104,28 @@ const ProfileForm = () => {
             id="street-number"
             label="number"
             validation="number"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
           <MultilineTextField
             id="street"
             label="Street"
             validation="lettersWithHyphen"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
           <MultilineTextField
             id="town"
             label="Town/City"
             validation="lettersWithHyphen"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
           <MultilineTextField
             id="postcode"
             label="Postcode"
             validation="postcode"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
         </FormSection>
@@ -118,7 +137,7 @@ const ProfileForm = () => {
             id="summary"
             label="Summary"
             validation="singleline"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps, fullWidth: true }}
           />
 
@@ -126,7 +145,7 @@ const ProfileForm = () => {
             id="description"
             label="Description"
             validation="multiline"
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps, fullWidth: true }}
           />
         </FormSection>
