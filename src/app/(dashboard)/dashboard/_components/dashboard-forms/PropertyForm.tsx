@@ -33,6 +33,8 @@ import TextFieldChipSelect from "@/components/forms/inputs/TextFieldChipSelect";
 import MultilineTextField from "@/components/forms/inputs/MultilineTextField";
 import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
+import FormCard from "@/components/forms/FormCard";
+import FormSection from "@/components/forms/FormSection";
 
 type PropertyFormProps = {
   newForm?: boolean;
@@ -188,68 +190,62 @@ const PropertyForm = (props: PropertyFormProps) => {
         </Card>
       </Card>
 
-      <Card sx={layout}>
-        <Stack gap={0.5} direction="row" alignItems="center">
-          <LocationOnIcon color="primary" />
-          <Typography variant="h6" color="darkslategrey">
-            Address
-          </Typography>
-        </Stack>
+      <FormCard>
+        <FormSection
+          heading="Address"
+          Icon={<LocationOnIcon color="primary" />}
+        >
+          <MultilineTextField
+            id="propertyNumber"
+            label="Property number"
+            validation="number"
+            defaultValue={
+              propertyData.displayAddress
+                ? extractNumberFromString(propertyData.displayAddress)
+                : ""
+            }
+            handleUpdateFormRef={handleUpdateFormRef}
+            textFieldProps={{
+              error: props.formErrors?.propertyNumber ? true : false,
+              helperText: props.formErrors?.propertyNumber ?? "",
+            }}
+          />
+          <MultilineTextField
+            id="street"
+            label="Street"
+            validation="lettersWithHyphen"
+            defaultValue={propertyData.street}
+            handleUpdateFormRef={handleUpdateFormRef}
+            textFieldProps={{
+              error: props.formErrors?.street ? true : false,
+              helperText: props.formErrors?.street ?? "",
+            }}
+          />
 
-        <Card sx={{ padding: 2, backgroundColor: "rgba(255, 255, 255, 0.5)" }}>
-          <Stack gap={2} direction="row" alignItems="flex-end">
-            <MultilineTextField
-              id="propertyNumber"
-              label="Property number"
-              validation="number"
-              defaultValue={
-                propertyData.displayAddress
-                  ? extractNumberFromString(propertyData.displayAddress)
-                  : ""
-              }
-              handleUpdateFormRef={handleUpdateFormRef}
-              textFieldProps={{
-                error: props.formErrors?.propertyNumber ? true : false,
-                helperText: props.formErrors?.propertyNumber ?? "",
-              }}
-            />
-            <MultilineTextField
-              id="street"
-              label="Street"
-              validation="lettersWithHyphen"
-              defaultValue={propertyData.street}
-              handleUpdateFormRef={handleUpdateFormRef}
-              textFieldProps={{
-                error: props.formErrors?.street ? true : false,
-                helperText: props.formErrors?.street ?? "",
-              }}
-            />
-
-            <MultilineTextField
-              id="town"
-              label="Town"
-              validation="lettersWithHyphen"
-              defaultValue={propertyData.town}
-              handleUpdateFormRef={handleUpdateFormRef}
-              textFieldProps={{
-                error: props.formErrors?.town ? true : false,
-                helperText: props.formErrors?.town ?? "",
-              }}
-            />
-            <MultilineTextField
-              id="postcode"
-              label="Postcode"
-              validation="postcode"
-              defaultValue={propertyData.postcode ?? ""}
-              handleUpdateFormRef={handleUpdateFormRef}
-              textFieldProps={{
-                error: props.formErrors?.postcode ? true : false,
-                helperText: props.formErrors?.postcode ?? "",
-              }}
-            />
-          </Stack>
-        </Card>
-      </Card>
+          <MultilineTextField
+            id="town"
+            label="Town"
+            validation="lettersWithHyphen"
+            defaultValue={propertyData.town}
+            handleUpdateFormRef={handleUpdateFormRef}
+            textFieldProps={{
+              error: props.formErrors?.town ? true : false,
+              helperText: props.formErrors?.town ?? "",
+            }}
+          />
+          <MultilineTextField
+            id="postcode"
+            label="Postcode"
+            validation="postcode"
+            defaultValue={propertyData.postcode ?? ""}
+            handleUpdateFormRef={handleUpdateFormRef}
+            textFieldProps={{
+              error: props.formErrors?.postcode ? true : false,
+              helperText: props.formErrors?.postcode ?? "",
+            }}
+          />
+        </FormSection>
+      </FormCard>
 
       <Card sx={layout}>
         <Stack gap={0.5} direction="row" alignItems="center">
