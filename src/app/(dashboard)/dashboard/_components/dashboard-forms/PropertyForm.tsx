@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
@@ -35,6 +35,9 @@ import SelectDropdown from "@/components/forms/inputs/SelectDropdown";
 import Concertina from "@/components/ui/Concertina";
 import FormCard from "@/components/forms/FormCard";
 import FormSection from "@/components/forms/FormSection";
+import MediaAsset from "./MediaAsset";
+import useMediaAsset from "@/components/forms/hooks/useMediaAsset";
+import { fetchPropertyImage } from "@/server/fecthAssets";
 
 type PropertyFormProps = {
   newForm?: boolean;
@@ -44,6 +47,13 @@ type PropertyFormProps = {
 };
 
 export type UpdateFormRefFunction = (key: string, value: any) => void;
+
+const cardSxProps = {
+  paddingBottom: 1.5,
+  flex: "auto",
+  display: "flex",
+  justifyContent: "center",
+};
 
 const layout = {
   display: "grid",
@@ -70,6 +80,27 @@ const PropertyForm = (props: PropertyFormProps) => {
 
     formData.current && handleUpdateLocalData("property", formData.current);
   };
+
+  const [pending, setPending] = useState(false);
+  const [activeAsset, setActiveAsset] = useState<string | null>(null);
+
+  const newImageAsset = useMediaAsset({
+    name: "image",
+    accepts: "image/jpg",
+    setters: { setPending, setActiveAsset },
+  });
+
+  const propertyImages = propertyData.galleryImages.length
+    ? [...new Array(propertyData.galleryImages.length)].map((_, i) =>
+        useMediaAsset({
+          id: propertyData.galleryImages[i].storageId,
+          name: "image " + i,
+          accepts: "image/jpg",
+          assetFetcher: fetchPropertyImage,
+          setters: { setPending, setActiveAsset },
+        })
+      )
+    : [];
 
   return (
     <Stack gap={2}>
@@ -483,6 +514,45 @@ const PropertyForm = (props: PropertyFormProps) => {
           />
         </Card>
       </Concertina>
+
+      <FormCard>
+        <FormSection
+          heading="Media"
+          stackProps={{ flexWrap: "wrap", justifyContent: "center" }}
+        >
+          {propertyImages.length
+            ? propertyImages.map((asset, i) => (
+                <Card key={i} sx={cardSxProps}>
+                  <MediaAsset
+                    name={asset.name}
+                    asset={asset.blob}
+                    file={asset.file}
+                    lastFile={asset.lastFile}
+                    handlers={asset.handlers}
+                    inputAccepts={asset.accepts}
+                    isPending={pending}
+                    isUploading={activeAsset === asset.name}
+                  />
+                </Card>
+              ))
+            : null}
+
+          {propertyImages.length < 5 ? (
+            <Card sx={cardSxProps}>
+              <MediaAsset
+                name={newImageAsset.name}
+                asset={newImageAsset.blob}
+                file={newImageAsset.file}
+                lastFile={newImageAsset.lastFile}
+                handlers={newImageAsset.handlers}
+                inputAccepts={newImageAsset.accepts}
+                isPending={pending}
+                isUploading={activeAsset === newImageAsset.name}
+              />
+            </Card>
+          ) : null}
+        </FormSection>
+      </FormCard>
     </Stack>
   );
 };
