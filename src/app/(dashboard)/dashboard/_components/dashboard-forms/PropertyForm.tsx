@@ -96,7 +96,7 @@ const PropertyForm = (props: PropertyFormProps) => {
           id: propertyData.galleryImages[i].storageId,
           name: "image " + i,
           accepts: "image/jpg",
-          assetFetcher: fetchPropertyImage,
+          getAssetUrl: fetchPropertyImage,
           setters: { setPending, setActiveAsset },
         })
       )
