@@ -7,10 +7,13 @@ type UseMediaAssetParams = {
     setPending: React.Dispatch<React.SetStateAction<boolean>>;
     setActiveAsset: React.Dispatch<React.SetStateAction<string | null>>;
   };
+  id?: string;
   asset?: { src: string; alt: string };
+  getAssetUrl?: (id: string) => Promise<string | null>;
 };
 
 const useMediaAsset = (params: UseMediaAssetParams) => {
+  const [init, setInit] = useState(true);
   const [blob, setBlob] = useState(params.asset ?? null);
   const [file, setFile] = useState<File | null>(null);
   const [lastFile, setLastFile] = useState<File | null>(null);
@@ -61,6 +64,21 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
     handleRevokeObjectUrl();
     setBlob(null);
   };
+
+  useEffect(() => {
+    if (!init) return;
+
+    const asset =
+      params.id && params.getAssetUrl && params.getAssetUrl(params.id);
+
+    asset &&
+      asset.then((response) => {
+        if (!response) return;
+
+        setBlob({ src: response, alt: "property image" });
+        setInit(false);
+      });
+  });
 
   useEffect(() => {
     return () => handleRevokeObjectUrl();
