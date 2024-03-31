@@ -58,6 +58,7 @@ const MediaAsset = (props: MediaAssetProps) => {
             src={asset.src}
             alt={asset.alt}
             style={{ objectFit: "cover" }}
+            sizes="110px"
           />
         ) : (
           <NoItemCard variant="image" />
