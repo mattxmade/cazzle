@@ -66,7 +66,7 @@ const MediaAsset = (props: MediaAssetProps) => {
       </Box>
 
       <ButtonGroup>
-        <Tooltip title={`Add ${props.name}`}>
+        <Tooltip title="Choose file">
           <Button
             component="label"
             variant="contained"
@@ -96,7 +96,7 @@ const MediaAsset = (props: MediaAssetProps) => {
           </Button>
         </Tooltip>
 
-        <Tooltip title={`Upload ${props.name}`}>
+        <Tooltip title={!file ? "" : `Upload ${props.name}`}>
           <Box>
             <Button
               type="submit"
@@ -116,7 +116,7 @@ const MediaAsset = (props: MediaAssetProps) => {
           </Box>
         </Tooltip>
 
-        <Tooltip title={`Remove ${props.name}`}>
+        <Tooltip title={!asset ? "" : `Remove ${props.name}`}>
           <Box>
             <Button
               variant="contained"
