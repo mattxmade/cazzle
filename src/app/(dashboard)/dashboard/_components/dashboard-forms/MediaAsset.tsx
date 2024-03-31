@@ -34,7 +34,7 @@ const MediaAsset = (props: MediaAssetProps) => {
 
   const isChooseButtonDisabled = props.isPending;
   const isRemoveButtonDisabled = !asset || props.isPending;
-  let isUploadButtonDisabled = !asset || props.isPending;
+  let isUploadButtonDisabled = !asset || !file || props.isPending;
 
   if (file && lastFile) {
     if (file.name === lastFile.name && file.size === lastFile.size)
