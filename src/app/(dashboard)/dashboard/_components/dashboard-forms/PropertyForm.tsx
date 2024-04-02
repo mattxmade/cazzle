@@ -38,6 +38,7 @@ import FormSection from "@/components/forms/FormSection";
 import MediaAsset from "./MediaAsset";
 import useMediaAsset from "@/components/forms/hooks/useMediaAsset";
 import { fecthAsset } from "@/server/fecthAssets";
+import uploadFile from "@/server/actions/agent/media";
 
 type PropertyFormProps = {
   newForm?: boolean;
@@ -91,7 +92,9 @@ const PropertyForm = (props: PropertyFormProps) => {
     return useMediaAsset({
       id: imageId ?? undefined,
       name: "image " + (i + 1),
+      docId: propertyData._id,
       accepts: "image/jpg",
+      uploadAsset: uploadFile,
       getAssetUrl: imageId ? fecthAsset : undefined,
       setters: { setPending, setActiveAsset },
     });
@@ -524,6 +527,7 @@ const PropertyForm = (props: PropertyFormProps) => {
                 lastFile={asset.lastFile}
                 handlers={asset.handlers}
                 inputAccepts={asset.accepts}
+                isLoading={asset.isLoading}
                 isPending={pending}
                 isUploading={activeAsset === asset.name}
               />
