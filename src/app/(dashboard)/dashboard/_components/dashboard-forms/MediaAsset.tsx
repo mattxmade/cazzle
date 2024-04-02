@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup/ButtonGroup";
 
 import Tooltip from "@mui/material/Tooltip";
+import Skeleton from "@mui/material/Skeleton";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -19,6 +20,7 @@ type MediaAssetProps = {
   file: File | null;
   lastFile: File | null;
   isPending: boolean;
+  isLoading: boolean;
   isUploading: boolean;
   asset: { src: string; alt: string } | null;
   inputAccepts: "image/jpg";
@@ -45,25 +47,29 @@ const MediaAsset = (props: MediaAssetProps) => {
     <Stack width={210} alignItems="center" spacing={1}>
       <Typography variant="button">{props.name}</Typography>
 
-      <Box
-        width={110}
-        height={110}
-        position="relative"
-        overflow="hidden"
-        borderRadius={2}
-      >
-        {asset ? (
-          <Image
-            fill
-            src={asset.src}
-            alt={asset.alt}
-            style={{ objectFit: "cover" }}
-            sizes="110px"
-          />
-        ) : (
-          <NoItemCard variant="image" />
-        )}
-      </Box>
+      {props.isLoading ? (
+        <Skeleton variant="rounded" width={110} height={110} />
+      ) : (
+        <Box
+          width={110}
+          height={110}
+          position="relative"
+          overflow="hidden"
+          borderRadius={2}
+        >
+          {asset ? (
+            <Image
+              fill
+              src={asset.src}
+              alt={asset.alt}
+              style={{ objectFit: "cover" }}
+              sizes="110px"
+            />
+          ) : (
+            <NoItemCard variant="image" />
+          )}
+        </Box>
+      )}
 
       <ButtonGroup>
         <Tooltip title="Choose file">
