@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
+import { DbResponse } from "@/data/dbStatus";
 
 type UseMediaAssetParams = {
   name: string;
@@ -8,11 +9,15 @@ type UseMediaAssetParams = {
     setActiveAsset: React.Dispatch<React.SetStateAction<string | null>>;
   };
   id?: string;
+  docId: string;
   asset?: { src: string; alt: string };
-  getAssetUrl?: (id: string) => Promise<string | null>;
+  uploadAsset?: (FormData: FormData) => Promise<DbResponse>;
+  getAssetUrl?: (formData: FormData) => Promise<string | null | undefined>;
 };
 
 const useMediaAsset = (params: UseMediaAssetParams) => {
+  const [pending, startTransition] = useTransition();
+
   const [init, setInit] = useState(true);
   const [blob, setBlob] = useState(params.asset ?? null);
   const [file, setFile] = useState<File | null>(null);
@@ -35,7 +40,7 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
   };
 
   const handleUploadFile = () => {
-    if (!file) return;
+    if (!file || !params.uploadAsset) return;
 
     if (file && lastFile) {
       if (file.name === lastFile.name && file.size === lastFile.size) return;
@@ -46,14 +51,22 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
     setPending(true);
     setActiveAsset(params.name);
 
-    const timeout = setTimeout(() => {
-      clearTimeout(timeout);
+    const formData = new FormData();
+
+    formData.append("id", params.docId);
+    formData.append("file", file);
+
+    startTransition(async () => {
+      if (!params.uploadAsset) return;
+
+      const response = await params.uploadAsset(formData);
+      if (response.status === "error") return setPending(false);
 
       setPending(false);
       setActiveAsset(null);
 
       setLastFile(file);
-    }, 5000);
+    });
   };
 
   const handleRevokeObjectUrl = () => {
@@ -66,19 +79,19 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
   };
 
   useEffect(() => {
-    if (!init) return;
+    if (!init || !params.id || !params.getAssetUrl || pending) return;
 
-    const asset =
-      params.id && params.getAssetUrl && params.getAssetUrl(params.id);
+    const formData = new FormData();
+    formData.append("asset", params.id);
 
-    asset &&
-      asset.then((response) => {
-        if (!response) return;
+    startTransition(async () => {
+      const url = params.getAssetUrl && (await params.getAssetUrl(formData));
+      if (typeof url !== "string" || !url.length) return;
 
-        setBlob({ src: response, alt: "property image" });
-        setInit(false);
-      });
-  });
+      setInit(false);
+      setBlob({ src: url, alt: params.name });
+    });
+  }, []);
 
   useEffect(() => {
     return () => handleRevokeObjectUrl();
@@ -89,6 +102,7 @@ const useMediaAsset = (params: UseMediaAssetParams) => {
     file,
     lastFile,
     name: params.name,
+    isLoading: pending,
     accepts: params.accepts,
     handlers: {
       chooseFile: handleChooseFile,
