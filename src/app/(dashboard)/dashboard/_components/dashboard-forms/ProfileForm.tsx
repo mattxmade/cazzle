@@ -25,6 +25,7 @@ const cardSxProps = {
 };
 
 type ProfileFormProps = {
+  // branchDetails
   handleUpdateLocalData: FormDataFunction;
 };
 
@@ -34,16 +35,19 @@ const ProfileForm = (props: ProfileFormProps) => {
 
   // Profile media assets
   const logo = useMediaAsset({
+    docId: "", // TODO: add branch_id
     name: "logo",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
   });
   const advert = useMediaAsset({
+    docId: "", // TODO: add branch_id
     name: "advert",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
   });
   const banner = useMediaAsset({
+    docId: "", // TODO: add branch_id
     name: "banner",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
@@ -164,6 +168,7 @@ const ProfileForm = (props: ProfileFormProps) => {
               lastFile={logo.lastFile}
               handlers={logo.handlers}
               inputAccepts={logo.accepts}
+              isLoading={logo.isLoading}
               isPending={pending}
               isUploading={activeAsset === logo.name}
             />
@@ -177,6 +182,7 @@ const ProfileForm = (props: ProfileFormProps) => {
               lastFile={advert.lastFile}
               handlers={advert.handlers}
               inputAccepts={advert.accepts}
+              isLoading={advert.isLoading}
               isPending={pending}
               isUploading={activeAsset === advert.name}
             />
@@ -190,6 +196,7 @@ const ProfileForm = (props: ProfileFormProps) => {
               lastFile={banner.lastFile}
               handlers={banner.handlers}
               inputAccepts={banner.accepts}
+              isLoading={banner.isLoading}
               isPending={pending}
               isUploading={activeAsset === banner.name}
             />
