@@ -134,7 +134,6 @@ const Dashboard = (props: DashboardProps) => {
     }
 
     unsavedData.current = valuesToUpdate;
-    console.log(unsavedData.current);
   };
 
   const handleNewFormData: FormDataFunction = (type, newData) => {
@@ -159,8 +158,6 @@ const Dashboard = (props: DashboardProps) => {
 
     unsavedData.current && !hasDataChanged && setHasDataChanged(true);
 
-    console.log(unsavedData.current);
-
     unsavedData.current &&
       validDocumentData(type, unsavedData.current) &&
       setCanSubmitData(true);
@@ -171,8 +168,6 @@ const Dashboard = (props: DashboardProps) => {
 
     if (pending) return;
     showAlert && setShowAlert(false);
-
-    console.log(unsavedData.current);
 
     if (!initialData.current || !unsavedData.current) return;
 
@@ -219,16 +214,12 @@ const Dashboard = (props: DashboardProps) => {
 
     startTransition(async () => {
       const response = await saveDocument(formData);
-      console.log(response);
-
       if (!response) return setTaskResponse(getStatus.server.error);
 
       const { status, message } = response;
 
       // Update Properties state
       if (response.data && response.data.type === "properties") {
-        console.log(response.data.document);
-
         setProperties((prevData) => {
           if (!response.data) return prevData;
 
@@ -273,7 +264,9 @@ const Dashboard = (props: DashboardProps) => {
       const lastView = view;
       setView(lastView);
 
-      setTaskResponse({ status: "success", message: "Data cleared" });
+      // TODO: FIX || overrides update status alert
+      // setTaskResponse({ status: "success", message: "Data cleared" });
+
       toastTools.handleOpen();
     }, 2000);
   };
