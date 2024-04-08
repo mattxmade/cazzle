@@ -7,25 +7,10 @@ import Container from "@mui/material/Container";
 import NotFound from "@/app/not-found";
 import PropertyCards from "@/components/layout/cards/PropertyCards";
 import SearchController from "@/components/ui/search/SearchController";
-import { validateSearchQuery } from "@/server/validation/validateSearchQuery";
+
+import { Filters } from "@/server/search/filterSearch";
+import { validateSearchQuery } from "@/server/search/validateSearchQuery";
 import { customTheme } from "@/styles/custom";
-
-export type ValidParam =
-  | "location"
-  | "minPrice"
-  | "maxPrice"
-  | "minBeds"
-  | "maxBeds"
-  | "propertyType";
-
-export type Filters = {
-  location?: string;
-  minPrice?: string;
-  maxPrice?: string;
-  minBeds?: string;
-  maxBeds?: string;
-  propertyType?: string;
-};
 
 type SearchParams = {
   // no params as non-dynamic route segment
