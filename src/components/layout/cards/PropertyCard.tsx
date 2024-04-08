@@ -29,19 +29,21 @@ type PropertyCardProps = {
   children?: React.ReactNode;
 };
 
+const css: React.CSSProperties = {
+  color: "ivory",
+};
+
+const linkStyle: React.CSSProperties = {
+  color: "black",
+  textDecoration: "none",
+};
+
 const PropertyCard = async ({ propertyData, ...props }: PropertyCardProps) => {
   const isUserFavourite = props.isUserFavourite;
 
   const LinkProps = {
     href: `/properties/${propertyData.slug}`,
-    style: {
-      color: "black",
-      textDecoration: "none",
-    } as React.CSSProperties,
-  };
-
-  const css: React.CSSProperties = {
-    color: "ivory",
+    style: linkStyle,
   };
 
   return (
