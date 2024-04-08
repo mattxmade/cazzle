@@ -25,7 +25,7 @@ const cardSxProps = {
 };
 
 type ProfileFormProps = {
-  // branchDetails
+  branchDetails: Partial<BranchDetails>;
   handleUpdateLocalData: FormDataFunction;
 };
 
@@ -35,19 +35,19 @@ const ProfileForm = (props: ProfileFormProps) => {
 
   // Profile media assets
   const logo = useMediaAsset({
-    docId: "", // TODO: add branch_id
+    docId: props.branchDetails._id || "", // TODO: add branch_id
     name: "logo",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
   });
   const advert = useMediaAsset({
-    docId: "", // TODO: add branch_id
+    docId: props.branchDetails._id || "", // TODO: add branch_id
     name: "advert",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
   });
   const banner = useMediaAsset({
-    docId: "", // TODO: add branch_id
+    docId: props.branchDetails._id || "", // TODO: add branch_id
     name: "banner",
     accepts: "image/jpg",
     setters: { setPending, setActiveAsset },
@@ -73,6 +73,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="branch-name"
             label="Branch name"
             validation="lettersWithHyphen"
+            defaultValue={props.branchDetails.branchName}
             handleUpdateFormRef={handleUpdateFormRef}
           />
 
@@ -80,6 +81,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="telephone"
             label="Telephone"
             validation="number"
+            defaultValue={props.branchDetails?.telephone ?? ""}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -88,6 +90,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="email"
             label="Email"
             validation="lettersOnly"
+            defaultValue={props.branchDetails.email}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -96,6 +99,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="website"
             label="Website"
             validation="lettersOnly"
+            defaultValue={props.branchDetails.website}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -108,6 +112,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="street-number"
             label="number"
             validation="number"
+            defaultValue={props.branchDetails.addressNumber ?? ""}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -115,6 +120,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="street"
             label="Street"
             validation="lettersWithHyphen"
+            defaultValue={props.branchDetails.street}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -122,6 +128,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="town"
             label="Town/City"
             validation="lettersWithHyphen"
+            defaultValue={props.branchDetails.town}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -129,6 +136,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="postcode"
             label="Postcode"
             validation="postcode"
+            defaultValue={props.branchDetails.postcode}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps }}
           />
@@ -141,6 +149,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="summary"
             label="Summary"
             validation="singleline"
+            defaultValue={props.branchDetails.summary}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps, fullWidth: true }}
           />
@@ -149,6 +158,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="description"
             label="Description"
             validation="multiline"
+            defaultValue={props.branchDetails.description}
             handleUpdateFormRef={handleUpdateFormRef}
             textFieldProps={{ ...textFieldProps, fullWidth: true }}
           />
