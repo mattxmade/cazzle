@@ -62,7 +62,7 @@ const ProfileForm = (props: ProfileFormProps) => {
       ? (formData.current = { [key]: value })
       : (formData.current = { ...formData.current, [key]: value });
 
-    formData.current && handleUpdateLocalData("agent", formData.current);
+    formData.current && handleUpdateLocalData("branch", formData.current);
   };
 
   return (
@@ -73,7 +73,7 @@ const ProfileForm = (props: ProfileFormProps) => {
             id="branch-name"
             label="Branch name"
             validation="lettersWithHyphen"
-            defaultValue={props.branchDetails.branchName}
+            defaultValue={props.branchDetails.name}
             handleUpdateFormRef={handleUpdateFormRef}
           />
 
