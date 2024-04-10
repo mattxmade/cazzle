@@ -22,8 +22,8 @@ const PropertyCards = async ({ search }: PropertyCardsProps) => {
   )) as PropertyListing_[];
 
   const filteredProperties =
-    search && propertyListings
-      ? filterProperties(search, propertyListings)
+    search?.searchParams && propertyListings
+      ? await filterProperties(search.searchParams, propertyListings)
       : null;
 
   const properties = filteredProperties || propertyListings;
