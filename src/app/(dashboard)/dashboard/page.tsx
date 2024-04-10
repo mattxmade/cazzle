@@ -7,10 +7,13 @@ import getSignedInUser from "@/server/user/getUser";
 import Dashboard from "./_components/Dashboard";
 import { PropertyListing_ } from "@/types";
 import { newForm } from "@/types/runtime";
+import { checkPermission } from "@/server/permissions";
 
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
+  checkPermission();
+
   const user = await getSignedInUser();
   if (!user || !user?.current) redirect("/sign-in");
 
