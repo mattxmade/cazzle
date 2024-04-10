@@ -149,6 +149,7 @@ const SearchFiltersBar = (props: SearchFilterBarProps) => {
               onChange={(e) => handleInputChange(e, "propertyType")}
               label="Property Type"
             >
+              <MenuItem value="">Property Type</MenuItem>
               {content.search.filters.propertyType.map((type) => (
                 <MenuItem key={"propertyType_" + type.value} value={type.value}>
                   {type.text}
