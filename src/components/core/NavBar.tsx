@@ -17,6 +17,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { content } from "@/app/content";
 import AccountMenu from "../ui/AccountMenu";
+import { requireAuthentication } from "@/server/permissions";
 
 type NavBarProps = {
   navItems?: { name: string; slug: string }[];
@@ -47,43 +48,49 @@ const NavBar = ({ navItems }: NavBarProps) => {
           : null}
       </Stack>
 
-      <Stack spacing={1}>
-        <ClerkLoading>
-          <SignedIn>
-            <IconButton
-              aria-disabled="true"
-              sx={{ ":hover": { cursor: "auto", backgroundColor: "inherit" } }}
-            >
-              <CircularProgress size={25} />
-            </IconButton>
-          </SignedIn>
+      {!requireAuthentication() ? null : (
+        <Stack spacing={1}>
+          <ClerkLoading>
+            <SignedIn>
+              <IconButton
+                aria-disabled="true"
+                sx={{
+                  ":hover": { cursor: "auto", backgroundColor: "inherit" },
+                }}
+              >
+                <CircularProgress size={25} />
+              </IconButton>
+            </SignedIn>
 
-          <SignedOut>
-            <Button
-              aria-disabled="true"
-              sx={{ ":hover": { cursor: "auto", backgroundColor: "inherit" } }}
-            >
-              <CircularProgress size={25} />
-            </Button>
-          </SignedOut>
-        </ClerkLoading>
-
-        <ClerkLoaded>
-          <SignedIn>
-            <SignOutButton>
-              <AccountMenu />
-            </SignOutButton>
-          </SignedIn>
-
-          <SignedOut>
-            <SignInButton mode="modal">
-              <Button aria-label="sign-in">
-                <Typography variant="button">Sign In</Typography>
+            <SignedOut>
+              <Button
+                aria-disabled="true"
+                sx={{
+                  ":hover": { cursor: "auto", backgroundColor: "inherit" },
+                }}
+              >
+                <CircularProgress size={25} />
               </Button>
-            </SignInButton>
-          </SignedOut>
-        </ClerkLoaded>
-      </Stack>
+            </SignedOut>
+          </ClerkLoading>
+
+          <ClerkLoaded>
+            <SignedIn>
+              <SignOutButton>
+                <AccountMenu />
+              </SignOutButton>
+            </SignedIn>
+
+            <SignedOut>
+              <SignInButton mode="modal">
+                <Button aria-label="sign-in">
+                  <Typography variant="button">Sign In</Typography>
+                </Button>
+              </SignInButton>
+            </SignedOut>
+          </ClerkLoaded>
+        </Stack>
+      )}
     </Stack>
   );
 };
