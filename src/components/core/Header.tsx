@@ -1,3 +1,7 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+
 import Link from "next/link";
 import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
@@ -5,12 +9,15 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 
 import { content } from "@/app/content";
+import { isIgnoredPath } from "@/server/routePath";
 
 type HeaderProps = {
   children?: React.ReactNode;
 };
 
 const Header = ({ children }: HeaderProps) => {
+  if (isIgnoredPath(usePathname())) return null;
+
   return (
     <Container disableGutters maxWidth={false}>
       <Container
