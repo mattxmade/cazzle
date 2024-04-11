@@ -11,7 +11,6 @@ import MediaCarousel from "./MediaCarousel";
 import MediaGalleryAside from "./MediaGalleryAside";
 import BackButton from "../ui/buttons/BackButton";
 import { MediaData } from "@/types";
-import useHideElements from "@/hooks/useHideElements";
 
 type GalleryProps = {
   initItem: number;
@@ -21,8 +20,6 @@ type GalleryProps = {
 const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
   const clientRouter = useRouter();
   const clientParams = useParams() as { propertyId: string };
-
-  useHideElements(["header"]);
 
   const [currentItem, setCurrentItem] = useState(initItem - 1);
 
