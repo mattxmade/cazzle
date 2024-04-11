@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 
 type ElementDisplay = React.CSSProperties["display"];
 
@@ -6,7 +6,7 @@ const useHideElements = (elements: Array<keyof JSX.IntrinsicElements>) => {
   const displaySettingsRef = useRef<ElementDisplay[] | []>([]);
   const elementsRef = useRef<Array<HTMLElement | undefined> | null>(null);
 
-  useEffect(() => {
+  const hideElements = () => {
     if (!document) return;
     [...new Array(elements.length)].map((_, i) => {
       const elNode = document.querySelector(elements[i]) as HTMLElement;
@@ -20,24 +20,32 @@ const useHideElements = (elements: Array<keyof JSX.IntrinsicElements>) => {
             elNode.style.display,
           ]);
 
+      !elementsRef.current?.length
+        ? (elementsRef.current = [elNode])
+        : (elementsRef.current = [...elementsRef.current, elNode]);
+
       elNode.style.display = "none";
       return elNode;
     });
+  };
 
-    return () => {
-      if (!document || !elementsRef.current) return;
+  const restoreElements = () => {
+    if (!document || !elementsRef.current) return;
 
-      if (!elementsRef.current.length || !displaySettingsRef.current.length)
-        return;
+    if (!elementsRef.current.length || !displaySettingsRef.current.length)
+      return;
 
-      elementsRef.current.forEach((el, i) => {
-        const displaySetting = displaySettingsRef.current[i];
-        if (!el || !displaySetting) return;
+    elementsRef.current.forEach((el, i) => {
+      const displaySetting = displaySettingsRef.current[i];
+      if (!el || !displaySetting) return;
 
-        el.style.display = displaySetting;
-      });
-    };
-  }, []);
+      console.log(el);
+      console.log(displaySetting);
+      el.style.display = displaySetting;
+    });
+  };
+
+  return { hideElements, restoreElements };
 };
 
 export default useHideElements;
