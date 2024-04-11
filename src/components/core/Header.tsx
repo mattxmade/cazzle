@@ -19,7 +19,17 @@ const Header = ({ children }: HeaderProps) => {
   if (isIgnoredPath(usePathname())) return null;
 
   return (
-    <Container disableGutters maxWidth={false}>
+    <Container
+      disableGutters
+      maxWidth={false}
+      sx={{
+        top: 0,
+        zIndex: 100,
+        position: "sticky",
+        backdropFilter: "blur(8px)",
+        background: "rgb(255 255 255 / 60%)",
+      }}
+    >
       <Container
         component="header"
         maxWidth="lg"
