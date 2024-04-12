@@ -12,6 +12,7 @@ import Header from "@/components/core/Header";
 import Footer from "@/components/core/Footer";
 import { projectMetadata } from "./metadata";
 import "./globals.css";
+import { Suspense } from "react";
 
 type RootLayoutProps = Readonly<{
   children: React.ReactNode;
@@ -38,7 +39,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 }}
               >
                 <Header>
-                  <NavBar />
+                  <Suspense>
+                    <NavBar />
+                  </Suspense>
                 </Header>
                 {children}
                 <Footer />
