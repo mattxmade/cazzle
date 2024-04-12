@@ -7,6 +7,8 @@ import { checkPermission } from "@/server/permissions";
 import getSignedInUser from "@/server/user/getUser";
 
 import type { PropertyListing_ } from "@/types";
+
+import NotFound from "@/app/not-found";
 import Dashboard from "./_components/Dashboard";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +19,7 @@ export default async function DashboardPage() {
   const user = await getSignedInUser();
   if (!user || !user?.current) redirect("/sign-in");
 
-  if (user.current.role !== "agent") redirect("/");
+  if (user.current.role !== "agent") return redirect("/not-found");
 
   const { getAgentByUserId } = api.agents.queries;
 
