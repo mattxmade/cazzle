@@ -15,8 +15,9 @@ export default async function DashboardPage() {
   checkPermission();
 
   const user = await getSignedInUser();
-  if (!user || !user?.current || user.current.role !== "agent")
-    redirect("/sign-in");
+  if (!user || !user?.current) redirect("/sign-in");
+
+  if (user.current.role !== "agent") redirect("/");
 
   const { getAgentByUserId } = api.agents.queries;
 
