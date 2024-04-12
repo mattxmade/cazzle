@@ -6,23 +6,22 @@ import { SignOutButton, UserButton, UserProfile } from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
+import Dialog from "@mui/material/Dialog";
+import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import PersonAdd from "@mui/icons-material/PersonAdd";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
-import Dialog from "@mui/material/Dialog";
-
-import HomeIcon from "@mui/icons-material/Home";
-import CloseIcon from "@mui/icons-material/Close";
-import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
 import Typography from "@mui/material/Typography";
+import Logout from "@mui/icons-material/Logout";
+import HomeIcon from "@mui/icons-material/Home";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import CloseIcon from "@mui/icons-material/Close";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import HomeWorkIcon from "@mui/icons-material/HomeWork";
 
-let agent = true;
+let agent = false;
 
 const AccountMenu = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -133,17 +132,18 @@ const AccountMenu = () => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={() => setOpenDialog(true)}>
-          <Avatar /> My Account
+          <Avatar /> Account
         </MenuItem>
 
-        {agent ? (
-          <MenuItem href="/dashboard" component={NextLink}>
-            <Avatar>
-              <WysiwygTwoToneIcon />
-            </Avatar>
-            Branch Dashboard
-          </MenuItem>
-        ) : null}
+        <MenuItem
+          href={agent ? "/dashboard" : "/favourites"}
+          component={NextLink}
+        >
+          <Avatar>
+            <FavoriteIcon />
+          </Avatar>
+          {agent ? "Dashboard" : "Favourites"}
+        </MenuItem>
 
         <Divider />
 
@@ -154,19 +154,21 @@ const AccountMenu = () => {
           Home
         </MenuItem>
 
-        <MenuItem href="/" component={NextLink}>
+        <MenuItem href="/properties" component={NextLink}>
           <ListItemIcon>
-            <PersonAdd fontSize="small" />
+            <HomeWorkIcon fontSize="small" />
           </ListItemIcon>
-          View branch profile
+          Properties
         </MenuItem>
 
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
+        {agent ? (
+          <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
+            <ListItemIcon>
+              <PersonAdd fontSize="small" />
+            </ListItemIcon>
+            Branch profile
+          </MenuItem>
+        ) : null}
 
         <SignOutButton>
           <MenuItem>
