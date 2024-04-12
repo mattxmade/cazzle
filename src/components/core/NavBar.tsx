@@ -15,16 +15,21 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { content } from "@/app/content";
 import AccountMenu from "../ui/AccountMenu";
+
+import { content } from "@/app/content";
 import { requireAuthentication } from "@/server/permissions";
+import getSignedInUser from "@/server/user/getUser";
 
 type NavBarProps = {
   navItems?: { name: string; slug: string }[];
 };
 
-const NavBar = ({ navItems }: NavBarProps) => {
+const NavBar = async ({ navItems }: NavBarProps) => {
   const items = navItems ?? content.navBarItems;
+
+  const user = await getSignedInUser();
+  const role = user?.current?.role;
 
   return (
     <Stack component="nav" direction={"row"} spacing={7} alignItems="center">
@@ -77,7 +82,7 @@ const NavBar = ({ navItems }: NavBarProps) => {
           <ClerkLoaded>
             <SignedIn>
               <SignOutButton>
-                <AccountMenu />
+                <AccountMenu role={role} />
               </SignOutButton>
             </SignedIn>
 
