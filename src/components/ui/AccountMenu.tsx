@@ -2,7 +2,7 @@
 
 import NextLink from "next/link";
 import { Fragment, useState } from "react";
-import { SignOutButton, UserButton, UserProfile } from "@clerk/nextjs";
+import { SignOutButton, UserProfile } from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -10,24 +10,29 @@ import Dialog from "@mui/material/Dialog";
 import Divider from "@mui/material/Divider";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import IconButton from "@mui/material/IconButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
+
 import Logout from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
+import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
 
-let agent = false;
+type AccountMenuProps = {
+  role: string | null | undefined;
+};
 
-const AccountMenu = () => {
+const AccountMenu = (props: AccountMenuProps) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
   const [openDialog, setOpenDialog] = useState(false);
+
+  const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -135,15 +140,23 @@ const AccountMenu = () => {
           <Avatar /> Account
         </MenuItem>
 
-        <MenuItem
-          href={agent ? "/dashboard" : "/favourites"}
-          component={NextLink}
-        >
-          <Avatar>
-            <FavoriteIcon />
-          </Avatar>
-          {agent ? "Dashboard" : "Favourites"}
-        </MenuItem>
+        {props.role === "agent" ? (
+          <MenuItem href="/dashboard" component={NextLink}>
+            <Avatar>
+              <WysiwygTwoToneIcon />
+            </Avatar>
+            Dashboard
+          </MenuItem>
+        ) : null}
+
+        {props.role === "user" ? (
+          <MenuItem href="/favourites" component={NextLink}>
+            <Avatar>
+              <FavoriteIcon />
+            </Avatar>
+            Favourites
+          </MenuItem>
+        ) : null}
 
         <Divider />
 
@@ -161,7 +174,7 @@ const AccountMenu = () => {
           Properties
         </MenuItem>
 
-        {agent ? (
+        {props.role === "agent" ? (
           <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
             <ListItemIcon>
               <PersonAdd fontSize="small" />
