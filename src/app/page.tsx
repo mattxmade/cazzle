@@ -41,10 +41,11 @@ export default function Home() {
 
         <Box component="section" width={640} height={540} position="relative">
           <Image
-            src="/hero.gif"
-            alt="hero"
             fill
             priority
+            unoptimized
+            src="/hero.gif"
+            alt="hero"
             style={{ objectFit: "cover" }}
           />
         </Box>
