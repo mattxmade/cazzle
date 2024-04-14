@@ -1,4 +1,3 @@
-import Image from "next/image";
 import NextLink from "next/link";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -39,15 +38,24 @@ export default function Home() {
           </Typography>
         </Box>
 
-        <Box component="section" width={640} height={540} position="relative">
-          <Image
-            fill
-            priority
-            unoptimized
-            src="/hero.gif"
-            alt="hero"
-            style={{ objectFit: "cover" }}
-          />
+        <Box
+          component="section"
+          width={640}
+          height={540}
+          position="relative"
+          overflow="hidden"
+        >
+          <video
+            loop
+            muted
+            autoPlay
+            controls
+            width={640}
+            height={640}
+            poster="/hero.jpg"
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+          </video>
         </Box>
       </Stack>
 
