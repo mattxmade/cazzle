@@ -38,7 +38,16 @@ export default function Home() {
           </Typography>
         </Box>
 
-        <Box component="section" sx={{ maxWidth: 640, maxHeight: 540 }}>
+        <Box
+          component="section"
+          sx={{
+            maxWidth: 640,
+            maxHeight: 540,
+            overflow: "hidden",
+            display: "grid",
+            placeContent: "center",
+          }}
+        >
           <video
             loop
             muted
