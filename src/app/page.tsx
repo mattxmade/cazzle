@@ -38,23 +38,16 @@ export default function Home() {
           </Typography>
         </Box>
 
-        <Box
-          component="section"
-          width={640}
-          height={540}
-          position="relative"
-          overflow="hidden"
-        >
+        <Box component="section" sx={{ maxWidth: 640, maxHeight: 540 }}>
           <video
             loop
             muted
             autoPlay
-            controls
-            width={640}
-            height={640}
+            width={"100%"}
+            height={"auto"}
             poster="/hero.jpg"
           >
-            <source src="/hero.mp4" type="video/mp4" />
+            <source src="/hero.webm" type="video/webm" />
           </video>
         </Box>
       </Stack>
