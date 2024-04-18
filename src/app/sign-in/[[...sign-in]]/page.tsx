@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import theme from "@/theme";
+import { checkPermission } from "@/server/permissions";
 
 const backgroundColor = theme.palette?.mode
   ? theme.palette.mode === "light"
@@ -18,14 +19,21 @@ type PageParams = {
 };
 
 export default function SignInPage({ params, searchParams }: PageParams) {
+  checkPermission();
+
   if (searchParams.redirect_url) redirect("/sign-in");
 
   return (
-    <Grid container component="main" sx={{ height: "100vh" }}>
+    <Grid
+      container
+      component="main"
+      maxWidth={2400}
+      sx={{ height: "100vh", alignSelf: "center", overflowX: "hidden" }}
+    >
       <Grid
         item
-        xs={false}
-        sm={4}
+        xs={0}
+        sm={0}
         md={7}
         sx={{
           backgroundRepeat: "no-repeat",
@@ -34,13 +42,14 @@ export default function SignInPage({ params, searchParams }: PageParams) {
           backgroundPosition: "center",
         }}
       />
-      <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+      <Grid square item xs={12} sm={12} md={5} component={Paper} elevation={6}>
         <Box
           sx={{
-            marginTop: "25%",
+            height: "100%",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <SignIn />
