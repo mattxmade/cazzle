@@ -158,7 +158,7 @@ const AccountMenu = (props: AccountMenuProps) => {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         {props.variant ? (
-          <>
+          <Box>
             <MenuItem href="/" component={NextLink}>
               <ListItemIcon>
                 <HomeIcon fontSize="small" />
@@ -174,9 +174,9 @@ const AccountMenu = (props: AccountMenuProps) => {
               </ListItemIcon>
               Properties
             </MenuItem>
-          </>
+          </Box>
         ) : (
-          <>
+          <Box>
             <SignedIn>
               <MenuItem onClick={() => setOpenDialog(true)}>
                 <Avatar /> Account
@@ -200,6 +200,7 @@ const AccountMenu = (props: AccountMenuProps) => {
                 </MenuItem>
               ) : null}
             </SignedIn>
+
             <SignedOut>
               <SignInButton mode="modal">
                 <MenuItem>
@@ -210,19 +211,23 @@ const AccountMenu = (props: AccountMenuProps) => {
                 </MenuItem>
               </SignInButton>
             </SignedOut>
+
             <Divider />
+
             <MenuItem href="/" component={NextLink}>
               <ListItemIcon>
                 <HomeIcon fontSize="small" />
               </ListItemIcon>
               Home
             </MenuItem>
+
             <MenuItem href="/properties" component={NextLink}>
               <ListItemIcon>
                 <HomeWorkIcon fontSize="small" />
               </ListItemIcon>
               Properties
             </MenuItem>
+
             <SignedIn>
               {props.role === "agent" ? (
                 <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
@@ -242,7 +247,7 @@ const AccountMenu = (props: AccountMenuProps) => {
                 </MenuItem>
               </SignOutButton>
             </SignedIn>
-          </>
+          </Box>
         )}
       </Menu>
     </Fragment>
