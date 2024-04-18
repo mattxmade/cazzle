@@ -9,11 +9,11 @@ const useToast = () => {
 
   const handleOpen = useCallback(() => {
     setOpen(true);
-  }, [open]);
+  }, []);
 
   const handleClose = useCallback(() => {
     setOpen(false);
-  }, [open]);
+  }, []);
 
   return {
     open,
