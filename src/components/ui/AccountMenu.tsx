@@ -2,7 +2,13 @@
 
 import NextLink from "next/link";
 import { Fragment, useState } from "react";
-import { SignOutButton, UserProfile } from "@clerk/nextjs";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  SignOutButton,
+  UserProfile,
+} from "@clerk/nextjs";
 
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
@@ -16,6 +22,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
+import Login from "@mui/icons-material/Login";
 import Logout from "@mui/icons-material/Logout";
 import HomeIcon from "@mui/icons-material/Home";
 import PersonAdd from "@mui/icons-material/PersonAdd";
@@ -25,7 +32,8 @@ import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
 
 type AccountMenuProps = {
-  role: string | null | undefined;
+  userName?: string;
+  role?: string | null;
 };
 
 const AccountMenu = (props: AccountMenuProps) => {
@@ -87,7 +95,7 @@ const AccountMenu = (props: AccountMenuProps) => {
       </Dialog>
 
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <Tooltip title="Account settings">
+        <Tooltip title={props.role ? "Account settings" : "Sign-in"}>
           <IconButton
             onClick={handleClick}
             size="small"
@@ -95,7 +103,15 @@ const AccountMenu = (props: AccountMenuProps) => {
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar
+              sx={{
+                width: 32,
+                height: 32,
+                bgcolor: props.role ? "purple" : "",
+              }}
+            >
+              {!props.userName ? "C" : props.userName.slice(0, 1).toUpperCase()}
+            </Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -136,27 +152,40 @@ const AccountMenu = (props: AccountMenuProps) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={() => setOpenDialog(true)}>
-          <Avatar /> Account
-        </MenuItem>
-
-        {props.role === "agent" ? (
-          <MenuItem href="/dashboard" component={NextLink}>
-            <Avatar>
-              <WysiwygTwoToneIcon />
-            </Avatar>
-            Dashboard
+        <SignedIn>
+          <MenuItem onClick={() => setOpenDialog(true)}>
+            <Avatar /> Account
           </MenuItem>
-        ) : null}
 
-        {props.role === "user" ? (
-          <MenuItem href="/favourites" component={NextLink}>
-            <Avatar>
-              <FavoriteIcon />
-            </Avatar>
-            Favourites
-          </MenuItem>
-        ) : null}
+          {props.role === "agent" ? (
+            <MenuItem href="/dashboard" component={NextLink}>
+              <Avatar>
+                <WysiwygTwoToneIcon />
+              </Avatar>
+              Dashboard
+            </MenuItem>
+          ) : null}
+
+          {props.role === "user" ? (
+            <MenuItem href="/user/favourites" component={NextLink}>
+              <Avatar>
+                <FavoriteIcon />
+              </Avatar>
+              Favourites
+            </MenuItem>
+          ) : null}
+        </SignedIn>
+
+        <SignedOut>
+          <SignInButton mode="modal">
+            <MenuItem>
+              <ListItemIcon>
+                <Login fontSize="small" />
+              </ListItemIcon>
+              Sign-in
+            </MenuItem>
+          </SignInButton>
+        </SignedOut>
 
         <Divider />
 
@@ -174,23 +203,25 @@ const AccountMenu = (props: AccountMenuProps) => {
           Properties
         </MenuItem>
 
-        {props.role === "agent" ? (
-          <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
-            <ListItemIcon>
-              <PersonAdd fontSize="small" />
-            </ListItemIcon>
-            Branch profile
-          </MenuItem>
-        ) : null}
+        <SignedIn>
+          {props.role === "agent" ? (
+            <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
+              <ListItemIcon>
+                <PersonAdd fontSize="small" />
+              </ListItemIcon>
+              Branch profile
+            </MenuItem>
+          ) : null}
 
-        <SignOutButton>
-          <MenuItem>
-            <ListItemIcon>
-              <Logout fontSize="small" />
-            </ListItemIcon>
-            Logout
-          </MenuItem>
-        </SignOutButton>
+          <SignOutButton>
+            <MenuItem>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Sign-out
+            </MenuItem>
+          </SignOutButton>
+        </SignedIn>
       </Menu>
     </Fragment>
   );
