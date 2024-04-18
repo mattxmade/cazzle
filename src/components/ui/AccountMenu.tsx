@@ -32,6 +32,7 @@ import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
 
 type AccountMenuProps = {
+  variant?: boolean;
   userName?: string;
   role?: string | null;
 };
@@ -95,7 +96,11 @@ const AccountMenu = (props: AccountMenuProps) => {
       </Dialog>
 
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <Tooltip title={props.role ? "Account settings" : "Sign-in"}>
+        <Tooltip
+          title={
+            props.variant ? "Menu" : props.role ? "Account settings" : "Sign-in"
+          }
+        >
           <IconButton
             onClick={handleClick}
             size="small"
@@ -152,76 +157,93 @@ const AccountMenu = (props: AccountMenuProps) => {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <SignedIn>
-          <MenuItem onClick={() => setOpenDialog(true)}>
-            <Avatar /> Account
-          </MenuItem>
-
-          {props.role === "agent" ? (
-            <MenuItem href="/dashboard" component={NextLink}>
-              <Avatar>
-                <WysiwygTwoToneIcon />
-              </Avatar>
-              Dashboard
-            </MenuItem>
-          ) : null}
-
-          {props.role === "user" ? (
-            <MenuItem href="/user/favourites" component={NextLink}>
-              <Avatar>
-                <FavoriteIcon />
-              </Avatar>
-              Favourites
-            </MenuItem>
-          ) : null}
-        </SignedIn>
-
-        <SignedOut>
-          <SignInButton mode="modal">
-            <MenuItem>
+        {props.variant ? (
+          <>
+            <MenuItem href="/" component={NextLink}>
               <ListItemIcon>
-                <Login fontSize="small" />
+                <HomeIcon fontSize="small" />
               </ListItemIcon>
-              Sign-in
+              Home
             </MenuItem>
-          </SignInButton>
-        </SignedOut>
 
-        <Divider />
+            <Divider />
 
-        <MenuItem href="/" component={NextLink}>
-          <ListItemIcon>
-            <HomeIcon fontSize="small" />
-          </ListItemIcon>
-          Home
-        </MenuItem>
-
-        <MenuItem href="/properties" component={NextLink}>
-          <ListItemIcon>
-            <HomeWorkIcon fontSize="small" />
-          </ListItemIcon>
-          Properties
-        </MenuItem>
-
-        <SignedIn>
-          {props.role === "agent" ? (
-            <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
+            <MenuItem href="/properties" component={NextLink}>
               <ListItemIcon>
-                <PersonAdd fontSize="small" />
+                <HomeWorkIcon fontSize="small" />
               </ListItemIcon>
-              Branch profile
+              Properties
             </MenuItem>
-          ) : null}
+          </>
+        ) : (
+          <>
+            <SignedIn>
+              <MenuItem onClick={() => setOpenDialog(true)}>
+                <Avatar /> Account
+              </MenuItem>
 
-          <SignOutButton>
-            <MenuItem>
+              {props.role === "agent" ? (
+                <MenuItem href="/dashboard" component={NextLink}>
+                  <Avatar>
+                    <WysiwygTwoToneIcon />
+                  </Avatar>
+                  Dashboard
+                </MenuItem>
+              ) : null}
+
+              {props.role === "user" ? (
+                <MenuItem href="/user/favourites" component={NextLink}>
+                  <Avatar>
+                    <FavoriteIcon />
+                  </Avatar>
+                  Favourites
+                </MenuItem>
+              ) : null}
+            </SignedIn>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <MenuItem>
+                  <ListItemIcon>
+                    <Login fontSize="small" />
+                  </ListItemIcon>
+                  Sign-in
+                </MenuItem>
+              </SignInButton>
+            </SignedOut>
+            <Divider />
+            <MenuItem href="/" component={NextLink}>
               <ListItemIcon>
-                <Logout fontSize="small" />
+                <HomeIcon fontSize="small" />
               </ListItemIcon>
-              Sign-out
+              Home
             </MenuItem>
-          </SignOutButton>
-        </SignedIn>
+            <MenuItem href="/properties" component={NextLink}>
+              <ListItemIcon>
+                <HomeWorkIcon fontSize="small" />
+              </ListItemIcon>
+              Properties
+            </MenuItem>
+            <SignedIn>
+              {props.role === "agent" ? (
+                <MenuItem href={`/estate-agents/${""}`} component={NextLink}>
+                  <ListItemIcon>
+                    <PersonAdd fontSize="small" />
+                  </ListItemIcon>
+                  Branch profile
+                </MenuItem>
+              ) : null}
+
+              <SignOutButton>
+                <MenuItem>
+                  <ListItemIcon>
+                    <Logout fontSize="small" />
+                  </ListItemIcon>
+                  Sign-out
+                </MenuItem>
+              </SignOutButton>
+            </SignedIn>
+          </>
+        )}
       </Menu>
     </Fragment>
   );
