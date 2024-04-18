@@ -33,7 +33,7 @@ const NavBar = async ({ navItems }: NavBarProps) => {
 
   return (
     <Stack component="nav" direction={"row"} spacing={7} alignItems="center">
-      <Stack direction={"row"} spacing={3}>
+      <Stack direction={"row"} spacing={3} className="nav-bar__links">
         {items
           ? items.map((item) => (
               <Link
@@ -53,46 +53,23 @@ const NavBar = async ({ navItems }: NavBarProps) => {
           : null}
       </Stack>
 
-      {!requireAuthentication() ? null : (
+      {!requireAuthentication() ? (
+        <AccountMenu variant={true} />
+      ) : (
         <Stack spacing={1}>
           <ClerkLoading>
-            <SignedIn>
-              <IconButton
-                aria-disabled="true"
-                sx={{
-                  ":hover": { cursor: "auto", backgroundColor: "inherit" },
-                }}
-              >
-                <CircularProgress size={25} />
-              </IconButton>
-            </SignedIn>
-
-            <SignedOut>
-              <Button
-                aria-disabled="true"
-                sx={{
-                  ":hover": { cursor: "auto", backgroundColor: "inherit" },
-                }}
-              >
-                <CircularProgress size={25} />
-              </Button>
-            </SignedOut>
+            <IconButton
+              aria-disabled="true"
+              sx={{
+                ":hover": { cursor: "auto", backgroundColor: "inherit" },
+              }}
+            >
+              <CircularProgress size={25} />
+            </IconButton>
           </ClerkLoading>
 
           <ClerkLoaded>
-            <SignedIn>
-              <SignOutButton>
-                <AccountMenu role={role} />
-              </SignOutButton>
-            </SignedIn>
-
-            <SignedOut>
-              <SignInButton mode="modal">
-                <Button aria-label="sign-in">
-                  <Typography variant="button">Sign In</Typography>
-                </Button>
-              </SignInButton>
-            </SignedOut>
+            <AccountMenu userName={user?.current?.name} role={role} />
           </ClerkLoaded>
         </Stack>
       )}
