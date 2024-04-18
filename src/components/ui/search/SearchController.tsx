@@ -12,7 +12,7 @@ import SearchFiltersBar from "./SearchFiltersBar";
 import SearchFiltersModal from "./SearchFiltersModal";
 
 import type { InputType } from "@/utils/validateInputs";
-import type { Filters } from "@/app/(properties)/properties/page";
+import { type Filters } from "@/server/search/filterSearch";
 
 export type FilterInputs = {
   location: string;
@@ -91,12 +91,9 @@ const SearchController = ({ queryParams }: SearchControllerProps) => {
     });
 
     router.push("/properties");
-  }, [filterValues]);
+  }, [filterValues, router]);
 
-  const handleCloseSearchForm = useCallback(
-    () => setOpenSearchForm(false),
-    [openSearchForm]
-  );
+  const handleCloseSearchForm = useCallback(() => setOpenSearchForm(false), []);
 
   return (
     <>
