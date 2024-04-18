@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 
@@ -32,7 +34,9 @@ const MediaCarousel = (props: MediaCarouselProps) => {
       <Button aria-label="previous gallery slide" onClick={prevSlide}>
         <ArrowBackIosIcon />
       </Button>
-      <Container sx={{ position: "relative", overflow: "hidden" }}>
+      <Container
+        sx={{ position: "relative", overflow: "hidden", height: "100%" }}
+      >
         {props.mediaData.map((item, i) =>
           item.src ? (
             <Box
@@ -41,13 +45,13 @@ const MediaCarousel = (props: MediaCarouselProps) => {
                 display: i !== props.item ? "none" : "grid",
               }}
             >
-              <img
+              <Image
+                fill
                 key={item.src}
                 src={item.src}
                 alt={`listing image ${i + 1}`}
                 loading="lazy"
-                width={"100%"}
-                style={{ aspectRatio: "1/1", objectFit: "contain" }}
+                style={{ objectFit: "contain" }}
               />
 
               <Typography>{`${props.item + 1} of ${
