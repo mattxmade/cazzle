@@ -32,7 +32,7 @@ const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
           `/properties/${clientParams["propertyId"]}/media?media=${item + 1}`
         );
     },
-    [currentItem]
+    [clientParams, clientRouter]
   );
 
   const navigateBack = () => {
