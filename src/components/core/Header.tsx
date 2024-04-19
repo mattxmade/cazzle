@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment, Suspense } from "react";
 import { usePathname } from "next/navigation";
 
 import Link from "next/link";
@@ -12,11 +13,12 @@ import { content } from "@/app/content";
 import { isIgnoredPath } from "@/server/routePath";
 
 type HeaderProps = {
+  root?: boolean;
   children?: React.ReactNode;
 };
 
-const Header = ({ children }: HeaderProps) => {
-  if (isIgnoredPath(usePathname())) return null;
+const Header = ({ root, children }: HeaderProps) => {
+  if (root && isIgnoredPath(usePathname())) return <Fragment />;
 
   return (
     <Container
@@ -49,8 +51,7 @@ const Header = ({ children }: HeaderProps) => {
             <Typography variant="h4">{content.header.heading}</Typography>
           </Link>
         </Stack>
-
-        {children}
+        <div>{children}</div>
       </Container>
       <Divider />
     </Container>
