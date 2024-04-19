@@ -5,7 +5,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 
 import { content } from "./content";
-import PageTemplate from "@/components/pages/TemplatePage";
+import PageTemplate from "@/components/pages/PageTemplate";
 
 export default function Home() {
   return (
