@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import NextLink from "next/link";
 import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs";
@@ -7,6 +8,9 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+
+import Header from "@/components/core/Header";
+import NavBar from "@/components/core/NavBar";
 
 import createAccount from "@/server/user/createAccount";
 import getSignedInUser from "@/server/user/getUser";
@@ -39,37 +43,48 @@ export default async function OnboardingPage() {
   if (!accountSetupResponse) redirect("/sign-in");
 
   return (
-    <Container
-      disableGutters
-      component="main"
-      maxWidth={false}
-      sx={{
-        ...flexLayout,
-        flex: "auto",
-        backgroundColor: "#e9e9eb",
-      }}
-    >
-      <Container component="section" maxWidth="xl" sx={{ ...flexLayout }}>
-        <Stack gap={6} flex="auto" alignItems="center" justifyContent="center">
-          <Typography variant="h2">{accountSetupResponse.message}</Typography>
+    <Fragment>
+      <Header>
+        <NavBar />
+      </Header>
 
-          <Typography variant="button">
-            Look for the{" "}
-            {
-              <FavoriteBorderIcon
-                aria-label="favourite icon"
-                role="presentation"
-                sx={{ top: 5, position: "relative" }}
-              />
-            }{" "}
-            next to each listing to add them to your favourites.
-          </Typography>
+      <Container
+        disableGutters
+        component="main"
+        maxWidth={false}
+        sx={{
+          ...flexLayout,
+          flex: "auto",
+          backgroundColor: "#e9e9eb",
+        }}
+      >
+        <Container component="section" maxWidth="xl" sx={{ ...flexLayout }}>
+          <Stack
+            gap={6}
+            flex="auto"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Typography variant="h2">{accountSetupResponse.message}</Typography>
 
-          <Button variant="contained" component={NextLink} href="/properties">
-            View Properites
-          </Button>
-        </Stack>
+            <Typography variant="button">
+              Look for the{" "}
+              {
+                <FavoriteBorderIcon
+                  aria-label="favourite icon"
+                  role="presentation"
+                  sx={{ top: 5, position: "relative" }}
+                />
+              }{" "}
+              next to each listing to add them to your favourites.
+            </Typography>
+
+            <Button variant="contained" component={NextLink} href="/properties">
+              View Properites
+            </Button>
+          </Stack>
+        </Container>
       </Container>
-    </Container>
+    </Fragment>
   );
 }
