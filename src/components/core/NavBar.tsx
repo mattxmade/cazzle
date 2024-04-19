@@ -1,21 +1,12 @@
 import Link from "next/link";
-
-import {
-  ClerkLoaded,
-  ClerkLoading,
-  SignedIn,
-  SignedOut,
-  SignOutButton,
-  SignInButton,
-} from "@clerk/nextjs";
+import { ClerkLoaded, ClerkLoading } from "@clerk/nextjs";
 
 import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import AccountMenu from "../ui/AccountMenu";
+import AccountMenu from "@/components/ui/AccountMenu";
 
 import { content } from "@/app/content";
 import { requireAuthentication } from "@/server/permissions";
