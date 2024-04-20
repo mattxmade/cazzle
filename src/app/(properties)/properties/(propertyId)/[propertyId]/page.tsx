@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
@@ -11,7 +12,6 @@ import InfoIcon from "@mui/icons-material/InfoOutlined";
 import Typography from "@mui/material/Typography";
 import CalculateIcon from "@mui/icons-material/CalculateOutlined";
 
-import NotFound from "@/app/not-found";
 import ImageGrid from "@/components/layout/ImageGrid";
 import PrimaryGrid from "@/components/layout/PrimaryGrid";
 import Thumbnails from "@/components/Thumbnails";
@@ -37,7 +37,7 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
     name: params.propertyId,
   })) as PropertyListing_;
 
-  if (!property) return <NotFound />;
+  if (!property) return redirect("/not-found");
 
   const dbImages = await fetchQuery(api.properties.queries.getPropertyImages, {
     ImageIdList: property.galleryImages as { storageId: Id<"_storage"> }[],
