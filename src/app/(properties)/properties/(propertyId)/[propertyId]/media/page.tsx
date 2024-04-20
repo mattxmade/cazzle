@@ -1,10 +1,10 @@
+import { redirect } from "next/navigation";
+
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 
-import NotFound from "@/app/not-found";
 import type { PropertyListing_ } from "@/types";
-
 import MediaGallery from "@/components/layout/MediaGallery";
 
 type MediaPageParams = {
@@ -22,13 +22,13 @@ export default async function MediaPage(props: MediaPageParams) {
     name: params.propertyId,
   })) as PropertyListing_;
 
-  if (!property) return <NotFound />;
+  if (!property) return redirect("/not-found");
 
   const imageData = await fetchQuery(api.properties.queries.getPropertyImages, {
     ImageIdList: property.galleryImages as { storageId: Id<"_storage"> }[],
   });
 
-  if (!imageData) return <NotFound />;
+  if (!imageData) return redirect("/not-found");
 
   // initial media item to display ( origin from listing page thumbnails )
   const item = searchParams.media ? Number(searchParams.media) : 0;
