@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import Stack from "@mui/material/Stack";
@@ -15,6 +16,7 @@ type FavouritesFormProps = {
 };
 
 const FavouritesForm = (props: FavouritesFormProps) => {
+  const router = useRouter();
   const [result, setResult] = useState<string | null>(null);
 
   const toastTools = useToast();
@@ -24,6 +26,9 @@ const FavouritesForm = (props: FavouritesFormProps) => {
     const response = await addToFavourties(formData);
     setResult(response);
     toastTools.handleOpen();
+
+    // sync with server
+    router.refresh();
   };
 
   const isUserFavourite = !result
