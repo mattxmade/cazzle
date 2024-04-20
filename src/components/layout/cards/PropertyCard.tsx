@@ -19,7 +19,7 @@ import { Suspense } from "react";
 import formatPrice from "@/utils/formatPrice";
 
 import CardIcons from "./CardIcons";
-import FavButton from "@/components/ui/buttons/FavButton";
+import FavouritesForm from "@/components/user/favourites/FavesForm";
 import PropertyCardMedia from "./PropertyCardMedia";
 import type { PropertyListing_ } from "@/types";
 
@@ -174,7 +174,7 @@ const PropertyCard = async ({ propertyData, ...props }: PropertyCardProps) => {
                 />
               </Link>
             </Card>
-            <FavButton
+            <FavouritesForm
               listingId={propertyData._id}
               isUserFavourite={isUserFavourite}
             />
