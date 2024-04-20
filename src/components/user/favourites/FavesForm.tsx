@@ -7,7 +7,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import useToast from "@/components/ui/feedback/toast/useToast";
-import addToFavourties from "@/server/actions/addToFavourties";
+import addToFavourties from "@/server/user/addToFavourties";
 import SubmitButton from "./SubmitButton";
 
 type FavouritesFormProps = {
