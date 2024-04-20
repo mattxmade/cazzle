@@ -30,6 +30,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
+import { Button, Stack } from "@mui/material";
 
 type AccountMenuProps = {
   variant?: boolean;
@@ -58,7 +59,7 @@ const AccountMenu = (props: AccountMenuProps) => {
       <Dialog
         open={openDialog}
         onClose={handleCloseDialog}
-        PaperProps={{ sx: { maxWidth: "100%", overflow: "hidden" } }}
+        PaperProps={{ sx: { margin: 0, maxWidth: "100%", overflow: "hidden" } }}
       >
         <Box
           sx={{
@@ -74,6 +75,7 @@ const AccountMenu = (props: AccountMenuProps) => {
           <Typography variant="h6" sx={{ px: 1 }}>
             Account
           </Typography>
+
           <IconButton
             onClick={handleCloseDialog}
             aria-label="close account dialog"
@@ -90,9 +92,21 @@ const AccountMenu = (props: AccountMenuProps) => {
             elements: {
               rootBox: { overflowY: "scroll" },
               card: { margin: 0, borderRadius: 0 },
+              profileSection__danger: {
+                display: "none",
+              },
             },
           }}
         />
+
+        <Button
+          color="error"
+          variant="contained"
+          aria-label="delete account"
+          sx={{ position: "absolute", right: 25, bottom: 8 }}
+        >
+          Delete Account
+        </Button>
       </Dialog>
 
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
