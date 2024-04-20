@@ -3,6 +3,7 @@
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
+import { clerkClient } from "@clerk/nextjs";
 
 import { getStatus } from "@/data/dbStatus";
 import getSignedInUser from "./getUser";
@@ -34,12 +35,13 @@ const deleteAccount = async (formData: FormData) => {
       { token: user.token }
     );
 
-    // TODO
     // clerk delete account
+    await clerkClient.users.deleteUser(user.id);
 
     // response message ui feedback
     return response;
   } catch (error) {
+    console.log(error);
     return getStatus.server.error;
   }
 };
