@@ -1,10 +1,10 @@
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import Card from "@mui/material/Card";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Container from "@mui/material/Container";
 
-import NotFound from "@/app/not-found";
 import PropertyCards from "@/components/layout/cards/PropertyCards";
 import SearchController from "@/components/ui/search/SearchController";
 
@@ -13,7 +13,6 @@ import { validateSearchQuery } from "@/server/search/validateSearchQuery";
 import { customTheme } from "@/styles/custom";
 
 type SearchParams = {
-  // no params as non-dynamic route segment
   searchParams: Filters;
 };
 
@@ -30,9 +29,11 @@ export default async function PropertiesPage({ searchParams }: SearchParams) {
 
   const hasFilters = filters.length && isValid ? true : false;
 
-  return filters && !isValid ? (
-    <NotFound />
-  ) : (
+  // invalid query redirect guard clause
+  // possible as user can manually adjust query via address bar
+  if (filters && !isValid) return redirect("/not-found");
+
+  return (
     <>
       <Container
         disableGutters
