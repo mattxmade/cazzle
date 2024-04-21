@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import Container from "@mui/material/Container";
 
 import Typography from "@mui/material/Typography";
@@ -39,25 +40,27 @@ const MediaCarousel = (props: MediaCarouselProps) => {
       >
         {props.mediaData.map((item, i) =>
           item.src ? (
-            <Box
+            <Stack
               key={"carousel_" + item.src + i}
-              sx={{
-                display: i !== props.item ? "none" : "grid",
-              }}
+              height="95%"
+              alignItems="center"
+              display={i !== props.item ? "none" : "flex"}
             >
-              <Image
-                fill
-                key={item.src}
-                src={item.src}
-                alt={`listing image ${i + 1}`}
-                loading="lazy"
-                style={{ objectFit: "contain" }}
-              />
+              <Box flex="auto" width="100%" position="relative">
+                <Image
+                  fill
+                  key={item.src}
+                  src={item.src}
+                  alt={`listing image ${i + 1}`}
+                  loading="lazy"
+                  style={{ objectFit: "contain" }}
+                />
+              </Box>
 
               <Typography>{`${props.item + 1} of ${
                 slideTotal + 1
               }`}</Typography>
-            </Box>
+            </Stack>
           ) : null
         )}
       </Container>
