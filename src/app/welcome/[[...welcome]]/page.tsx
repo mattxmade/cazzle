@@ -27,20 +27,20 @@ export default async function OnboardingPage() {
   checkPermission();
 
   const user = await getSignedInUser();
-  if (!user) redirect("/sign-in");
+  if (!user) redirect("/");
 
-  if (user.current?.role === "user") redirect("/properties");
+  if (user.current?.role === "user") redirect("/");
   if (user.current?.role === "estate-agent") redirect("/dashboard");
 
   const clerkUser = await currentUser();
-  if (!clerkUser) redirect("/sign-in");
+  if (!clerkUser) redirect("/not-found");
 
   const formData = new FormData();
   formData.append("accountName", clerkUser.firstName ?? "user");
   formData.append("accountType", "standard");
 
   const accountSetupResponse = await createAccount(formData);
-  if (!accountSetupResponse) redirect("/sign-in");
+  if (!accountSetupResponse) redirect("/not-found");
 
   return (
     <Fragment>
