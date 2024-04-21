@@ -13,12 +13,11 @@ import { content } from "@/app/content";
 import { isIgnoredPath } from "@/server/routePath";
 
 type HeaderProps = {
-  root?: boolean;
   children?: React.ReactNode;
 };
 
-const Header = ({ root, children }: HeaderProps) => {
-  if (root && isIgnoredPath(usePathname())) return <Fragment />;
+const Header = ({ children }: HeaderProps) => {
+  if (isIgnoredPath(usePathname())) return <Fragment />;
 
   return (
     <Container
