@@ -7,6 +7,7 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import AccountMenu from "@/components/ui/AccountMenu";
+import DeleteAccountForm from "../user/account/DeleteAccountForm";
 
 import { content } from "@/app/content";
 import { requireAuthentication } from "@/server/permissions";
@@ -60,7 +61,9 @@ const NavBar = async ({ navItems }: NavBarProps) => {
           </ClerkLoading>
 
           <ClerkLoaded>
-            <AccountMenu userName={user?.current?.name} role={role} />
+            <AccountMenu userName={user?.current?.name} role={role}>
+              <DeleteAccountForm />
+            </AccountMenu>
           </ClerkLoaded>
         </Stack>
       )}
