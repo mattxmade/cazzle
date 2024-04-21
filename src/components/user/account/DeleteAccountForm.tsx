@@ -1,5 +1,14 @@
+import "server-only";
+
+import deleteAccount from "@/server/user/deleteAccount";
+import DeleteAccountStatus from "./DeleteAccountStatus";
+
 const DeleteAccountForm = () => {
-  return <h2>Delete Account Form</h2>;
+  return (
+    <form action={deleteAccount}>
+      <DeleteAccountStatus />
+    </form>
+  );
 };
 
 export default DeleteAccountForm;
