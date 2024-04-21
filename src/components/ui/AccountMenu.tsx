@@ -30,12 +30,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import HomeWorkIcon from "@mui/icons-material/HomeWork";
 import WysiwygTwoToneIcon from "@mui/icons-material/WysiwygTwoTone";
-import { Button, Stack } from "@mui/material";
 
 type AccountMenuProps = {
   variant?: boolean;
   userName?: string;
   role?: string | null;
+  children?: React.ReactNode;
 };
 
 const AccountMenu = (props: AccountMenuProps) => {
@@ -99,14 +99,7 @@ const AccountMenu = (props: AccountMenuProps) => {
           }}
         />
 
-        <Button
-          color="error"
-          variant="contained"
-          aria-label="delete account"
-          sx={{ position: "absolute", right: 25, bottom: 8 }}
-        >
-          Delete Account
-        </Button>
+        {props.children}
       </Dialog>
 
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
