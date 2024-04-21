@@ -35,7 +35,7 @@ const UserAppBar = () => {
       <Container
         maxWidth="xl"
         sx={{
-          gap: 16,
+          gap: 5,
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
