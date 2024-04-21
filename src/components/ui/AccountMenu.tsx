@@ -56,51 +56,55 @@ const AccountMenu = (props: AccountMenuProps) => {
 
   return (
     <Fragment>
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        PaperProps={{ sx: { margin: 0, maxWidth: "100%", overflow: "hidden" } }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            px: 4,
-            py: 1,
-            borderBottom: "1px solid rgba(0, 0, 0, 0.16)",
+      {props.role ? (
+        <Dialog
+          open={openDialog}
+          onClose={handleCloseDialog}
+          PaperProps={{
+            sx: { margin: 0, maxWidth: "100%", overflow: "hidden" },
           }}
         >
-          <Typography variant="h6" sx={{ px: 1 }}>
-            Account
-          </Typography>
-
-          <IconButton
-            onClick={handleCloseDialog}
-            aria-label="close account dialog"
+          <Box
             sx={{
-              width: "fit-content",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+              px: 4,
+              py: 1,
+              borderBottom: "1px solid rgba(0, 0, 0, 0.16)",
             }}
           >
-            <CloseIcon />
-          </IconButton>
-        </Box>
+            <Typography variant="h6" sx={{ px: 1 }}>
+              Account
+            </Typography>
 
-        <UserProfile
-          appearance={{
-            elements: {
-              rootBox: { overflowY: "scroll" },
-              card: { margin: 0, borderRadius: 0 },
-              profileSection__danger: {
-                display: "none",
+            <IconButton
+              onClick={handleCloseDialog}
+              aria-label="close account dialog"
+              sx={{
+                width: "fit-content",
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          <UserProfile
+            appearance={{
+              elements: {
+                rootBox: { overflowY: "scroll" },
+                card: { margin: 0, borderRadius: 0 },
+                profileSection__danger: {
+                  display: "none",
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
 
-        {props.children}
-      </Dialog>
+          {props.children}
+        </Dialog>
+      ) : null}
 
       <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
         <Tooltip
