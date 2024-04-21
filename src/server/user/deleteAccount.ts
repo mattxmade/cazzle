@@ -1,7 +1,6 @@
 "use server";
 
 import { api } from "@/../convex/_generated/api";
-import { Id } from "@/../convex/_generated/dataModel";
 import { fetchMutation, fetchQuery } from "convex/nextjs";
 import { clerkClient } from "@clerk/nextjs";
 
@@ -9,11 +8,6 @@ import { getStatus } from "@/data/dbStatus";
 import getSignedInUser from "./getUser";
 
 const deleteAccount = async (formData: FormData) => {
-  const userID = formData.get("userID") as Id<"users">;
-
-  if (!userID || typeof userID !== "string")
-    return getStatus.credentials.invalid;
-
   try {
     const user = await getSignedInUser();
     if (!user) return getStatus.credentials.invalid;
