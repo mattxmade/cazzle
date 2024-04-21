@@ -43,9 +43,8 @@ const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
     <Container
       disableGutters
       component="article"
-      maxWidth={false}
+      maxWidth="xl"
       sx={{
-        maxWidth: 2400,
         height: "100vh",
         display: "flex",
         flexDirection: "column",
@@ -70,7 +69,7 @@ const MediaGallery = ({ mediaData, initItem, showGallery }: GalleryProps) => {
         flexGrow={1}
         overflow="hidden"
       >
-        <Box component="aside">
+        <Box component="aside" className="main__media-gallery__aside">
           <MediaGalleryAside
             columns={2}
             mediaData={mediaData}
