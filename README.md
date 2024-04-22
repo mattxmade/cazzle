@@ -100,13 +100,13 @@ const ConvexClerkProvider = (props: { children: React.ReactNode }) => {
 ### Authentication Flows
 Clerk Auth makes implementing authentication straightforward and offers email as well as social authentication. Clerk provides serveral React/Next Components to streamline development. 
 
-<a href="#"><img src="docs/clerk.jpg" width="900"/></a>
+<a href="#"><img src="docs/auth.jpg" width="900"/></a>
 
 ##
 
 ### Signed-Out | Signed-In
 
-<a href="#"><img src="docs/flows.jpg" /></a>
+<a href="#"><img src="docs/menu.jpg" /></a>
 <br>
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
