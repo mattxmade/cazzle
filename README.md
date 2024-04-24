@@ -62,12 +62,12 @@ The application utilises <a href="https://github.com/get-convex/convex-js">**Con
 ## 🔬 Overview
 
 ### Planning
-Planning involved researching similar property portals such as <a href="https://www.rightmove.co.uk/">Rightmove</a> and Keaze. Alongside their websites, both had excellent documentation about thier APIs which were invaluable while developing the application schema. 
+Planning involved researching similar property portals such as <a href="https://www.rightmove.co.uk/">Rightmove</a> and <a href="https://keaze.com/">Keaze<a/>. Alongside their websites, both had excellent documentation about thier APIs which were invaluable while developing the application schema. 
 
 <details open>
-  <summary><h3>Layout mockups</h3> </summary>
+  <summary><h3>UI Wireframes</h3> </summary>
 
-  Skeleton mockups were created during the pre-development planning phase to visualise how data would need to be displayed
+  User interface (UI) wireframes were created during the pre-development planning phase to visualise how data would need to be displayed
   
   <br>
   <a href="#"><img src="docs/planning.webp" width="900"/></a>
