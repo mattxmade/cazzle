@@ -247,6 +247,13 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             value={formatPrice(inputValues["Deposit amount"], currency)}
             handleInputChange={handleCalcInput}
           />
+
+          <p>
+            Deposit percentage{" "}
+            {housePriceInput.defaultValue &&
+              depositAmountInput.defaultValue &&
+              housePriceInput.defaultValue / depositAmountInput.defaultValue}
+          </p>
         </RangeInputSection>
 
         <RangeInputSection
