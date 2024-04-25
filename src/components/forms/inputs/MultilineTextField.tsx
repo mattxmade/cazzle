@@ -2,7 +2,6 @@ import { useState } from "react";
 import TextField, { type TextFieldProps } from "@mui/material/TextField";
 
 import formatPrice from "@/utils/formatPrice";
-import generateLabelName from "@/utils/generateLabelName";
 import extractNumberFromString from "@/utils/extractNumberFromString";
 import { type Pattern, isValidInput } from "@/utils/validateInputs";
 
@@ -18,7 +17,6 @@ type MultilineTextFieldProps = {
 
 const MultilineTextField = (props: MultilineTextFieldProps) => {
   const [text, setText] = useState(props.defaultValue ?? "");
-  const labelName = generateLabelName(props.label.toLowerCase());
 
   const handleValidInput = (value: any) => {
     props.handleUpdateFormRef(props.id, value);
@@ -73,7 +71,7 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
   return (
     <TextField
       id={props.id}
-      label={labelName}
+      label={props.label}
       value={text}
       placeholder={props.label}
       onChange={handleTextChange}
