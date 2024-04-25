@@ -3,6 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 
 /**
+ * Mui Components
+ */
+import Card from "@mui/material/Card";
+import Stack from "@mui/material/Stack";
+import Divider from "@mui/material/Divider";
+import Typography from "@mui/material/Typography";
+
+/**
  * Types
  */
 import { type CurrencyKeys } from "@/utils/currencies";
@@ -221,72 +229,74 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   useEffect(handleCalulatorResult, [inputValues]);
 
   return (
-    <>
+    <Card sx={{ py: 2, px: 3 }}>
       <form id="mrc-form">
-        <HeadingOne>Mortgage Repayment Calculator</HeadingOne>
+        <Stack spacing={2}>
+          <Typography variant="h6">Mortgage Repayment Calculator</Typography>
 
-        <SelectInputSection
-          input={costResultSelectInput}
-          value={inputValues["Cost result select"]}
-          handleSelectInput={handleCalcInput}
-        />
-        <TextInputSection
-          input={housePriceInput}
-          value={formatPrice(inputValues["House price"], currency)}
-          handleInputChange={handleCalcInput}
-        />
+          <Divider />
 
-        <RangeInputSection
-          input={depositAmountInput}
-          dynamicMax={inputValues["House price"]}
-          value={inputValues["Deposit amount"]}
-          handleInputChange={handleCalcInput}
-        >
+          <SelectInputSection
+            input={costResultSelectInput}
+            value={inputValues["Cost result select"]}
+            handleSelectInput={handleCalcInput}
+          />
           <TextInputSection
-            input={depositAmountInput}
-            value={formatPrice(inputValues["Deposit amount"], currency)}
+            input={housePriceInput}
+            value={formatPrice(inputValues["House price"], currency)}
             handleInputChange={handleCalcInput}
           />
 
-          <p>
-            Deposit percentage{" "}
-            {housePriceInput.defaultValue &&
-              depositAmountInput.defaultValue &&
-              housePriceInput.defaultValue / depositAmountInput.defaultValue}
-          </p>
-        </RangeInputSection>
+          <RangeInputSection
+            input={depositAmountInput}
+            dynamicMax={inputValues["House price"]}
+            value={inputValues["Deposit amount"]}
+            handleInputChange={handleCalcInput}
+          >
+            <TextInputSection
+              input={depositAmountInput}
+              value={formatPrice(inputValues["Deposit amount"], currency)}
+              handleInputChange={handleCalcInput}
+            />
 
-        <RangeInputSection
-          input={termLengthRangeInput}
-          value={inputValues["Term length"]}
-          handleInputChange={handleCalcInput}
-        >
-          <TextInputSection
+            <p>
+              Deposit percentage{" "}
+              {housePriceInput.defaultValue &&
+                depositAmountInput.defaultValue &&
+                housePriceInput.defaultValue / depositAmountInput.defaultValue}
+            </p>
+          </RangeInputSection>
+
+          <RangeInputSection
             input={termLengthRangeInput}
             value={inputValues["Term length"]}
             handleInputChange={handleCalcInput}
-          />
-        </RangeInputSection>
+          >
+            <TextInputSection
+              input={termLengthRangeInput}
+              value={inputValues["Term length"]}
+              handleInputChange={handleCalcInput}
+            />
+          </RangeInputSection>
 
-        <RangeInputSection
-          input={annualInterestRangeInput}
-          value={inputValues["Annual interest"]}
-          handleInputChange={handleCalcInput}
-        >
-          <TextInputSection
+          <RangeInputSection
             input={annualInterestRangeInput}
-            value={inputValues["Annual interest"] + "%"}
+            value={inputValues["Annual interest"]}
             handleInputChange={handleCalcInput}
-          />
-        </RangeInputSection>
-
-        <p>
-          Monthly repayments:{" "}
-          {!monthlyRepayment ? "£0" : formatPrice(monthlyRepayment, currency)}
-        </p>
+          >
+            <TextInputSection
+              input={annualInterestRangeInput}
+              value={inputValues["Annual interest"] + "%"}
+              handleInputChange={handleCalcInput}
+            />
+          </RangeInputSection>
+        </Stack>
       </form>
 
-      {props.children}
-    </>
+      <p>
+        Monthly repayments:{" "}
+        {!monthlyRepayment ? "£0" : formatPrice(monthlyRepayment, currency)}
+      </p>
+    </Card>
   );
 }
