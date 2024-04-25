@@ -5,10 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 /**
  * Mui Components
  */
+
+import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import InputAdornment from "@mui/material/InputAdornment";
 
 /**
  * Types
@@ -28,7 +31,7 @@ import extractNumberFromString from "@/utils/extractNumberFromString";
 import RangeInputSection from "./inputs/RangeInputSection";
 import SelectInputSection from "./inputs/SelectInputSection";
 import TextInputSection from "./inputs/TextInputSection";
-import { HeadingOne } from "./HeadingOne";
+import MultilineTextField from "../forms/inputs/MultilineTextField";
 
 type HousePriceProps = {
   label?: string;
@@ -241,11 +244,73 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             value={inputValues["Cost result select"]}
             handleSelectInput={handleCalcInput}
           />
-          <TextInputSection
-            input={housePriceInput}
-            value={formatPrice(inputValues["House price"], currency)}
-            handleInputChange={handleCalcInput}
+
+          <MultilineTextField
+            id="mrc-property-price"
+            label="Property price"
+            validation="currency"
+            defaultValue={formatPrice(
+              inputValues["House price"],
+              "GBP",
+              false,
+              true
+            )}
+            handleUpdateFormRef={() => {}}
+            textFieldProps={{
+              required: false,
+              InputProps: {
+                startAdornment: (
+                  <InputAdornment position="start">£</InputAdornment>
+                ),
+              },
+              sx: {
+                maxWidth: "100%",
+              },
+            }}
           />
+
+          <Stack direction="row" gap={2}>
+            <Stack flex="auto">
+              <MultilineTextField
+                id="mrc-deposit"
+                label="Deposit"
+                validation="currency"
+                defaultValue={formatPrice(
+                  inputValues["Deposit amount"],
+                  "GBP",
+                  false,
+                  true
+                )}
+                handleUpdateFormRef={() => {}}
+                textFieldProps={{
+                  required: false,
+                  InputProps: {
+                    startAdornment: (
+                      <InputAdornment position="start">£</InputAdornment>
+                    ),
+                  },
+                  sx: {
+                    flex: "auto",
+                    maxWidth: "100%",
+                  },
+                }}
+              />
+
+              <Typography variant="caption">
+                Lenders may expect more than a 10% deposit
+              </Typography>
+            </Stack>
+
+            <Box width={72} height={72}>
+              <Typography>
+                {housePriceInput.defaultValue &&
+                  depositAmountInput.defaultValue &&
+                  housePriceInput.defaultValue /
+                    depositAmountInput.defaultValue}{" "}
+                %
+              </Typography>
+            </Box>
+          </Stack>
 
           <RangeInputSection
             input={depositAmountInput}
@@ -258,13 +323,6 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
               value={formatPrice(inputValues["Deposit amount"], currency)}
               handleInputChange={handleCalcInput}
             />
-
-            <p>
-              Deposit percentage{" "}
-              {housePriceInput.defaultValue &&
-                depositAmountInput.defaultValue &&
-                housePriceInput.defaultValue / depositAmountInput.defaultValue}
-            </p>
           </RangeInputSection>
 
           <RangeInputSection
