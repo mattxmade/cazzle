@@ -25,6 +25,7 @@ import ListingDetails from "@/components/listing/ListingDetails";
 import { content } from "@/app/content";
 import formatPrice from "@/utils/formatPrice";
 import type { PropertyListing_ } from "@/types";
+import MortgageCalculator from "@/components/calculator/MortgageRepaymentCalculator";
 
 type PropertyPageParams = Readonly<{
   params: { propertyId: string };
@@ -202,6 +203,20 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
                   </Typography>
                 </Grid>
               </Grid>
+            </Container>
+            <Divider />
+
+            <Container {...sectionStyle}>
+              <MortgageCalculator
+                currency="GBP"
+                housePrice={{
+                  label: "Property price",
+                  defaultValue: property.fullMarketPrice,
+                }}
+                depositAmount={{ defaultValue: property.depositValue }}
+                annualInterest={{ defaultValue: 5.3 }}
+                termLength={{ defaultValue: 25 }}
+              />
             </Container>
             <Divider />
           </Stack>
