@@ -204,7 +204,8 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
     const termLength = inputValues["Term length"];
 
     const annualInterest = inputValues["Annual interest"];
-    const repaymentType = inputValues["Cost result select"].toLowerCase();
+    const repaymentType =
+      inputValues["Cost result select"].toLowerCase() ?? "capital repayment";
 
     let result = 0;
 
@@ -240,12 +241,6 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
 
             <Divider />
           </Stack>
-
-          <SelectInputSection
-            input={costResultSelectInput}
-            value={inputValues["Cost result select"]}
-            handleSelectInput={handleCalcInput}
-          />
 
           {/* Property price */}
           <MultilineTextField
