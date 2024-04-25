@@ -232,12 +232,14 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   useEffect(handleCalulatorResult, [inputValues]);
 
   return (
-    <Card sx={{ py: 2, px: 3 }}>
-      <form id="mrc-form">
-        <Stack spacing={2}>
-          <Typography variant="h6">Mortgage Repayment Calculator</Typography>
+    <Card sx={{ pt: 2 }}>
+      <Box id="mrc-form" component="form" px={3}>
+        <Stack spacing={3}>
+          <Stack spacing={2}>
+            <Typography variant="h6">Mortgage Repayment Calculator</Typography>
 
-          <Divider />
+            <Divider />
+          </Stack>
 
           <SelectInputSection
             input={costResultSelectInput}
@@ -245,6 +247,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             handleSelectInput={handleCalcInput}
           />
 
+          {/* Property price */}
           <MultilineTextField
             id="mrc-property-price"
             label="Property price"
@@ -269,6 +272,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             }}
           />
 
+          {/* Deposit */}
           <Stack direction="row" gap={2}>
             <Stack flex="auto">
               <MultilineTextField
@@ -312,49 +316,66 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             </Box>
           </Stack>
 
-          <RangeInputSection
-            input={depositAmountInput}
-            dynamicMax={inputValues["House price"]}
-            value={inputValues["Deposit amount"]}
-            handleInputChange={handleCalcInput}
-          >
-            <TextInputSection
-              input={depositAmountInput}
-              value={formatPrice(inputValues["Deposit amount"], currency)}
-              handleInputChange={handleCalcInput}
-            />
-          </RangeInputSection>
+          {/* Annual Interest */}
+          <MultilineTextField
+            id="mrc-annual-interest"
+            label="Annual interest"
+            validation="number"
+            defaultValue={inputValues["Annual interest"]}
+            handleUpdateFormRef={() => {}}
+            textFieldProps={{
+              required: false,
+              InputProps: {
+                startAdornment: (
+                  <InputAdornment position="start">%</InputAdornment>
+                ),
+              },
+              sx: {
+                maxWidth: "100%",
+              },
+            }}
+          />
 
-          <RangeInputSection
-            input={termLengthRangeInput}
-            value={inputValues["Term length"]}
-            handleInputChange={handleCalcInput}
-          >
-            <TextInputSection
-              input={termLengthRangeInput}
-              value={inputValues["Term length"]}
-              handleInputChange={handleCalcInput}
-            />
-          </RangeInputSection>
-
-          <RangeInputSection
-            input={annualInterestRangeInput}
-            value={inputValues["Annual interest"]}
-            handleInputChange={handleCalcInput}
-          >
-            <TextInputSection
-              input={annualInterestRangeInput}
-              value={inputValues["Annual interest"] + "%"}
-              handleInputChange={handleCalcInput}
-            />
-          </RangeInputSection>
+          {/* Repayment Period */}
+          <MultilineTextField
+            id="mrc-term-length"
+            label="Repayment period"
+            validation="number"
+            defaultValue={inputValues["Term length"]}
+            handleUpdateFormRef={() => {}}
+            textFieldProps={{
+              required: false,
+              InputProps: {
+                startAdornment: (
+                  <InputAdornment position="start">years</InputAdornment>
+                ),
+              },
+              sx: {
+                maxWidth: "100%",
+              },
+            }}
+          />
         </Stack>
-      </form>
+      </Box>
 
-      <p>
-        Monthly repayments:{" "}
-        {!monthlyRepayment ? "£0" : formatPrice(monthlyRepayment, currency)}
-      </p>
+      <Stack
+        mt={2}
+        padding={4}
+        alignItems="center"
+        position="relative"
+        sx={{
+          outlineWidth: 1,
+          outlineStyle: "solid",
+          outlineColor: "lightgrey",
+          backgroundColor: "#F4F4F5",
+        }}
+      >
+        <Typography>Monthly repayments:</Typography>
+
+        <Typography fontSize={36}>
+          {!monthlyRepayment ? "£0" : formatPrice(monthlyRepayment, currency)}
+        </Typography>
+      </Stack>
     </Card>
   );
 }
