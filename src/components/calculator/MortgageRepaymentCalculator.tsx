@@ -61,7 +61,7 @@ type AnnualInterestProps = {
 
 type MortgageCalcInputValues = {
   [index: string]: number | string;
-  "House price": number;
+  "Property price": number;
   "Cost result select": string;
   "Deposit amount": number;
   "Term length": number;
@@ -87,9 +87,9 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   const currency = props.currency ?? "GBP";
 
   const housePriceInput = {
-    name: "House price",
+    name: "Property price",
     type: "currency",
-    label: props.housePrice?.label ?? "House price",
+    label: props.housePrice?.label ?? "Property price",
     defaultValue: props.housePrice?.defaultValue ?? 0,
   };
 
@@ -141,7 +141,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   };
 
   const [inputValues, setInputValues] = useState<MortgageCalcInputValues>({
-    "House price": housePriceInput.defaultValue,
+    "Property price": housePriceInput.defaultValue,
     "Cost result select": costResultSelectInput.defaultValue,
     "Deposit amount": depositAmountInput.defaultValue,
     "Term length": termLengthRangeInput.defaultValue,
@@ -150,25 +150,27 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
 
   const [monthlyRepayment, setMonthlyRepayment] = useState<number>(0);
 
-  const handleCalcInput: HandleInputChangeParams = useCallback(
-    (e, inputName) => {
+  const handleCalcInput = useCallback(
+    (id: string, value: string[] | string | number) => {
+      if (typeof value !== "number" || typeof value !== "string") return;
+
+      const inputName = id
+        .slice(0, "mrc".length)
+        .replaceAll("-", " ")
+        .toLowerCase();
+
       const key = Object.keys(inputValues).find(
-        (inputState) => inputState === inputName
+        (inputState) => inputState.toLowerCase() === inputName
       );
 
       if (!key) return;
-      const input = e.target as HTMLInputElement;
 
-      const inputValue = input.type.includes("select")
-        ? input.value
-        : extractNumberFromString(input.value);
-
-      if (typeof inputValue === "string") {
-        return setInputValues({ ...inputValues, [key]: inputValue });
+      if (typeof value === "string") {
+        return setInputValues({ ...inputValues, [key]: value });
       }
 
-      if (key === "House price") {
-        const housePrice = inputValue;
+      if (key === "Property price") {
+        const housePrice = value;
         const depositAmount = inputValues["Deposit amount"];
 
         return depositAmount > housePrice
@@ -177,19 +179,19 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
               [key]: housePrice,
               "Deposit amount": housePrice,
             })
-          : setInputValues({ ...inputValues, [key]: inputValue });
+          : setInputValues({ ...inputValues, [key]: value });
       }
 
       if (key === "Deposit amount") {
-        const housePrice = inputValues["House price"];
-        const depositAmount = inputValue;
+        const housePrice = inputValues["Property price"];
+        const depositAmount = value;
 
         return depositAmount > housePrice
           ? setInputValues({ ...inputValues, [key]: housePrice })
-          : setInputValues({ ...inputValues, [key]: inputValue });
+          : setInputValues({ ...inputValues, [key]: value });
       }
 
-      setInputValues({ ...inputValues, [key]: inputValue });
+      setInputValues({ ...inputValues, [key]: value });
     },
     [inputValues]
   );
@@ -197,7 +199,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   const handleCalulatorResult = () => {
     if (!Object.values(inputValues).every((value) => value && value)) return;
 
-    const housePrice = inputValues["House price"];
+    const housePrice = inputValues["Property price"];
     const depositAmount = inputValues["Deposit amount"];
 
     const loanAmount = housePrice - depositAmount;
@@ -248,12 +250,12 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             label="Property price"
             validation="currency"
             defaultValue={formatPrice(
-              inputValues["House price"],
+              inputValues["Property price"],
               "GBP",
               false,
               true
             )}
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleCalcInput}
             textFieldProps={{
               required: false,
               InputProps: {
@@ -280,7 +282,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
                   false,
                   true
                 )}
-                handleUpdateFormRef={() => {}}
+                handleUpdateFormRef={handleCalcInput}
                 textFieldProps={{
                   required: false,
                   InputProps: {
@@ -317,7 +319,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             label="Annual interest"
             validation="number"
             defaultValue={inputValues["Annual interest"]}
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleCalcInput}
             textFieldProps={{
               required: false,
               InputProps: {
@@ -337,7 +339,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             label="Repayment period"
             validation="number"
             defaultValue={inputValues["Term length"]}
-            handleUpdateFormRef={() => {}}
+            handleUpdateFormRef={handleCalcInput}
             textFieldProps={{
               required: false,
               InputProps: {
