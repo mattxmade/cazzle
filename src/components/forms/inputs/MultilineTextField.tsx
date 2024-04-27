@@ -38,8 +38,8 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
 
     switch (props.validation) {
       case "number":
-        isValidInput(input.value, "number") &&
-          handleValidInput(extractNumberFromString(input.value));
+        const value = Number(input.value);
+        typeof value === "number" && handleValidInput(value);
         break;
 
       case "currency":
@@ -84,6 +84,7 @@ const MultilineTextField = (props: MultilineTextFieldProps) => {
         ...props.textFieldProps?.sx,
       }}
       InputProps={{
+        type: props.validation === "number" ? "number" : "",
         sx: { alignItems: "baseline" },
         ...props.textFieldProps?.InputProps,
       }}
