@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Mui Components
@@ -22,15 +22,11 @@ import { type CurrencyKeys } from "@/utils/currencies";
  * Utility functions
  */
 import formatPrice from "@/utils/formatPrice";
-import calculateRepayments from "@/utils/calculateRepayments";
-import extractNumberFromString from "@/utils/extractNumberFromString";
+import calculateRepayments from "./calculateRepayments";
 
 /**
  * Custom React Components
  */
-import RangeInputSection from "./inputs/RangeInputSection";
-import SelectInputSection from "./inputs/SelectInputSection";
-import TextInputSection from "./inputs/TextInputSection";
 import MultilineTextField from "../forms/inputs/MultilineTextField";
 
 type HousePriceProps = {
@@ -150,13 +146,17 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
 
   const [monthlyRepayment, setMonthlyRepayment] = useState<number>(0);
 
+  const resultRef = useRef<HTMLParagraphElement | null>(null);
+  const depositPercentage = useRef<number | null>(null);
+
   const handleCalcInput = useCallback(
     (id: string, value: string[] | string | number) => {
-      if (typeof value !== "number" || typeof value !== "string") return;
+      if (typeof value !== "number" && typeof value !== "string") return;
 
       const inputName = id
-        .slice(0, "mrc".length)
+        .slice("mrc".length)
         .replaceAll("-", " ")
+        .trim()
         .toLowerCase();
 
       const key = Object.keys(inputValues).find(
@@ -196,6 +196,8 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
     [inputValues]
   );
 
+  const interval = useRef<ReturnType<typeof setInterval>>();
+
   const handleCalulatorResult = () => {
     if (!Object.values(inputValues).every((value) => value && value)) return;
 
@@ -229,7 +231,59 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
       );
     }
 
+    // Calculate deposit %
+    depositPercentage.current = +(100 / (housePrice / depositAmount)).toFixed();
+
+    // Update result state
     setMonthlyRepayment(result);
+
+    const speed = Number(
+      formatPrice(result, currency, false, true)
+        .split("")
+        .filter((char) => char !== ",")
+        .map((char, i) => (i === 0 ? (char = "1") : "0"))
+        .join("")
+    );
+
+    // textContent transition
+    if (!resultRef.current) return;
+    resultRef.current.textContent = "£0";
+
+    const repayment = formatPrice(result, currency, false, false);
+
+    if (resultRef.current.textContent !== repayment) {
+      let progress = 0;
+
+      interval.current && clearInterval(interval.current);
+
+      interval.current = setInterval(() => {
+        if (!resultRef.current || progress === result) {
+          clearInterval(interval.current);
+          return;
+        }
+
+        if (progress > result) {
+          resultRef.current.textContent = formatPrice(
+            result,
+            currency,
+            false,
+            true
+          );
+
+          clearInterval(interval.current);
+          return;
+        }
+
+        progress += speed / 20;
+
+        resultRef.current.textContent = formatPrice(
+          progress,
+          currency,
+          false,
+          true
+        );
+      }, 0);
+    }
   };
 
   useEffect(handleCalulatorResult, [inputValues]);
@@ -251,7 +305,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             validation="currency"
             defaultValue={formatPrice(
               inputValues["Property price"],
-              "GBP",
+              currency,
               false,
               true
             )}
@@ -269,16 +323,16 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             }}
           />
 
-          {/* Deposit */}
+          {/* Deposit amount*/}
           <Stack direction="row" gap={2}>
             <Stack flex="auto">
               <MultilineTextField
-                id="mrc-deposit"
-                label="Deposit"
+                id="mrc-deposit-amount"
+                label="Deposit amount"
                 validation="currency"
                 defaultValue={formatPrice(
                   inputValues["Deposit amount"],
-                  "GBP",
+                  currency,
                   false,
                   true
                 )}
@@ -304,10 +358,11 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
 
             <Box width={72} height={72}>
               <Typography>
-                {housePriceInput.defaultValue &&
-                  depositAmountInput.defaultValue &&
-                  housePriceInput.defaultValue /
-                    depositAmountInput.defaultValue}{" "}
+                {depositPercentage.current ??
+                  (housePriceInput.defaultValue &&
+                    depositAmountInput.defaultValue &&
+                    housePriceInput.defaultValue /
+                      depositAmountInput.defaultValue)}{" "}
                 %
               </Typography>
             </Box>
@@ -369,8 +424,8 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
       >
         <Typography>Monthly repayments:</Typography>
 
-        <Typography fontSize={36}>
-          {!monthlyRepayment ? "£0" : formatPrice(monthlyRepayment, currency)}
+        <Typography ref={resultRef} component="p" fontSize={36}>
+          £0
         </Typography>
       </Stack>
     </Card>
