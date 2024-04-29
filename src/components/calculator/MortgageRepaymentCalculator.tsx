@@ -5,13 +5,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 /**
  * Mui Components
  */
-
 import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
+
+/**
+ * Mui Charts
+ */
+import { Gauge } from "@mui/x-charts/Gauge";
 
 /**
  * Types
@@ -147,7 +151,11 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   const [monthlyRepayment, setMonthlyRepayment] = useState<number>(0);
 
   const resultRef = useRef<HTMLParagraphElement | null>(null);
-  const depositPercentage = useRef<number | null>(null);
+  const depositPercentage = useRef<number | null>(
+    housePriceInput.defaultValue && depositAmountInput.defaultValue
+      ? housePriceInput.defaultValue / depositAmountInput.defaultValue
+      : 0
+  );
 
   const handleCalcInput = useCallback(
     (id: string, value: string[] | string | number) => {
@@ -267,7 +275,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
             result,
             currency,
             false,
-            true
+            false
           );
 
           clearInterval(interval.current);
@@ -280,7 +288,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
           progress,
           currency,
           false,
-          true
+          false
         );
       }, 0);
     }
@@ -324,48 +332,50 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
           />
 
           {/* Deposit amount*/}
-          <Stack direction="row" gap={2}>
-            <Stack flex="auto">
-              <MultilineTextField
-                id="mrc-deposit-amount"
-                label="Deposit amount"
-                validation="currency"
-                defaultValue={formatPrice(
-                  inputValues["Deposit amount"],
-                  currency,
-                  false,
-                  true
-                )}
-                handleUpdateFormRef={handleCalcInput}
-                textFieldProps={{
-                  required: false,
-                  InputProps: {
-                    startAdornment: (
-                      <InputAdornment position="start">£</InputAdornment>
-                    ),
-                  },
-                  sx: {
-                    flex: "auto",
-                    maxWidth: "100%",
-                  },
-                }}
-              />
+          <Stack direction="row" flexWrap="wrap" alignItems="center" gap={1}>
+            <MultilineTextField
+              id="mrc-deposit-amount"
+              label="Deposit amount"
+              validation="currency"
+              defaultValue={formatPrice(
+                inputValues["Deposit amount"],
+                currency,
+                false,
+                true
+              )}
+              handleUpdateFormRef={handleCalcInput}
+              textFieldProps={{
+                required: false,
+                InputProps: {
+                  startAdornment: (
+                    <InputAdornment position="start">£</InputAdornment>
+                  ),
+                },
+                sx: {
+                  flex: "auto",
+                  maxWidth: "100%",
+                },
+              }}
+            />
 
-              <Typography variant="caption">
-                Lenders may expect more than a 10% deposit
-              </Typography>
-            </Stack>
+            {/* Deposit % gauge*/}
+            <Gauge
+              value={depositPercentage.current}
+              text={({ value }) => `${value}%`}
+              valueMin={0}
+              valueMax={100}
+              width={92}
+              height={92}
+              startAngle={0}
+              endAngle={360}
+              innerRadius="80%"
+              outerRadius="100%"
+              sx={{ flex: "none" }}
+            />
 
-            <Box width={72} height={72}>
-              <Typography>
-                {depositPercentage.current ??
-                  (housePriceInput.defaultValue &&
-                    depositAmountInput.defaultValue &&
-                    housePriceInput.defaultValue /
-                      depositAmountInput.defaultValue)}{" "}
-                %
-              </Typography>
-            </Box>
+            <Typography variant="body2">
+              Lenders may expect more than a 10% deposit
+            </Typography>
           </Stack>
 
           {/* Annual Interest */}
