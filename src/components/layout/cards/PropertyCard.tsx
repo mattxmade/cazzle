@@ -175,6 +175,7 @@ const PropertyCard = async ({ propertyData, ...props }: PropertyCardProps) => {
               </Link>
             </Card>
             <FavouritesForm
+              elevation={1}
               listingId={propertyData._id}
               isUserFavourite={isUserFavourite}
             />
