@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { CardProps } from "@mui/material/Card";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
@@ -13,6 +14,10 @@ import SubmitButton from "./SubmitButton";
 type FavouritesFormProps = {
   listingId: string;
   isUserFavourite?: boolean;
+  skipText?: boolean;
+  elevation?: CardProps["elevation"];
+  color?: React.CSSProperties["color"];
+  borderRadius?: React.CSSProperties["borderRadius"];
 };
 
 const FavouritesForm = (props: FavouritesFormProps) => {
@@ -42,14 +47,18 @@ const FavouritesForm = (props: FavouritesFormProps) => {
       <Stack direction="row" alignItems="center">
         <form action={handleFormSubmit}>
           <SubmitButton
+            elevation={0}
+            borderRadius={props.borderRadius}
             listingId={props.listingId}
             isUserFavourite={isUserFavourite}
           />
         </form>
 
-        <Typography variant="body1" fontWeight={500}>
-          Save
-        </Typography>
+        {props.skipText ? null : (
+          <Typography variant="body1" fontWeight={500}>
+            Save
+          </Typography>
+        )}
       </Stack>
 
       {result ? (
