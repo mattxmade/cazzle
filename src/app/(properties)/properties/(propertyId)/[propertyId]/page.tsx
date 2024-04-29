@@ -24,8 +24,8 @@ import ListingDetails from "@/components/listing/ListingDetails";
 
 import { content } from "@/app/content";
 import formatPrice from "@/utils/formatPrice";
-import type { PropertyListing_ } from "@/types";
 import MortgageCalculator from "@/components/calculator/MortgageRepaymentCalculator";
+import type { PropertyListing_ } from "@/types";
 
 type PropertyPageParams = Readonly<{
   params: { propertyId: string };
@@ -79,7 +79,10 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
         <Grid container xs={12} sm={12} md={8} width="100%">
           <Stack width="100%">
             <Container {...sectionStyle}>
-              <ListingHeader heading={property.displayAddress} />
+              <ListingHeader
+                heading={property.displayAddress}
+                listingId={property._id}
+              />
 
               <Stack gap={1} direction="row" alignItems="center">
                 <Typography variant="h4">
