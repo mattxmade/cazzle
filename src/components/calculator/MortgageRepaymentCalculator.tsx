@@ -153,7 +153,10 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   const resultRef = useRef<HTMLParagraphElement | null>(null);
   const depositPercentage = useRef<number | null>(
     housePriceInput.defaultValue && depositAmountInput.defaultValue
-      ? housePriceInput.defaultValue / depositAmountInput.defaultValue
+      ? +(
+          (depositAmountInput.defaultValue / housePriceInput.defaultValue) *
+          100
+        ).toFixed(1)
       : 0
   );
 
@@ -240,7 +243,9 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
     }
 
     // Calculate deposit %
-    depositPercentage.current = +(100 / (housePrice / depositAmount)).toFixed();
+    depositPercentage.current = +((depositAmount / housePrice) * 100).toFixed(
+      1
+    );
 
     // Update result state
     setMonthlyRepayment(result);
@@ -358,8 +363,10 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
               }}
             />
 
-            {/* Deposit % gauge*/}
+            {/* Deposit Percentage gauge*/}
             <Gauge
+              title="Deposit percentage"
+              desc="Deposit percentage of property price"
               value={depositPercentage.current}
               text={({ value }) => `${value}%`}
               valueMin={0}
