@@ -47,10 +47,11 @@ const FavouritesForm = (props: FavouritesFormProps) => {
       <Stack direction="row" alignItems="center">
         <form action={handleFormSubmit}>
           <SubmitButton
-            elevation={0}
-            borderRadius={props.borderRadius}
             listingId={props.listingId}
             isUserFavourite={isUserFavourite}
+            color={props.color}
+            elevation={props.elevation}
+            borderRadius={props.borderRadius}
           />
         </form>
 
