@@ -1,15 +1,23 @@
 import Stack from "@mui/material/Stack/Stack";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import LikeButton from "@/components/ui/buttons/LikeButton";
+
 import ShareButton from "@/components/ui/buttons/ShareButton";
+import FavouritesForm from "../user/favourites/FavesForm";
+
+import getSignedInUser from "@/server/user/getUser";
+import { Id } from "@/../convex/_generated/dataModel";
 
 type ListingHeaderProps = {
   heading: string;
+  listingId: Id<"properties">;
   children?: React.ReactNode;
 };
 
-const ListingHeader = ({ heading, children }: ListingHeaderProps) => {
+const ListingHeader = async (props: ListingHeaderProps) => {
+  const user = await getSignedInUser();
+  const userFavourites = !user ? [] : user.current?.favourites ?? [];
+
   return (
     <Stack
       width={"100%"}
@@ -18,13 +26,19 @@ const ListingHeader = ({ heading, children }: ListingHeaderProps) => {
       justifyContent="space-between"
     >
       <Typography variant="h1" fontSize={"1rem"} fontWeight={"500"}>
-        {heading}
+        {props.heading}
       </Typography>
 
-      <Stack direction="row">
-        <ShareButton />
+      <Stack direction="row" gap={0.5}>
+        <ShareButton elevation={0} borderRadius={1} />
         <Divider orientation="vertical" variant="middle" flexItem />
-        <LikeButton />
+        <FavouritesForm
+          listingId={props.listingId}
+          isUserFavourite={userFavourites.includes(props.listingId)}
+          skipText={true}
+          elevation={0}
+          borderRadius={1}
+        />
       </Stack>
     </Stack>
   );
