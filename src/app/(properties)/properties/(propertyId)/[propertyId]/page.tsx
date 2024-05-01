@@ -1,10 +1,13 @@
+import { nanoid } from "nanoid";
+import { Suspense } from "react";
 import { redirect } from "next/navigation";
+
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/../convex/_generated/api";
 import { Id } from "@/../convex/_generated/dataModel";
 
 import Divider from "@mui/material/Divider";
-import Container from "@mui/material/Container";
+import Container, { ContainerProps } from "@mui/material/Container";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import Stack from "@mui/material/Stack/Stack";
 import Button from "@mui/material/Button";
@@ -21,6 +24,8 @@ import InfoTooltip from "@/components/ui/feedback/InfoTooltip";
 import ListingAside from "@/components/listing/ListingAside";
 import ListingHeader from "@/components/listing/ListingHeader";
 import ListingDetails from "@/components/listing/ListingDetails";
+import ScrollToButton from "@/components/scroll/ScrollToButton";
+import ScrollToContainer from "@/components/scroll/ScrollToContainer";
 
 import { content } from "@/app/content";
 import formatPrice from "@/utils/formatPrice";
@@ -30,6 +35,8 @@ import type { PropertyListing_ } from "@/types";
 type PropertyPageParams = Readonly<{
   params: { propertyId: string };
 }>;
+
+const SCROLL_TO_ID = nanoid();
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +57,7 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
 
   const features = property.features;
 
-  const sectionStyle = {
+  const sectionStyle: ContainerProps = {
     disableGutters: true,
     component: "section",
     sx: { paddingTop: 2, paddingBottom: 2 },
@@ -79,10 +86,12 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
         <Grid container xs={12} sm={12} md={8} width="100%">
           <Stack width="100%">
             <Container {...sectionStyle}>
-              <ListingHeader
-                heading={property.displayAddress}
-                listingId={property._id}
-              />
+              <Suspense>
+                <ListingHeader
+                  heading={property.displayAddress}
+                  listingId={property._id}
+                />
+              </Suspense>
 
               <Stack gap={1} direction="row" alignItems="center">
                 <Typography variant="h4">
@@ -94,14 +103,18 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
                 </Button>
               </Stack>
 
-              <Button sx={{ width: "fit-content", padding: 0 }}>
+              <ScrollToButton
+                id={`scroll-btn-${SCROLL_TO_ID}`}
+                containerId={`scroll-cont-${SCROLL_TO_ID}`}
+                sx={{ width: "fit-content", padding: 0 }}
+              >
                 <Stack gap={1} direction="row" alignItems="center">
                   <CalculateIcon fontSize="medium" />
                   <Typography variant="body2">
                     Monthly mortgage payments
                   </Typography>
                 </Stack>
-              </Button>
+              </ScrollToButton>
             </Container>
             <Divider />
 
@@ -209,7 +222,10 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
             </Container>
             <Divider />
 
-            <Container {...sectionStyle}>
+            <ScrollToContainer
+              id={`scroll-cont-${SCROLL_TO_ID}`}
+              {...sectionStyle}
+            >
               <MortgageCalculator
                 currency="GBP"
                 housePrice={{
@@ -220,7 +236,7 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
                 annualInterest={{ defaultValue: 5.3 }}
                 termLength={{ defaultValue: 25 }}
               />
-            </Container>
+            </ScrollToContainer>
             <Divider />
           </Stack>
         </Grid>
