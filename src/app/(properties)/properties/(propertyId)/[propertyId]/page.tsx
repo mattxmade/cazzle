@@ -16,7 +16,6 @@ import Typography from "@mui/material/Typography";
 import CalculateIcon from "@mui/icons-material/CalculateOutlined";
 
 import ImageGrid from "@/components/layout/ImageGrid";
-import PrimaryGrid from "@/components/layout/PrimaryGrid";
 import Thumbnails from "@/components/Thumbnails";
 import NoItemCard from "@/components/NoItemCard";
 import BranchCard from "@/components/layout/cards/BranchCard";
@@ -26,10 +25,11 @@ import ListingHeader from "@/components/listing/ListingHeader";
 import ListingDetails from "@/components/listing/ListingDetails";
 import ScrollToButton from "@/components/scroll/ScrollToButton";
 import ScrollToContainer from "@/components/scroll/ScrollToContainer";
+import MortgageCalculator from "@/components/calculator/MortgageRepaymentCalculator";
+import IntersectionWrapper from "@/components/intersection/IntersectionWrapper";
 
 import { content } from "@/app/content";
 import formatPrice from "@/utils/formatPrice";
-import MortgageCalculator from "@/components/calculator/MortgageRepaymentCalculator";
 import type { PropertyListing_ } from "@/types";
 
 type PropertyPageParams = Readonly<{
@@ -70,20 +70,13 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
       maxWidth="lg"
       sx={{ display: "grid", padding: "4rem 1rem" }}
     >
-      <ImageGrid link={property.slug + "/media?media="} imageData={images} />
+      <IntersectionWrapper id="intersection-id__property-page__image-grid">
+        <ImageGrid link={property.slug + "/media?media="} imageData={images} />
+      </IntersectionWrapper>
 
-      <PrimaryGrid
-        mediumAboveDisplayElements={
-          <Grid container md={4} sx={{ paddingTop: 2 }}>
-            {/* Listing Aside */}
-            <ListingAside>
-              <BranchCard sticky details={{ name: content.project.name }} />
-            </ListingAside>
-          </Grid>
-        }
-      >
+      <Grid container component="section">
         {/* Listing Main Content */}
-        <Grid container xs={12} sm={12} md={8} width="100%">
+        <Grid container md={12} lg={8} width="100%">
           <Stack width="100%">
             <Container {...sectionStyle}>
               <Suspense>
@@ -240,7 +233,29 @@ export default async function PropertyPage({ params }: PropertyPageParams) {
             <Divider />
           </Stack>
         </Grid>
-      </PrimaryGrid>
+
+        <Grid container lg={4} sx={{ paddingTop: 2 }}>
+          <IntersectionWrapper
+            elements={{
+              beforeId: "intersection-id__property-page__image-grid",
+            }}
+            styles={{
+              default: { transition: "0.3s" },
+              intersecting: {
+                top: 0,
+                position: "fixed",
+                transform: "translate(0, 92px)",
+                transition: "0.3s",
+              },
+            }}
+          >
+            {/* Listing Aside */}
+            <ListingAside>
+              <BranchCard sticky details={{ name: content.project.name }} />
+            </ListingAside>
+          </IntersectionWrapper>
+        </Grid>
+      </Grid>
     </Container>
   );
 }
