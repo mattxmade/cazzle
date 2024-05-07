@@ -13,11 +13,6 @@ import Typography from "@mui/material/Typography";
 import InputAdornment from "@mui/material/InputAdornment";
 
 /**
- * Mui Charts
- */
-import { Gauge } from "@mui/x-charts/Gauge";
-
-/**
  * Types
  */
 import { type CurrencyKeys } from "@/utils/currencies";
@@ -31,6 +26,7 @@ import calculateRepayments from "./calculateRepayments";
 /**
  * Custom React Components
  */
+import Gauge from "../charts/Gauge";
 import MultilineTextField from "../forms/inputs/MultilineTextField";
 
 type HousePriceProps = {
@@ -151,7 +147,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
   const [monthlyRepayment, setMonthlyRepayment] = useState<number>(0);
 
   const resultRef = useRef<HTMLParagraphElement | null>(null);
-  const depositPercentage = useRef<number | null>(
+  const depositPercentage = useRef<number>(
     housePriceInput.defaultValue && depositAmountInput.defaultValue
       ? +(
           (depositAmountInput.defaultValue / housePriceInput.defaultValue) *
@@ -159,6 +155,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
         ).toFixed(1)
       : 0
   );
+  const lastDepositPercentage = useRef(depositPercentage.current);
 
   const handleCalcInput = useCallback(
     (id: string, value: string[] | string | number) => {
@@ -188,7 +185,7 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
           ? setInputValues({
               ...inputValues,
               [key]: housePrice,
-              "Deposit amount": housePrice,
+              // "Deposit amount": housePrice,
             })
           : setInputValues({ ...inputValues, [key]: value });
       }
@@ -242,12 +239,20 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
       );
     }
 
+    // Last deposit percentage
+    lastDepositPercentage.current = depositPercentage.current;
+
     // Calculate deposit %
     depositPercentage.current = +((depositAmount / housePrice) * 100).toFixed(
       1
     );
 
+    // Fix: Add % bounds | Prevents Gauge infinite loop error
+    if (depositPercentage.current < 0) depositPercentage.current = 0;
+    if (depositPercentage.current > 100) depositPercentage.current = 100;
+
     // Update result state
+    result = result >= 0 ? result : 0;
     setMonthlyRepayment(result);
 
     const speed = Number(
@@ -365,9 +370,10 @@ export default function MortgageCalculator(props: MortgageCalculatorProps) {
 
             {/* Deposit Percentage gauge*/}
             <Gauge
+              targetValue={depositPercentage.current}
+              lastValue={lastDepositPercentage.current}
               title="Deposit percentage"
               desc="Deposit percentage of property price"
-              value={depositPercentage.current}
               text={({ value }) => `${value}%`}
               valueMin={0}
               valueMax={100}
