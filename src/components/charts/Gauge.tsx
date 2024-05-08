@@ -45,7 +45,7 @@ const Gauge = ({ lastValue, targetValue, children, ...props }: GaugeProps) => {
     return () => {
       interval.current && clearInterval(interval.current);
     };
-  }, []);
+  }, [mounted]);
 
   return (
     <Box ref={gaugeElContRef}>
