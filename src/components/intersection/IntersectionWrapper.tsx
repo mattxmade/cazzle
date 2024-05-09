@@ -14,21 +14,19 @@ type Props = {
 const IntersectionWrapper = (props: Props) => {
   const { elements, styles, children } = props;
 
-  if (!elements) return <Box {...props}>{children}</Box>;
-
   const elementBeforeRef = useRef<HTMLElement | null>(null);
   const elementTargetRef = useRef<HTMLElement | null>(null);
   const elementAfterRef = useRef<HTMLElement | null>(null);
 
-  const elementBeforeObserver = elements.beforeId ? useIntersection() : null;
-  const elementAfterObserver = elements.afterId ? useIntersection() : null;
+  const elementBeforeObserver = useIntersection();
+  const elementAfterObserver = useIntersection();
 
   const elementTargetObserver = useIntersection({
     root: elementTargetRef.current,
   });
 
   useEffect(() => {
-    if (!document) return;
+    if (!document || !elements) return;
 
     if (elementBeforeObserver && elements.beforeId) {
       if (elementBeforeRef.current) return;
@@ -49,7 +47,7 @@ const IntersectionWrapper = (props: Props) => {
 
   useEffect(() => {
     if (!elementTargetObserver) return;
-  }, [elementTargetObserver.entry]);
+  }, [elementTargetObserver]);
 
   useEffect(() => {
     if (!elementBeforeObserver) return;
@@ -61,9 +59,11 @@ const IntersectionWrapper = (props: Props) => {
 
   useEffect(() => {
     if (!elementAfterObserver) return;
-  }, [elementAfterObserver?.entry]);
+  }, [elementAfterObserver]);
 
-  return (
+  return !elements ? (
+    <Box {...props}>{children}</Box>
+  ) : (
     <Box {...props} ref={elementTargetObserver.ref} sx={{ ...style }}>
       {children}
     </Box>
