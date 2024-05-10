@@ -26,6 +26,7 @@
     "@mui/icons-material": "^5.15.6",
     "@mui/material": "^5.15.5",
     "@mui/material-nextjs": "^5.15.5",
+    "@mui/x-charts": "^7.3.1",
     "convex": "^1.8.0",
     "nanoid": "^5.0.4",
     "next": "^14.1.4",
