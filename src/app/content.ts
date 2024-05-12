@@ -113,6 +113,47 @@ const councilTaxBand = [
   { text: "H", value: "H" },
 ];
 
+export const dashboard = {
+  property: {
+    options: {
+      tenure,
+      propertyType,
+      availabilityStatus,
+      councilTaxBand,
+    },
+  },
+};
+
+const pages = {
+  listings: {
+    property: {
+      infoButton: "mortgage-calculator",
+    },
+  },
+};
+
+const forms = {
+  account: {
+    branch: {
+      title: "Branch Account",
+      description: `A branch account allows you to list properties on ${projectName} via the
+      property manager dashboard and provides an estate-agent profile
+      page.`,
+      instruction: null,
+      note: `Please note, creating a branch acount does not allow the ability to
+      favourite properties as this feature is reserved for standard user
+      accounts.`,
+    },
+    standard: {
+      title: "Standard Account",
+      description: `With a standard account, you can favourite listings as you search.`,
+      instruction: `Favourites can be viewed and managed by visiting the account page.`,
+      note: `Please note, when a listing is completed or removed by the seller, it
+      will no longer be listed in your favourites.`,
+    },
+  },
+};
+
 export const content = {
   project: {
     author: process.env.NEXT_PUBLIC_AUTHOR ?? "",
@@ -141,4 +182,7 @@ export const content = {
       propertyType,
     },
   },
+  forms,
+  pages,
+  dashboard,
 };

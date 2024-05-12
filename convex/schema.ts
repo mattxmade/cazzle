@@ -2,6 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
+  // Other tables here...
   users: defineTable({
     user_id: v.string(),
     name: v.optional(v.string()),
@@ -9,6 +10,38 @@ export default defineSchema({
     favourites: v.union(v.null(), v.array(v.id("properties"))),
     creationDate: v.number(),
     modifiedDate: v.number(),
+  }),
+
+  agents: defineTable({
+    agent_id: v.string(),
+    name: v.string(),
+    role: v.string(),
+    user_id: v.string(),
+    branch_id: v.optional(v.id("branches")),
+  }),
+
+  branches: defineTable({
+    ad: v.union(v.object({ storageId: v.id("_storage") }), v.null()),
+    addressNumber: v.union(v.float64(), v.null()),
+    agent_ids: v.array(v.string()),
+    banner: v.union(v.object({ storageId: v.id("_storage") }), v.null()),
+    branch_id: v.string(),
+    description: v.string(),
+    email: v.string(),
+    logo: v.union(v.object({ storageId: v.id("_storage") }), v.null()),
+    name: v.string(),
+    postcode: v.string(),
+    listings: v.object({
+      live: v.array(v.id("properties")),
+      draft: v.array(v.id("properties")),
+    }),
+    slug: v.string(),
+    street: v.string(),
+    summary: v.string(),
+    telephone: v.union(v.float64(), v.null()),
+    town: v.string(),
+    user_ids: v.array(v.string()),
+    website: v.string(),
   }),
 
   properties: defineTable({
@@ -46,5 +79,7 @@ export default defineSchema({
     summary: v.string(),
     tenure: v.string(),
     town: v.string(),
+    user_id: v.string(),
+    draft: v.optional(v.boolean()),
   }),
 });

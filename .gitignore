@@ -1,3 +1,82 @@
+*.ignore.*
+
+TODO.md
+
+lottie
+
+.prettierignore
+.gitignore
+
+# Production only
+metadata.ts
+robots.ts
+robots.txt
+
+# convex
+# convex/_generated
+convex/agents
+convex/branches
+convex/properties/mutations.ts
+convex/upload
+# convex/users/mutations.ts
+# convex/auth.config.js
+# convex/schema.ts
+convex/tasks.ts
+
+# pages
+(admin)
+sign-up
+estate-agents
+onboarding
+
+#src
+src/helpers
+
+# server
+src/server/actions/uploadFile.ts
+src/server/actions/agent
+src/server/actions/branch
+src/server/fetchAssets.ts
+src/server/updateRole.ts
+
+# types
+src/types/counties.ts
+src/types/gen.ts
+src/types/httpStatusCode.ts
+src/types/postcodes.ts
+src/types/runtime.ts
+
+# utils
+src/utils/generators
+src/utils/calculateRepayments.ts
+src/utils/extractNumberFromString.ts
+src/utils/httpStatusCode.ts
+src/utils/generateID.ts
+src/utils/generateLabelName.ts
+src/utils/idGenerator.ts
+src/utils/propertyGenerator.ts
+src/utils/validateInputs.ts
+src/utils/validateMediaItem.ts
+
+database
+
+data
+
+
+src/components/calculator/inputs
+HeadingOne.tsx
+
+# theme.ts
+# ThemeRegistry.tsx
+ConvexClientProvider.tsx
+# middleware.ts
+
+tailwind.config.ts
+postcss.config.js
+
+package-lock.json
+sampleData.jsonl
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies

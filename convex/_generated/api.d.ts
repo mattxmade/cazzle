@@ -14,6 +14,9 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as agents_queries from "../agents/queries.js";
+import type * as branches_mutations from "../branches/mutations.js";
+import type * as branches_queries from "../branches/queries.js";
 import type * as properties_mutations from "../properties/mutations.js";
 import type * as properties_queries from "../properties/queries.js";
 import type * as users_mutations from "../users/mutations.js";
@@ -28,6 +31,9 @@ import type * as users_queries from "../users/queries.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  "agents/queries": typeof agents_queries;
+  "branches/mutations": typeof branches_mutations;
+  "branches/queries": typeof branches_queries;
   "properties/mutations": typeof properties_mutations;
   "properties/queries": typeof properties_queries;
   "users/mutations": typeof users_mutations;

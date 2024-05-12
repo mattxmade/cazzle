@@ -36,6 +36,7 @@ export default function SignInPage({ params, searchParams }: PageParams) {
         sm={0}
         md={7}
         sx={{
+          backgroundImage: "url(https://source.unsplash.com/random?wallpapers)",
           backgroundRepeat: "no-repeat",
           backgroundColor: backgroundColor,
           backgroundSize: "cover",

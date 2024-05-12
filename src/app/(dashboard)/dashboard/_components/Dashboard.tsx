@@ -44,11 +44,11 @@ import type { PropertyListing_ } from "@/types";
 import { validate } from "@/data/validate";
 import { getStatus, type DbResponse } from "@/data/dbStatus";
 import { saveDocument, getDocuments } from "@/server/actions/agent/agent";
-import { BranchDetails, genNewData, validDocumentData } from "@/types/runtime";
+import { BranchDetails, newForm, validDocumentData } from "@/types/runtime";
 
 export type PartialData = Partial<BranchDetails> | Partial<PropertyListing_>;
-type DashboardKey = "property" | "agent";
-type DocumentModel = "properties" | "agents" | "";
+type DashboardKey = "property" | "branch";
+type DocumentModel = "properties" | "branches" | "";
 
 export type FormDataRef = {
   type: DashboardKey;
@@ -79,7 +79,7 @@ type DashboardProps = {
 const menuDrawerWidth = 240;
 
 const menuCarousel = {
-  "agent-profile": 0,
+  "branch-profile": 0,
   "new-property": 64,
   "properties-list": 64 * 2,
   "new-listing": 64 * 3,
@@ -97,9 +97,12 @@ const Dashboard = (props: DashboardProps) => {
 
   const [open, setOpen] = useState(true);
   const [openModal, setOpenModal] = useState(false);
-  const [view, setView] = useState("agent-profile");
+  const [view, setView] = useState("branch-profile");
 
-  const initialData = useRef<FormDataRef>(null);
+  const initialData = useRef<FormDataRef>({
+    type: "branch",
+    data: props.branch,
+  });
   const unsavedData = useRef<PartialData | null>(null);
 
   const [canSubmitData, setCanSubmitData] = useState(false);
@@ -109,7 +112,7 @@ const Dashboard = (props: DashboardProps) => {
   const [showAlert, setShowAlert] = useState(false);
 
   const [formErrors, setFormErrors] = useState<{
-    for: "agent" | "property";
+    for: "branch" | "property";
     errors: PropertyErrors;
   } | null>(null);
 
@@ -134,15 +137,16 @@ const Dashboard = (props: DashboardProps) => {
     }
 
     unsavedData.current = valuesToUpdate;
+    console.log(unsavedData.current);
   };
 
   const handleNewFormData: FormDataFunction = (type, newData) => {
-    if (!genNewData[type] || !newData) return;
+    if (!newForm[type] || !newData) return;
 
     switch (type) {
-      case "agent":
+      case "branch":
         unsavedData.current = {
-          ...genNewData[type],
+          ...newForm[type],
           ...newData,
         } as Partial<BranchDetails>;
 
@@ -150,13 +154,15 @@ const Dashboard = (props: DashboardProps) => {
 
       case "property":
         unsavedData.current = {
-          ...genNewData[type],
+          ...newForm[type],
           ...newData,
         } as Partial<PropertyListing_>;
         break;
     }
 
     unsavedData.current && !hasDataChanged && setHasDataChanged(true);
+
+    console.log(unsavedData.current);
 
     unsavedData.current &&
       validDocumentData(type, unsavedData.current) &&
@@ -169,13 +175,15 @@ const Dashboard = (props: DashboardProps) => {
     if (pending) return;
     showAlert && setShowAlert(false);
 
+    console.log(unsavedData.current);
+
     if (!initialData.current || !unsavedData.current) return;
 
     let documentModel: DocumentModel = "";
     let data: any = {};
 
-    if (initialData.current.type === "agent") {
-      documentModel = "agents";
+    if (initialData.current.type === "branch") {
+      documentModel = "branches";
 
       data = {
         ...initialData.current.data,
@@ -214,12 +222,16 @@ const Dashboard = (props: DashboardProps) => {
 
     startTransition(async () => {
       const response = await saveDocument(formData);
+      console.log(response);
+
       if (!response) return setTaskResponse(getStatus.server.error);
 
       const { status, message } = response;
 
       // Update Properties state
       if (response.data && response.data.type === "properties") {
+        console.log(response.data.document);
+
         setProperties((prevData) => {
           if (!response.data) return prevData;
 
@@ -312,12 +324,13 @@ const Dashboard = (props: DashboardProps) => {
 
   const handleSetView = useCallback(
     (requestedView: string) => {
-      setView(requestedView);
       handleClearData();
 
-      if (requestedView === "agent-profile") {
-        initialData.current = { type: "agent", data: props.branch };
+      if (requestedView === "branch-profile") {
+        initialData.current = { type: "branch", data: props.branch };
       }
+
+      setView(requestedView);
     },
     [view]
   );
@@ -344,7 +357,7 @@ const Dashboard = (props: DashboardProps) => {
               }}
             >
               <Stack sx={{ height: 64 }} justifyContent="center">
-                {view === "agent-profile" ? (
+                {view === "branch-profile" ? (
                   <ButtonGroup>
                     <Button
                       disabled={!hasDataChanged}
@@ -428,7 +441,7 @@ const Dashboard = (props: DashboardProps) => {
         <MenuItems
           menuItems={[
             {
-              name: "agent-profile",
+              name: "branch-profile",
               Icon: <AccountCircleIcon />,
               text: "Agency Profile",
             },
@@ -520,11 +533,16 @@ const Dashboard = (props: DashboardProps) => {
                 Choose a view
               </Typography>
             </DashboardView>
-            <DashboardView viewName="agent-profile" currentView={view}>
+            <DashboardView viewName="branch-profile" currentView={view}>
               <Typography variant="h2" fontSize={28}>
-                Agent Profile
+                Branch Profile
               </Typography>
-              <ProfileForm handleUpdateLocalData={handleUpdateLocalData} />
+              <ProfileForm
+                branchDetails={
+                  initialData.current?.data as Partial<BranchDetails>
+                }
+                handleUpdateLocalData={handleUpdateLocalData}
+              />
             </DashboardView>
             <DashboardView viewName="new-property" currentView={view}>
               <Typography variant="h2" fontSize={28}>

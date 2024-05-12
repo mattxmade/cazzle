@@ -22,6 +22,25 @@ export const getUserFavourite = query({
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) return null;
 
+    const listingItem = await ctx.db.get(args.listing_id);
+
+    if (!listingItem) {
+      // new user_id here
+      // listing no longer available
+    }
+
     return await ctx.db.get(args.listing_id);
+  },
+});
+
+export const getUserFavourites = query({
+  args: { favourites: v.array(v.id("properties")) },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return null;
+
+    return Promise.all(
+      args.favourites.map(async (listing_id) => await ctx.db.get(listing_id))
+    );
   },
 });

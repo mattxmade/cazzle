@@ -37,7 +37,7 @@ import FormCard from "@/components/forms/FormCard";
 import FormSection from "@/components/forms/FormSection";
 import MediaAsset from "./MediaAsset";
 import useMediaAsset from "@/components/forms/hooks/useMediaAsset";
-import { fecthAsset } from "@/server/fecthAssets";
+import { fetchAsset } from "@/server/fetchAssets";
 import uploadFile from "@/server/actions/agent/media";
 
 type PropertyFormProps = {
@@ -95,7 +95,7 @@ const PropertyForm = (props: PropertyFormProps) => {
       docId: propertyData._id,
       accepts: "image/jpg",
       uploadAsset: uploadFile,
-      getAssetUrl: imageId ? fecthAsset : undefined,
+      getAssetUrl: imageId ? fetchAsset : undefined,
       setters: { setPending, setActiveAsset },
     });
   });

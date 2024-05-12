@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { mutation } from "../_generated/server";
-import { getStatus } from "@/data/dbStatus";
+import { type DbResponse, getStatus } from "@/data/dbStatus";
 
 export const createUser = mutation({
   args: { user_id: v.string(), name: v.string(), role: v.string() },
@@ -38,6 +38,30 @@ export const deleteUser = mutation({
     } catch (error) {
       return getStatus.server.error;
     }
+  },
+});
+
+export const updateUserRole = mutation({
+  args: { user_id: v.id("users"), role: v.union(v.null(), v.string()) },
+
+  handler: async (ctx, args) => {
+    if (
+      !args.user_id ||
+      (args.role !== "user" && args.role !== "agent" && args.role !== null)
+    )
+      return null;
+
+    if (!ctx.auth.getUserIdentity()) return;
+
+    console.log(args.role);
+
+    await ctx.db.patch(args.user_id, {
+      modifiedDate: Date.now(),
+      role: args.role,
+    });
+
+    const user = await ctx.db.get(args.user_id);
+    return user?.role;
   },
 });
 

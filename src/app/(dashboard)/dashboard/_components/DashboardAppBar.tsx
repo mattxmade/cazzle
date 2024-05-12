@@ -76,7 +76,7 @@ const DashboardAppBar = (props: DashboardAppBarProps) => {
                 {props.children}
               </Box>
 
-              <AccountMenu />
+              <AccountMenu role="agent" />
             </ClerkLoaded>
           </SignedIn>
 

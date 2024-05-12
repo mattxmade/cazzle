@@ -17,7 +17,7 @@ export default async function DashboardPage() {
   checkPermission();
 
   const user = await getSignedInUser();
-  if (!user || !user?.current) redirect("/sign-in");
+  if (!user || !user?.current) redirect("/not-found");
 
   if (user.current.role !== "agent") return redirect("/not-found");
 
@@ -31,7 +31,7 @@ export default async function DashboardPage() {
     queryParams,
     queryOptions
   );
-  if (!estateAgent) redirect("/sign-in");
+  if (!estateAgent) redirect("/not-found");
 
   const { getAgentProperties } = api.agents.queries;
   const { getBranchProfile } = api.branches.queries;
