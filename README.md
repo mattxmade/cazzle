@@ -1,5 +1,5 @@
 <a href="#"><img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white" alt="next.js-badge"/></a> 
-# <a href="#"><img src="/docs/favicon.ico" width="24"/></a> Cazzle | <a href="#" target="_blank"> <strong>Live</strong></a>
+# <img src="/docs/favicon.ico" width="24"/> Cazzle
 
 > ### Property Portal built with Next.js
 
